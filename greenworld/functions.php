@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.7.0' );
+define( 'GREENWORLD_VERSION', '1.8.0' );
 
 /**
  * Emit the theme version into the page head so the running build is verifiable
@@ -40,6 +40,18 @@ add_action(
 );
 define( 'GREENWORLD_DIR', trailingslashit( get_template_directory() ) );
 define( 'GREENWORLD_URI', trailingslashit( get_template_directory_uri() ) );
+
+/**
+ * Branded placeholder for products with no featured image, so category, shop
+ * and search cards never render as an empty box (a common cause of grid gaps).
+ */
+add_filter(
+	'woocommerce_placeholder_img_src',
+	static function ( $src ) {
+		$rel = 'assets/img/placeholder-product.svg';
+		return is_readable( GREENWORLD_DIR . $rel ) ? GREENWORLD_URI . $rel : $src;
+	}
+);
 
 /**
  * PSR-4 style autoloader for the GreenWorld\ namespace.

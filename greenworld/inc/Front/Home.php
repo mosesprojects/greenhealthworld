@@ -87,6 +87,14 @@ final class Home {
 				'cta'   => __( 'Shop All Products', 'greenworld' ),
 				'url'   => self::shop(),
 			),
+			array(
+				'img'   => 'assets/img/slides/delivery.webp',
+				'eye'   => __( 'We deliver', 'greenworld' ),
+				'title' => __( 'Nationwide & Worldwide Delivery', 'greenworld' ),
+				'sub'   => __( 'Same-day in Nairobi, countrywide courier and DHL worldwide. Pay on delivery in Kenya.', 'greenworld' ),
+				'cta'   => __( 'See delivery options', 'greenworld' ),
+				'url'   => self::shop(),
+			),
 		);
 
 		$slides = array();
@@ -117,18 +125,25 @@ final class Home {
 		if ( $count === 0 ) { return; }
 		$shop = self::shop();
 
-		echo '<section class="gw-herocar gw-herocar--banner" data-gw-hero aria-roledescription="carousel" aria-label="' . esc_attr__( 'Featured', 'greenworld' ) . '">';
+		echo '<section class="gw-herocar" data-gw-hero aria-roledescription="carousel" aria-label="' . esc_attr__( 'Featured', 'greenworld' ) . '">';
 		echo '<div class="gw-herocar__track" data-gw-hero-track>';
 		foreach ( $slides as $i => $s ) {
-			$href = ( '' === $s['url'] ) ? $shop : $s['url'];
-			$alt  = ( '' === $s['title'] ) ? $s['eyebrow'] : $s['title'];
-			echo '<article class="gw-herocar__slide' . ( 0 === $i ? ' is-active' : '' ) . '" data-gw-hero-slide="' . (int) $i . '" aria-hidden="' . ( 0 === $i ? 'false' : 'true' ) . '">';
-			echo '<a class="gw-herocar__banner" href="' . esc_url( $href ) . '" aria-label="' . esc_attr( $alt ) . '">';
-			if ( '' !== $s['image'] ) {
-				echo '<img class="gw-herocar__bg" src="' . esc_url( $s['image'] ) . '" alt="" aria-hidden="true" loading="lazy">';
-				echo '<img class="gw-herocar__img" src="' . esc_url( $s['image'] ) . '" alt="' . esc_attr( $alt ) . '"' . ( 0 === $i ? ' fetchpriority="high"' : ' loading="lazy"' ) . '>';
-			}
-			echo '</a></article>';
+			$href  = ( '' === $s['url'] ) ? $shop : $s['url'];
+			$alt   = ( '' === $s['title'] ) ? $s['eyebrow'] : $s['title'];
+			$style = ( '' === $s['image'] ) ? '' : ' style="background-image:url(' . esc_url( $s['image'] ) . ')"';
+			echo '<article class="gw-herocar__slide' . ( 0 === $i ? ' is-active' : '' ) . '"' . $style . ' data-gw-hero-slide="' . (int) $i . '" aria-hidden="' . ( 0 === $i ? 'false' : 'true' ) . '">';
+			echo '<span class="gw-herocar__scrim" aria-hidden="true"></span>';
+			echo '<div class="gw-container gw-herocar__inner"><div class="gw-hero__copy">';
+			if ( '' !== $s['eyebrow'] ) { echo '<span class="gw-hero__eyebrow">' . esc_html( $s['eyebrow'] ) . '</span>'; }
+			if ( '' !== $s['title'] )   { echo '<h2 class="gw-hero__title">' . esc_html( $s['title'] ) . '</h2>'; }
+			if ( '' !== $s['sub'] )     { echo '<p class="gw-hero__sub">' . esc_html( $s['sub'] ) . '</p>'; }
+			$cta = ( '' === $s['cta'] ) ? __( 'Shop now', 'greenworld' ) : $s['cta'];
+			echo '<div class="gw-hero__cta">';
+			echo '<a class="gw-btn gw-btn--gold" href="' . esc_url( $href ) . '">' . esc_html( $cta ) . '</a>';
+			echo '<a class="gw-btn gw-btn--onhero" href="' . esc_url( $shop ) . '">' . esc_html__( 'Shop all products', 'greenworld' ) . '</a>';
+			echo '</div>';
+			echo '</div></div>';
+			echo '</article>';
 		}
 		echo '</div>';
 
@@ -300,6 +315,16 @@ final class Home {
 	 * @return array<int,int>
 	 */
 	private static function shelf_product_ids( array $row, int $n ): array {
+		// Authoritative: title-keyword classifier with word boundaries. A raw WP
+		// search for "Men's ..." also matches "woMEN"/"MENopause"/"MENstrual" and
+		// pollutes the shelf, so shelves never fall back to raw search.
+		$title_ids = self::products_by_title( (string) ( $row['include'] ?? '' ), (string) ( $row['exclude'] ?? '' ), $n );
+		if ( count( $title_ids ) >= 2 ) {
+			return $title_ids;
+		}
+
+		// Secondary: real product-category membership, filtered through the same
+		// exclude pattern so a mis-categorised product cannot leak into the shelf.
 		if ( taxonomy_exists( 'product_cat' ) ) {
 			$term_ids = array();
 			$names    = isset( $row['candidates'] ) ? (array) $row['candidates'] : array( (string) ( $row['q'] ?? '' ) );
@@ -311,42 +336,30 @@ final class Home {
 			}
 			$term_ids = array_values( array_unique( array_filter( $term_ids ) ) );
 			if ( count( $term_ids ) > 0 ) {
-				$ids = self::product_ids( array(
-					'posts_per_page' => $n,
+				$cat_ids = self::product_ids( array(
+					'posts_per_page' => (int) $n * 3,
 					'orderby'        => 'rand',
 					'tax_query'      => array(
 						array( 'taxonomy' => 'product_cat', 'field' => 'term_id', 'terms' => $term_ids, 'operator' => 'IN', 'include_children' => true ),
 					),
 				) );
-				if ( count( $ids ) >= 2 ) {
-					return $ids;
+				$exclude = (string) ( $row['exclude'] ?? '' );
+				$clean   = array();
+				foreach ( $cat_ids as $id ) {
+					$title = strtolower( (string) get_the_title( (int) $id ) );
+					if ( '' !== $exclude && preg_match( $exclude, $title ) ) {
+						continue;
+					}
+					$clean[] = (int) $id;
+				}
+				if ( count( $clean ) >= 2 ) {
+					return array_slice( $clean, 0, $n );
 				}
 			}
 		}
-		// Prefer title keywords with word boundaries over raw WP search: a search
-		// for "Men's ..." also matches "woMEN", "MENopause", "MENstrual" and pulls
-		// women's items into the men's shelf (and vice versa).
-		$title_ids = self::products_by_title( (string) ( $row['include'] ?? '' ), (string) ( $row['exclude'] ?? '' ), $n );
-		if ( count( $title_ids ) >= 2 ) {
-			return $title_ids;
-		}
-		$term = (string) ( $row['search'] ?? ( $row['q'] ?? '' ) );
-		if ( '' !== trim( $term ) ) {
-			$ids = self::products_by_search( $term, $n );
-			if ( count( $ids ) >= 2 ) {
-				return $ids;
-			}
-		}
+
 		return $title_ids;
 	}
-
-	/**
-	 * Fallback shelf resolver: published products whose title matches the
-	 * include pattern (empty = any) and does not match the exclude pattern.
-	 * Randomised so the row still refreshes on every load.
-	 *
-	 * @return array<int,int>
-	 */
 	private static function products_by_title( string $include, string $exclude, int $n ): array {
 		$pool    = self::product_ids( array( 'posts_per_page' => 200, 'orderby' => 'date', 'order' => 'DESC' ) );
 		$matched = array();

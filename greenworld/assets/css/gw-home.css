@@ -31,6 +31,11 @@
 .gw-herocar__dots{position:absolute;left:0;right:0;bottom:1.1rem;z-index:5;display:flex;justify-content:center;gap:.5rem;}
 .gw-herocar__dot{width:9px;height:9px;padding:0;border:0;border-radius:50%;cursor:pointer;background:rgba(255,255,255,.45);transition:all .25s ease;}
 .gw-herocar__dot.is-active{background:var(--gw-gold);width:26px;border-radius:6px;}
+.gw-herocar__inner{position:relative;z-index:3;}
+.gw-herocar__scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(9,49,36,.9) 0%,rgba(9,49,36,.66) 40%,rgba(9,49,36,.3) 68%,rgba(9,49,36,.06) 100%);}
+.gw-herocar__slide::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(9,49,36,.3),transparent 42%);}
+.gw-herocar .gw-hero__copy{position:relative;z-index:3;}
+.gw-herocar .gw-hero__title,.gw-herocar .gw-hero__sub{text-shadow:0 2px 14px rgba(0,0,0,.42);}
 @media (max-width:640px){
   .gw-herocar__nav{display:none;}
   .gw-herocar .gw-hero__copy{padding:1.75rem 0;}

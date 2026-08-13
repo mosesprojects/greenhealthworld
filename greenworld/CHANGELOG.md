@@ -2,6 +2,13 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.8.0 - Captioned slider + delivery slide, sorted shelves, no empty cards
+
+- **Hero slider shows captions again.** The homepage carousel was rebuilt from the caption-less banner mode back to a captioned hero: each slide shows the real product banner as a full-bleed cover background under a brand-green scrim, with the eyebrow, headline, description and call-to-action rendered as real text on top, sized to fit the hero band (no letterboxed "half" banner).
+- **Delivery banner moved into the slider.** The standalone deliveries band at the bottom of the homepage was removed and folded into the carousel as a redesigned, captioned delivery slide ("Nationwide & Worldwide Delivery" - same-day Nairobi, countrywide courier, DHL worldwide, pay on delivery), instead of the busy original banner shown as-is.
+- **Homepage shelves are correctly sorted.** Men's / Women's / Vitamins shelves now resolve by the title-keyword classifier first (word boundaries keep "woMEN"/"MENopause"/"MENstrual" out of the Men's shelf) and never fall back to raw product search. Category membership is still honoured as a secondary source, but filtered through the same exclude rules so a mis-categorised product cannot leak in.
+- **No more empty product cards / grid gaps.** Products with no featured image now show a branded Green World placeholder instead of a blank white box, so category, shop and search grids stay even. A product with no price (e.g. "Ovary Nutrition Capsules") still needs a price added in WooCommerce - that is product data, not a theme bug.
+
 ## 1.7.0 - Shorter hero, de-polluted shelves, 3-up base grid
 
 - **Hero height halved.** v1.6.9 made the banner a full-width 2:1 block, which is very tall on desktop. The slide is now a fixed, modest band (clamp 240-400px) with the real banner shown crisp and complete (object-fit:contain) over a blurred, darkened copy of itself that fills the frame - so it is short AND full, never letterboxed. Reverted to the raw banner images (the 2:1 composites are no longer needed).

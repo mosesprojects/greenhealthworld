@@ -214,29 +214,77 @@ final class Home {
 		echo '</div></div></section>';
 	}
 
-	/** Men / Women / General tri-section band with photographic cards. */
+	/**
+	 * Three category product shelves — Men's / Women's / General Health.
+	 * Each row shows ~6 products on desktop with the rest in a horizontal
+	 * scroller (2-up on mobile), and the selection is randomized on every
+	 * load so the homepage always feels fresh. Replaces the old static
+	 * "Shop by person / Health for Everyone" photo band.
+	 */
 	public static function health_focus(): void {
-		$shop  = self::shop();
-		$cards = array(
-			array( 'name' => __( "Men's Health", 'greenworld' ), 'q' => "Men's Health", 'img' => 'assets/img/hero-men.jpg', 'mod' => 'gw_focus_men_image', 'text' => __( 'Energy, stamina and everyday vitality for men.', 'greenworld' ) ),
-			array( 'name' => __( "Women's Health", 'greenworld' ), 'q' => "Women's Health", 'img' => 'assets/img/hero-women.jpg', 'mod' => 'gw_focus_women_image', 'text' => __( 'Balance, beauty and gentle natural self-care.', 'greenworld' ) ),
-			array( 'name' => __( 'General Health', 'greenworld' ), 'q' => 'General Health', 'img' => 'assets/img/hero-general.jpg', 'mod' => 'gw_focus_general_image', 'text' => __( 'Everyday wellbeing for the whole family.', 'greenworld' ) ),
+		$rows = array(
+			array( 'title' => __( "Men's Health", 'greenworld' ),   'q' => "Men's Health" ),
+			array( 'title' => __( "Women's Health", 'greenworld' ), 'q' => "Women's Health" ),
+			array( 'title' => __( 'General Health', 'greenworld' ), 'q' => 'General Health' ),
 		);
-		echo '<section class="gw-section gw-focus"><div class="gw-container">';
-		self::section_head( __( 'Shop by person', 'greenworld' ), __( 'Health for Everyone', 'greenworld' ) );
-		echo '<div class="gw-focus__grid">';
-		foreach ( $cards as $c ) {
-			$img  = (string) get_theme_mod( $c['mod'], GREENWORLD_URI . $c['img'] );
-			$term = taxonomy_exists( 'product_cat' ) ? get_term_by( 'name', $c['q'], 'product_cat' ) : false;
-			$url  = ( $term && ! is_wp_error( $term ) ) ? get_term_link( $term ) : add_query_arg( array( 's' => rawurlencode( $c['q'] ), 'post_type' => 'product' ), home_url( '/' ) );
-			if ( is_wp_error( $url ) ) { $url = $shop; }
-			$style = ( $img !== '' ) ? ' style="background-image:linear-gradient(180deg, rgba(11,63,46,.05), rgba(11,63,46,.78)), url(' . esc_url( $img ) . ')"' : '';
-			printf(
-				'<a class="gw-focus__card" href="%s"%s><span class="gw-focus__body"><span class="gw-focus__name">%s</span><span class="gw-focus__text">%s</span><span class="gw-focus__link">%s &rarr;</span></span></a>',
-				esc_url( (string) $url ), $style, esc_html( $c['name'] ), esc_html( $c['text'] ), esc_html__( 'Shop now', 'greenworld' )
-			);
+
+		$printed = false;
+		foreach ( $rows as $row ) {
+			$ids = self::category_product_ids( (string) $row['q'], 14 );
+			if ( count( $ids ) < 3 ) {
+				continue; // Skip a shelf with too few products rather than show a thin row.
+			}
+			if ( ! $printed ) {
+				echo '<section class="gw-section gw-shelves"><div class="gw-container">';
+				$printed = true;
+			}
+			echo '<div class="gw-shelf">';
+			self::section_head( __( 'Shop by category', 'greenworld' ), (string) $row['title'], self::category_link( (string) $row['q'] ), __( 'View all', 'greenworld' ) );
+			echo '<div class="gw-scroller gw-scroller--shelf" data-gw-scroller>';
+			echo '<button type="button" class="gw-scroller__nav gw-scroller__nav--prev" data-gw-scroll="prev" aria-label="' . esc_attr__( 'Scroll left', 'greenworld' ) . '">&#8249;</button>';
+			self::render_products( $ids, 6 );
+			echo '<button type="button" class="gw-scroller__nav gw-scroller__nav--next" data-gw-scroll="next" aria-label="' . esc_attr__( 'Scroll right', 'greenworld' ) . '">&#8250;</button>';
+			echo '</div></div>';
 		}
-		echo '</div></div></section>';
+		if ( $printed ) {
+			echo '</div></section>';
+		}
+	}
+
+	/**
+	 * Random product IDs from a named product category (fresh on every load).
+	 *
+	 * @return array<int,int>
+	 */
+	private static function category_product_ids( string $name, int $n ): array {
+		if ( ! taxonomy_exists( 'product_cat' ) ) {
+			return array();
+		}
+		$term = get_term_by( 'name', $name, 'product_cat' );
+		if ( ! $term || is_wp_error( $term ) ) {
+			return array();
+		}
+		return self::product_ids( array(
+			'posts_per_page' => $n,
+			'orderby'        => 'rand',
+			'tax_query'      => array(
+				array( 'taxonomy' => 'product_cat', 'field' => 'term_id', 'terms' => (int) $term->term_id ),
+			),
+		) );
+	}
+
+	/** Best URL for a category name: its term archive, else a product search. */
+	private static function category_link( string $name ): string {
+		if ( taxonomy_exists( 'product_cat' ) ) {
+			$term = get_term_by( 'name', $name, 'product_cat' );
+			if ( $term && ! is_wp_error( $term ) ) {
+				$link = get_term_link( $term );
+				if ( ! is_wp_error( $link ) ) {
+					return (string) $link;
+				}
+			}
+		}
+		return (string) add_query_arg( array( 's' => rawurlencode( $name ), 'post_type' => 'product' ), home_url( '/' ) );
 	}
 
 	/** Bookable "Computerized Full Body Scan" promo band (Customizer-driven). */

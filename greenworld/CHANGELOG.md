@@ -2,6 +2,26 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.0 — Homepage, product page & category refinements
+
+### Homepage
+- **"Explore our world of wellness"** pillars now render as a professional single-row carousel: 4 tiles per row on desktop (3 on tablet, 2 on mobile) with the rest reachable by horizontal scroll / arrow controls.
+- **Featured Health & Wellness Products** scroller now fits **two products per row on mobile**, clearly visible, while remaining a one-row scroller on desktop.
+- Removed the static **"Shop by person / Health for Everyone"** photo band and replaced it with **three live product shelves** — Men's Health, Women's Health and General Health — each showing ~6 products per row on desktop (2-up on mobile) with the remainder in a horizontal scroller.
+- Every product row (Featured + the three category shelves) is **randomized on every page load**, so returning visitors see fresh products.
+
+### Product page
+- Fixed the oversized / empty product-image area: the gallery is now a **framed, sticky card** with the image constrained (`object-fit: contain`, capped height) and vertically aligned to the top of the summary — no more large blank column.
+- Added a **"Green World" brand kicker** above the product title.
+- Added an **"Order on WhatsApp"** call-to-action inside the product summary (number + message template come from the Customizer), matching the loop button.
+- Retains the existing structured tabs (Description, Ingredients, How to Use, Delivery, Reviews) and related products below the fold.
+
+### Category landing pages
+- Product-category archives now show a **"Shop by need"** chip row of the category's sub-categories before the product grid (e.g. Men's Health → Men's Vitality, Prostate Wellness, …), building a stronger topical/entity landing page. Guides, related categories and an FAQ already render below the grid.
+
+### Housekeeping
+- Bumped `GREENWORLD_VERSION` to `1.6.0` to cache-bust `assets/css/main.css`, `assets/css/gw-home.css` and `assets/js/gw-home.js`.
+
 ## 1.0.0 — Initial release
 Premium, classic health & wellness WooCommerce theme for Green World Health Solutions.
 

@@ -30,8 +30,48 @@ final class InternalLinks implements Bootable {
 		add_shortcode( 'gw_guide_hub', [ $this, 'sc_hub' ] );
 
 		// Power structure on WooCommerce templates.
+		add_action( 'woocommerce_before_shop_loop', [ $this, 'category_shop_by_need' ], 5 );
 		add_action( 'woocommerce_after_single_product_summary', [ $this, 'product_context' ], 25 );
 		add_action( 'woocommerce_after_shop_loop', [ $this, 'category_context' ], 20 );
+	}
+
+	/**
+	 * "Shop by need" chips on a product-category archive: the child categories
+	 * of the current category, so a broad landing page (e.g. Men's Health) links
+	 * down into its sub-needs (Men's Vitality, Prostate Wellness, ...). Turns a
+	 * bare product grid into a stronger topical/entity landing page for SEO.
+	 */
+	public function category_shop_by_need(): void {
+		if ( ! function_exists( 'is_product_category' ) || ! is_product_category() ) {
+			return;
+		}
+		$term = get_queried_object();
+		if ( ! $term instanceof \WP_Term ) {
+			return;
+		}
+		$children = get_terms( [
+			'taxonomy'   => 'product_cat',
+			'parent'     => $term->term_id,
+			'hide_empty' => true,
+			'orderby'    => 'name',
+			'order'      => 'ASC',
+			'number'     => 12,
+		] );
+		if ( ! is_array( $children ) || count( $children ) === 0 ) {
+			return;
+		}
+		$this->styles();
+		echo '<nav class="gw-shopneed" aria-label="' . esc_attr__( 'Shop by need', 'greenworld' ) . '">';
+		echo '<span class="gw-shopneed__label">' . esc_html__( 'Shop by need', 'greenworld' ) . '</span>';
+		echo '<ul class="gw-shopneed__list">';
+		foreach ( $children as $c ) {
+			$link = get_term_link( $c );
+			if ( is_wp_error( $link ) ) {
+				continue;
+			}
+			printf( '<li><a href="%s">%s<span>%d</span></a></li>', esc_url( (string) $link ), esc_html( $c->name ), (int) $c->count );
+		}
+		echo '</ul></nav>';
 	}
 
 	/* ------------------------------------------------------------------ */

@@ -23,6 +23,8 @@ final class WooCommerce implements Bootable {
 		add_action( 'woocommerce_before_shop_loop_item', [ $this, 'wishlist_button' ], 8 );
 
 		// Single product.
+		add_action( 'woocommerce_single_product_summary', [ $this, 'brand_eyebrow' ], 4 );
+		add_action( 'woocommerce_single_product_summary', [ $this, 'whatsapp_button' ], 31 );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'trust_badges' ], 35 );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'delivery_estimate' ], 36 );
 		add_action( 'woocommerce_after_single_product_summary', [ $this, 'product_disclaimer' ], 6 );
@@ -91,6 +93,48 @@ final class WooCommerce implements Bootable {
 			'<button class="gw-wish" type="button" data-gw-wishlist="%d" aria-label="%s" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 21S4 14.5 4 8.8A4.2 4.2 0 0 1 12 6a4.2 4.2 0 0 1 8 2.8C20 14.5 12 21 12 21Z"/></svg></button>',
 			(int) $product->get_id(),
 			esc_attr__( 'Add to wishlist', 'greenworld' )
+		);
+	}
+
+	/**
+	 * Small brand kicker printed above the product title on the single-product
+	 * page, mirroring the "Brand" line in the redesigned layout.
+	 */
+	public function brand_eyebrow(): void {
+		global $product;
+		if ( ! $product instanceof \WC_Product ) {
+			return;
+		}
+		echo '<p class="gw-product-brand">' . esc_html__( 'Green World', 'greenworld' ) . '</p>';
+	}
+
+	/**
+	 * "Order on WhatsApp" call-to-action inside the single-product summary,
+	 * matching the loop button. Number + message template come from the
+	 * Customizer, so nothing is hardcoded.
+	 */
+	public function whatsapp_button(): void {
+		global $product;
+		if ( ! $product instanceof \WC_Product ) {
+			return;
+		}
+		$wa = (string) preg_replace( '/[^0-9]/', '', Customizer::val( 'gw_whatsapp' ) );
+		if ( '' === $wa ) {
+			return;
+		}
+		$tmpl = (string) Customizer::val( 'gw_wa_order_msg' );
+		if ( '' === trim( $tmpl ) ) {
+			$tmpl = 'Hi Green World Health Solutions, I would like to order: {product} ({url})';
+		}
+		$msg = str_replace(
+			[ '{product}', '{url}' ],
+			[ $product->get_name(), (string) get_permalink( $product->get_id() ) ],
+			$tmpl
+		);
+		printf(
+			'<a class="gw-wa-order gw-wa-order--single" href="%s" target="_blank" rel="nofollow noopener"><svg class="gw-wa-order__icon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.33 4.97L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 1.82c2.16 0 4.19.84 5.72 2.37a8.06 8.06 0 0 1 2.37 5.72c0 4.46-3.63 8.09-8.1 8.09a8.1 8.1 0 0 1-4.12-1.13l-.3-.18-3.12.82.83-3.04-.19-.31a8.03 8.03 0 0 1-1.25-4.25c0-4.46 3.63-8.09 8.1-8.09Zm4.68 10.29c-.26-.13-1.51-.75-1.74-.83-.23-.09-.4-.13-.57.13-.17.26-.65.83-.8 1-.15.17-.29.19-.55.06-.26-.13-1.08-.4-2.06-1.27-.76-.68-1.28-1.52-1.43-1.78-.15-.26-.02-.4.11-.53.12-.12.26-.31.39-.46.13-.15.17-.26.26-.44.09-.17.04-.33-.02-.46-.06-.13-.57-1.38-.78-1.89-.21-.5-.42-.43-.57-.44l-.49-.01c-.17 0-.44.06-.68.33-.23.26-.89.87-.89 2.12 0 1.25.91 2.46 1.04 2.63.13.17 1.79 2.74 4.34 3.84.61.26 1.08.42 1.45.54.61.19 1.16.16 1.6.1.49-.07 1.51-.62 1.72-1.21.21-.6.21-1.11.15-1.21-.06-.11-.23-.17-.49-.3Z"/></svg><span>%s</span></a>',
+			esc_url( 'https://wa.me/' . $wa . '?text=' . rawurlencode( $msg ) ),
+			esc_html__( 'Order on WhatsApp', 'greenworld' )
 		);
 	}
 

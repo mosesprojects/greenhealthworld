@@ -116,3 +116,36 @@ ul.products li.product::before{display:none!important;content:none!important;}
 .gw-breadcrumbs a{color:#4b5b52;text-decoration:none;}
 .gw-breadcrumbs a:hover{color:var(--gw-ink,#0B3F2E);text-decoration:underline;}
 .gw-breadcrumbs li[aria-current="page"]{color:var(--gw-ink,#0B3F2E);font-weight:600;}
+
+/* ============================================================
+   v1.6.0 — Homepage refinements
+   - "Explore our world of wellness" pillars: 1 row of 4 + scroll
+   - Featured scroller: 2 products per row on mobile
+   - Category shelves (Men's / Women's / General): ~6 per row + scroll
+   ============================================================ */
+
+/* ---------- Pillars as a horizontal scroller (Explore our world of wellness) ---------- */
+.gw-scroller--pillars{position:relative;}
+.gw-scroller--pillars .gw-pillars{margin:0;}
+.gw-scroller--pillars .gw-pillars__grid{
+  display:flex!important;grid-template-columns:none!important;flex-wrap:nowrap!important;
+  overflow-x:auto;scroll-snap-type:x mandatory;gap:1.1rem;margin:0!important;
+  padding:.35rem .1rem 1rem!important;scrollbar-width:thin;-webkit-overflow-scrolling:touch;
+}
+.gw-scroller--pillars .gw-pillars__grid::-webkit-scrollbar{height:8px;}
+.gw-scroller--pillars .gw-pillars__grid::-webkit-scrollbar-thumb{background:rgba(11,63,46,.25);border-radius:4px;}
+.gw-scroller--pillars .gw-pillars__item{flex:0 0 calc(25% - .83rem)!important;margin:0!important;scroll-snap-align:start;}
+.gw-scroller--pillars .gw-pillars__item a{height:100%;}
+@media (max-width:1024px){.gw-scroller--pillars .gw-pillars__item{flex:0 0 calc(33.333% - .74rem)!important;}}
+@media (max-width:640px){.gw-scroller--pillars .gw-pillars__item{flex:0 0 calc(50% - .55rem)!important;}}
+
+/* ---------- Category product shelves (replaces "Shop by person") ---------- */
+.gw-shelves .gw-shelf{margin-bottom:2.2rem;}
+.gw-shelves .gw-shelf:last-child{margin-bottom:0;}
+.gw-scroller--shelf .products li.product{flex:0 0 clamp(155px,15vw,188px)!important;}
+
+/* Featured + shelves: show two products per row on mobile, clearly visible */
+@media (max-width:640px){
+  .gw-featured ul.products li.product,
+  .gw-scroller .products li.product{flex:0 0 calc(50% - .55rem)!important;}
+}

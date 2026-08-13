@@ -21,6 +21,39 @@ final class Home {
 
 	/** @return array<int,int> */
 	private static function product_ids( array $args ): array {
+
+		$defaults = array( 'post_type' => 'product', 'post_status' => 'publish', 'posts_per_page' => 8, 'fields' => 'ids', 'no_found_rows' => true, 'ignore_sticky_posts' => true );
+		$q = new \WP_Query( array_merge( $defaults, $args ) );
+		return array_map( 'intval', (array) $q->posts );
+	}
+
+	private static function render_products( array $ids, int $cols = 4 ): void {
+		if ( count( $ids ) === 0 ) {
+			return;
+		}
+		echo do_shortcode( sprintf( '[products ids="%s" columns="%d" limit="%d"]', esc_attr( implode( ',', array_map( 'strval', $ids ) ) ), $cols, count( $ids ) ) );
+	}
+
+	private static function section_head( string $eyebrow, string $title, string $link = '', string $link_text = '' ): void {
+		echo '<div class="gw-sec__head">';
+		echo '<div class="gw-sec__heads">';
+		if ( $eyebrow !== '' ) { echo '<span class="gw-eyebrow">' . esc_html( $eyebrow ) . '</span>'; }
+		echo '<h2 class="gw-sec__title">' . esc_html( $title ) . '</h2>';
+		echo '</div>';
+		if ( $link !== '' && $link_text !== '' ) {
+			echo '<a class="gw-sec__more" href="' . esc_url( $link ) . '">' . esc_html( $link_text ) . '</a>';
+		}
+		echo '</div>';
+	}
+
+	/* --------------------------------------------------------------------- */
+
+	/**
+	 * Built-in + Customizer-driven hero slides (4 banner slides).
+	 *
+	 * @return array<int,array<string,string>>
+	 */
+	private static function hero_slides(): array {
 		$defaults = array(
 			array(
 				'img'   => 'assets/img/slides/hero-weight-loss.jpg',
@@ -70,7 +103,6 @@ final class Home {
 			);
 		}
 
-		// A slide renders only if it has a title or image (lets an editor hide 2/3).
 		return array_values( array_filter( $slides, static function ( $s ) {
 			return $s['title'] !== '' || $s['image'] !== '';
 		} ) );

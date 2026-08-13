@@ -2,6 +2,12 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.7 - Hotfix: restore Home renderer methods
+
+- **Critical fix for a fatal error introduced in 1.6.6** (`Call to undefined method GreenWorld\Front\Home::hero_slides()`). A bad in-place edit in 1.6.6 accidentally deleted three private helper methods on the homepage renderer (`product_ids()`, `render_products()`, `section_head()`) and the `hero_slides()` method signature, which took the whole homepage down.
+- All four methods are restored to their correct definitions; the 4-slide banner hero and deliveries band from 1.6.6 are unchanged and intact.
+- No visual or behavioural changes beyond restoring the homepage. If you deployed 1.6.6 and saw a white screen / fatal error, deploy 1.6.7 to recover.
+
 ## 1.6.6 - Banner hero + deliveries band
 
 - **New homepage hero: a 4-slide banner carousel** using your real marketing banners (Weight Loss Without Exercise, Men's Wellness, Women's Wellness, Premium Supplements). Each banner is shown complete (no cropping, no dark overlay), cross-fades every 6s, pauses on hover, supports swipe, and links to the matching category search. Images are bundled in the theme and can be swapped per slide in the Customizer (gw_hero1..4_image).

@@ -2,6 +2,13 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.9 - Full-bleed hero banners + 3-up category grid
+
+- **Hero banners now fill the slider edge-to-edge** instead of floating letterboxed ("half"). All four banners (Weight Loss, Men's, Women's, General) were rebuilt onto a uniform 1600x800 (2:1) canvas: the real Green World banner sits crisp and centred on a soft blurred, brand-tinted backdrop, so nothing is cropped and the frame is always full. The slider CSS switched from object-fit:contain to a fixed 2:1 slide with object-fit:cover.
+- **Women's slide** swapped from the awkward portrait/"THANKS" composite to the clean Women Care Gel product panel.
+- **Category / shop / search pages now show a guaranteed 3 products per row** on desktop (was 4-up and could leave a ragged empty cell from WooCommerce float fallback). Cards are forced onto an equal-height CSS grid with a stable 1:1 image box, so a product with a missing or odd-sized image no longer breaks the alignment. Mobile stays 2-up.
+- No change to the Featured / Men's / Women's / Vitamins shelves themselves - they were already 5-up horizontal scrollers pulling from those category searches and randomising each load (this only became visible once the fatal errors from 1.6.6/1.6.7 were fixed).
+
 ## 1.6.8 - Hotfix: hero URL sprintf crash
 
 - **Critical fix for a fatal error on the homepage** (`ValueError: Unknown format specifier "W"` from `sprintf()` inside `get_theme_mod()`). The hero slide URLs are built with `rawurlencode()` (e.g. `?s=Men%27s%20Wellness`), and WordPress runs a theme-mod's string default through `sprintf()`, which choked on the `%` sequences.

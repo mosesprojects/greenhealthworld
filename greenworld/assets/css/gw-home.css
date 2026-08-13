@@ -209,10 +209,10 @@ ul.products li.product::before{display:none!important;content:none!important;}
    edge-complete on a soft brand background, cross-fading via the existing
    carousel JS. Deliveries band is one wide banner linking to the shop.
    ===================================================================== */
-.gw-herocar--banner{background:linear-gradient(120deg,#f3f8f3,#e8f2ea);}
-.gw-herocar--banner .gw-herocar__slide{min-height:clamp(320px,42vw,520px);justify-content:center;padding:clamp(1rem,3vw,2.2rem);background:none;}
-.gw-herocar--banner .gw-herocar__banner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
-.gw-herocar--banner .gw-herocar__img{max-width:min(1040px,96%);max-height:clamp(300px,40vw,500px);width:auto;height:auto;object-fit:contain;border-radius:16px;box-shadow:0 18px 44px rgba(11,63,46,.16);}
+.gw-herocar--banner{background:var(--gw-ink,#0B3F2E);}
+.gw-herocar--banner .gw-herocar__slide{display:block;position:relative;min-height:0;aspect-ratio:2/1;padding:0;background:none;overflow:hidden;}
+.gw-herocar--banner .gw-herocar__banner{display:block;width:100%;height:100%;}
+.gw-herocar--banner .gw-herocar__img{display:block;width:100%;height:100%;object-fit:cover;border-radius:0;box-shadow:none;max-width:none;max-height:none;}
 .gw-herocar--banner .gw-herocar__nav{background:rgba(11,63,46,.14);color:var(--gw-ink,#0B3F2E);}
 .gw-herocar--banner .gw-herocar__nav:hover{background:rgba(11,63,46,.26);}
 .gw-herocar--banner .gw-herocar__dot{background:rgba(11,63,46,.26);}
@@ -221,6 +221,6 @@ ul.products li.product::before{display:none!important;content:none!important;}
 .gw-deliveries .gw-deliveries__banner:hover{transform:translateY(-2px);box-shadow:0 20px 48px rgba(11,63,46,.18);}
 .gw-deliveries .gw-deliveries__img{display:block;width:100%;height:auto;}
 @media (max-width:640px){
-  .gw-herocar--banner .gw-herocar__slide{min-height:auto;padding:1rem;}
-  .gw-herocar--banner .gw-herocar__img{max-height:none;max-width:100%;border-radius:12px;}
+  .gw-herocar--banner .gw-herocar__slide{aspect-ratio:2/1;min-height:0;padding:0;}
+  .gw-herocar--banner .gw-herocar__img{border-radius:0;}
 }

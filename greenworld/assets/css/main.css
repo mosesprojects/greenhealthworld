@@ -624,3 +624,18 @@ ul.products li.product .onsale{display:none}
 @media (max-width:900px){
   .gw-filters__close{display:inline-flex;align-items:center;justify-content:center}
 }
+
+
+/* --- GreenWorld 1.6.9: shop/archive/search guaranteed 3-up grid + equal cards --- */
+@media (min-width:901px){
+  .gw-wc--shop ul.products,
+  .woocommerce.archive ul.products,
+  .woocommerce-page.search ul.products,
+  .search-results.woocommerce ul.products{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-flow:row !important}
+}
+.gw-wc--shop ul.products li.product,
+.woocommerce.archive ul.products li.product,
+.woocommerce-page.search ul.products li.product{grid-column:auto !important;grid-row:auto !important;align-self:stretch !important}
+.gw-wc--shop ul.products li.product img,
+.woocommerce.archive ul.products li.product img,
+.woocommerce-page.search ul.products li.product img{width:100%!important;aspect-ratio:1/1;object-fit:cover;background:#fff}

@@ -93,13 +93,16 @@ final class Home {
 		$total = count( $defaults );
 		for ( $i = 1; $i <= $total; $i++ ) {
 			$d        = $defaults[ $i - 1 ];
+			$url_def  = isset( $d['url'] ) ? (string) $d['url'] : self::shop();
+			$url_mod  = (string) get_theme_mod( "gw_hero{$i}_url", '' );
+			$url      = ( '' === $url_mod ) ? $url_def : $url_mod;
 			$slides[] = array(
 				'image'   => (string) get_theme_mod( "gw_hero{$i}_image", GREENWORLD_URI . $d['img'] ),
 				'eyebrow' => (string) get_theme_mod( "gw_hero{$i}_eyebrow", $d['eye'] ),
 				'title'   => (string) get_theme_mod( "gw_hero{$i}_title", $d['title'] ),
 				'sub'     => (string) get_theme_mod( "gw_hero{$i}_sub", $d['sub'] ),
 				'cta'     => (string) get_theme_mod( "gw_hero{$i}_cta", $d['cta'] ),
-				'url'     => (string) get_theme_mod( "gw_hero{$i}_url", isset( $d['url'] ) ? (string) $d['url'] : self::shop() ),
+				'url'     => $url,
 			);
 		}
 

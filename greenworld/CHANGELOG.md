@@ -2,6 +2,12 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.8 - Hotfix: hero URL sprintf crash
+
+- **Critical fix for a fatal error on the homepage** (`ValueError: Unknown format specifier "W"` from `sprintf()` inside `get_theme_mod()`). The hero slide URLs are built with `rawurlencode()` (e.g. `?s=Men%27s%20Wellness`), and WordPress runs a theme-mod's string default through `sprintf()`, which choked on the `%` sequences.
+- The encoded URL is no longer passed as the `get_theme_mod` default. Each hero slide now reads `gw_heroN_url` with an empty default and falls back to the built-in search URL in PHP, so the encoded URL never touches `sprintf()`.
+- No visual change; the 4-slide banner hero and deliveries band are unchanged.
+
 ## 1.6.7 - Hotfix: restore Home renderer methods
 
 - **Critical fix for a fatal error introduced in 1.6.6** (`Call to undefined method GreenWorld\Front\Home::hero_slides()`). A bad in-place edit in 1.6.6 accidentally deleted three private helper methods on the homepage renderer (`product_ids()`, `render_products()`, `section_head()`) and the `hero_slides()` method signature, which took the whole homepage down.

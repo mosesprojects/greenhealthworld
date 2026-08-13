@@ -2,6 +2,12 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.1 — Homepage follow-ups
+
+- **"Explore our world of wellness"** now scrolls **continuously on its own** (a seamless auto-marquee) instead of needing arrow clicks. It pauses on hover/focus and falls back to a static, no-motion layout for visitors who prefer reduced motion.
+- **Removed the "Health & Wellness Journal" (Learn)** teaser section from the homepage — it was surfacing the default WordPress "Hello world!" post.
+- Bumped `GREENWORLD_VERSION` to `1.6.1` (parent + child theme headers in lockstep) to cache-bust `gw-home.css` / `gw-home.js`.
+
 ## 1.6.0 — Homepage, product page & category refinements
 
 ### Homepage

@@ -76,8 +76,34 @@
 		} );
 	}
 
+	function initMarquee( root ) {
+		var track = root.querySelector( '.gw-pillars__grid' );
+		if ( ! track ) { return; }
+		var items = toArray( track.children );
+		if ( items.length < 2 ) { return; }
+
+		// Respect users who prefer no motion: leave it as a plain scroll region.
+		var reduce = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+		if ( reduce ) { return; }
+
+		// Duplicate the set once so translateX(-50%) loops seamlessly. Clones are
+		// hidden from assistive tech and keyboard focus to avoid duplicate links.
+		items.forEach( function ( li ) {
+			var clone = li.cloneNode( true );
+			clone.setAttribute( 'aria-hidden', 'true' );
+			toArray( clone.querySelectorAll( 'a' ) ).forEach( function ( a ) { a.setAttribute( 'tabindex', '-1' ); } );
+			track.appendChild( clone );
+		} );
+
+		// Steady speed regardless of how many pillars exist (~4.5s per tile).
+		var dur = Math.max( 24, Math.round( items.length * 4.5 ) );
+		root.style.setProperty( '--gw-marquee-dur', dur + 's' );
+		root.classList.add( 'is-ready' );
+	}
+
 	ready( function () {
 		toArray( document.querySelectorAll( '[data-gw-hero]' ) ).forEach( initHero );
 		toArray( document.querySelectorAll( '[data-gw-scroller]' ) ).forEach( initScroller );
+		toArray( document.querySelectorAll( '[data-gw-marquee]' ) ).forEach( initMarquee );
 	} );
 } )();

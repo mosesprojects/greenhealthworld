@@ -124,20 +124,27 @@ ul.products li.product::before{display:none!important;content:none!important;}
    - Category shelves (Men's / Women's / General): ~6 per row + scroll
    ============================================================ */
 
-/* ---------- Pillars as a horizontal scroller (Explore our world of wellness) ---------- */
-.gw-scroller--pillars{position:relative;}
-.gw-scroller--pillars .gw-pillars{margin:0;}
-.gw-scroller--pillars .gw-pillars__grid{
+/* ---------- Pillars as a self-scrolling marquee (Explore our world of wellness) ---------- */
+.gw-marquee{position:relative;overflow:hidden;}
+.gw-marquee--pillars{-webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);}
+.gw-marquee--pillars .gw-pillars{margin:0;}
+.gw-marquee--pillars .gw-pillars__grid{
   display:flex!important;grid-template-columns:none!important;flex-wrap:nowrap!important;
-  overflow-x:auto;scroll-snap-type:x mandatory;gap:1.1rem;margin:0!important;
-  padding:.35rem .1rem 1rem!important;scrollbar-width:thin;-webkit-overflow-scrolling:touch;
+  width:max-content;gap:1.1rem;margin:0!important;padding:.35rem .1rem 1rem!important;
+  will-change:transform;
 }
-.gw-scroller--pillars .gw-pillars__grid::-webkit-scrollbar{height:8px;}
-.gw-scroller--pillars .gw-pillars__grid::-webkit-scrollbar-thumb{background:rgba(11,63,46,.25);border-radius:4px;}
-.gw-scroller--pillars .gw-pillars__item{flex:0 0 calc(25% - .83rem)!important;margin:0!important;scroll-snap-align:start;}
-.gw-scroller--pillars .gw-pillars__item a{height:100%;}
-@media (max-width:1024px){.gw-scroller--pillars .gw-pillars__item{flex:0 0 calc(33.333% - .74rem)!important;}}
-@media (max-width:640px){.gw-scroller--pillars .gw-pillars__item{flex:0 0 calc(50% - .55rem)!important;}}
+.gw-marquee--pillars .gw-pillars__item{flex:0 0 auto!important;width:clamp(230px,22vw,290px)!important;margin:0!important;}
+.gw-marquee--pillars .gw-pillars__item a{height:100%;}
+/* Animation is enabled by JS (adds .is-ready) only after the track is duplicated,
+   so the -50% loop is always seamless. */
+.gw-marquee--pillars.is-ready .gw-pillars__grid{animation:gw-marquee-x var(--gw-marquee-dur,45s) linear infinite;}
+.gw-marquee--pillars.is-ready:hover .gw-pillars__grid,
+.gw-marquee--pillars.is-ready:focus-within .gw-pillars__grid{animation-play-state:paused;}
+@keyframes gw-marquee-x{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@media (prefers-reduced-motion:reduce){
+  .gw-marquee--pillars{overflow-x:auto;-webkit-mask-image:none;mask-image:none;}
+  .gw-marquee--pillars.is-ready .gw-pillars__grid{animation:none;}
+}
 
 /* ---------- Category product shelves (replaces "Shop by person") ---------- */
 .gw-shelves .gw-shelf{margin-bottom:2.2rem;}

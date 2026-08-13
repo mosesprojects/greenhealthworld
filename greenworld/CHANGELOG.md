@@ -2,6 +2,14 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.11.0 - Product page: international (Tabarak-style) polish
+
+- Add-to-cart CTA restyled to the brand gold accent (was WooCommerce's default mauve), scoped to the single-product buy row with high specificity so it wins without !important. Quantity and CTA now sit on one aligned row; the green Order on WhatsApp button sits full-width below.
+- Replaced the plain 3-item guarantee list with a bordered 2x2 feature card (fast delivery, genuine product, secure checkout, easy returns) using distinct icons, matching the trust row used by international electronics stores.
+- Added a You save X% pill under the price on sale items, and stronger price typography (bold, strikethrough original).
+- Added a Brand: Green World line beside the product meta, and cleaner Category/SKU meta styling.
+- All changes are CSS plus three small WooCommerce hooks (trust_badges rebuilt, sale_savings and brand_line added). Version bump to 1.11.0.
+
 ## v1.10.0 - Single-product layout rebuild
 
 - Rebuilt the single-product page into a capped two-column grid (gallery left, summary right). The gallery is now a neat square frame instead of expanding to half the page, and the summary gets the extra room.

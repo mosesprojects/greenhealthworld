@@ -40,6 +40,8 @@ final class WooCommerce implements Bootable {
 		// Single-product layout rebuild (v1.10.0).
 		add_filter( 'body_class', [ $this, 'product_body_class' ] );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'availability' ], 15 );
+		add_action( 'woocommerce_single_product_summary', [ $this, 'sale_savings' ], 11 );
+		add_action( 'woocommerce_single_product_summary', [ $this, 'brand_line' ], 41 );
 		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
 		add_action( 'woocommerce_after_single_product_summary', [ $this, 'stacked_sections' ], 10 );
 
@@ -145,14 +147,23 @@ final class WooCommerce implements Bootable {
 	}
 
 	public function trust_badges(): void {
-		$badges = [
-			__( 'Quality health & wellness products', 'greenworld' ),
-			__( 'Secure payment: M-Pesa, bank transfer or cash on delivery', 'greenworld' ),
-			__( 'Discreet delivery across Kenya', 'greenworld' ),
-		];
-		echo '<ul class="gw-ptrust" aria-label="' . esc_attr__( 'Store guarantees', 'greenworld' ) . '">';
-		foreach ( $badges as $b ) {
-			echo '<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' . esc_html( $b ) . '</li>';
+		$feats = array(
+			array( 'truck', __( 'Fast delivery across Kenya', 'greenworld' ) ),
+			array( 'shield', __( 'Genuine Green World product', 'greenworld' ) ),
+			array( 'lock', __( 'Secure checkout: M-Pesa, bank or cash on delivery', 'greenworld' ) ),
+			array( 'return', __( 'Easy returns within 7 days', 'greenworld' ) ),
+		);
+		$icons = array(
+			'truck'  => '<path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="18" cy="17" r="2"/>',
+			'shield' => '<path d="M12 3l7 3v5c0 4.4-3 7.8-7 9-4-1.2-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/>',
+			'lock'   => '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+			'return' => '<path d="M3 7v5h5"/><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>',
+		);
+		echo '<ul class="gw-features" aria-label="' . esc_attr__( 'Store guarantees', 'greenworld' ) . '">';
+		foreach ( $feats as $f ) {
+			$key  = (string) $f[0];
+			$path = isset( $icons[ $key ] ) ? $icons[ $key ] : '';
+			echo '<li><span class="gw-features__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' . $path . '</svg></span><span class="gw-features__t">' . esc_html( (string) $f[1] ) . '</span></li>';
 		}
 		echo '</ul>';
 	}
@@ -341,6 +352,31 @@ final class WooCommerce implements Bootable {
 				echo '</div>';
 			}
 		}
+	}
+
+
+	/**
+	 * "You save X%" pill shown under the price when a product is on sale.
+	 */
+	public function sale_savings(): void {
+		$product = isset( $GLOBALS['product'] ) ? $GLOBALS['product'] : null;
+		if ( $product instanceof \WC_Product && $product->is_on_sale() ) {
+			$reg  = (float) wc_get_price_to_display( $product, array( 'price' => $product->get_regular_price() ) );
+			$sale = (float) wc_get_price_to_display( $product, array( 'price' => $product->get_price() ) );
+			if ( $reg > 0 && $sale > 0 && $sale < $reg ) {
+				$pct  = (int) round( ( ( $reg - $sale ) / $reg ) * 100 );
+				$save = wc_price( $reg - $sale );
+				echo '<p class="gw-save"><span class="gw-save__pct">-' . esc_html( (string) $pct ) . '%</span><span class="gw-save__amt">' . wp_kses_post( sprintf( __( 'You save %s', 'greenworld' ), $save ) ) . '</span></p>';
+			}
+		}
+	}
+
+	/**
+	 * "Brand: Green World" line placed next to the product meta, matching the
+	 * SKU / Category / Brand line used by international electronics stores.
+	 */
+	public function brand_line(): void {
+		echo '<p class="gw-brandline">' . esc_html__( 'Brand:', 'greenworld' ) . ' <strong>' . esc_html__( 'Green World', 'greenworld' ) . '</strong></p>';
 	}
 
 }

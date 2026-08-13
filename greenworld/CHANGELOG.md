@@ -2,6 +2,14 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.4 - Category-page grid, professional filters, homepage 5-up rows
+
+- **Category / shop pages now show 3 products per row** (was 2 with a blank column). The archive product grid uses `minmax(0,1fr)` tracks so cards shrink to fit instead of wrapping early and leaving empty space; 2-up on tablet/mobile.
+- **Redesigned the filter sidebar** to an international-standard look: a sticky card with a clear "Filter products" header, pill-shaped product counts on categories, a green active state, styled price inputs with focus rings, and custom check marks for the rating/attribute options. The mobile off-canvas drawer behaviour is unchanged.
+- **Homepage product rows now show exactly 5 fully-visible cards per row on desktop** (Featured plus the Men's / Women's / General shelves), with the rest reachable by horizontal scroll - no more half-cut 5th card. 3-up on tablet, 2-up on mobile. Every row is still randomized on each page load.
+- **Added a one-time category-hierarchy seeder.** On the first wp-admin load after deploy it creates the Green World category tree (Vitamins & Minerals; Women's Wellness -> Menopause / Menstrual / Reproductive; Men's Wellness -> Vitality / Prostate / Reproductive; Digestive, Immune, Bone & Joint, Heart & Circulatory, Weight Management, Herbal & Natural, General Wellness). It is additive and idempotent - it never renames, deletes or reassigns, and the new categories stay hidden from menus/filters until you assign products to them.
+- Bumped version to `1.6.4` (parent + child).
+
 ## 1.6.3 — Category shelves now populate reliably
 
 - **Fixed the three homepage category rows (Men's / Women's / General Health) showing empty.** They now resolve products in this order: (1) membership of the matching product categories, including sub-categories and several alternate category names; (2) if those categories are missing or empty, a fallback that matches products by title keywords with word boundaries (so "…for Men" lands under Men's Health and "Menopause…"/"…for Women" under Women's Health). Rows still show 6/5 per row (2-up on mobile) with scroll + View all, randomized each load.

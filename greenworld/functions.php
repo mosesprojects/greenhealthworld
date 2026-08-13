@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.6.3' );
+define( 'GREENWORLD_VERSION', '1.6.4' );
 define( 'GREENWORLD_DIR', trailingslashit( get_template_directory() ) );
 define( 'GREENWORLD_URI', trailingslashit( get_template_directory_uri() ) );
 
@@ -284,6 +284,71 @@ add_action( 'after_switch_theme', 'greenworld_run_starter_setup' );
 add_action( 'admin_init', 'greenworld_run_starter_setup' );
 
 /**
+ * One-time: seed the Green World product-category hierarchy.
+ *
+ * Additive and idempotent. It only creates categories that do not already
+ * exist under the same parent; it never renames, deletes or reassigns
+ * anything. New categories are created empty, and the mega menu and filter
+ * sidebar both use hide_empty=>true, so empty categories stay hidden from
+ * shoppers until you assign products to them. Safe to run on a live store.
+ * Guarded by an option flag so the pass runs exactly once.
+ */
+function greenworld_seed_category_hierarchy(): void {
+	if ( is_admin() === false || current_user_can( 'manage_woocommerce' ) === false ) {
+		return;
+	}
+	if ( get_option( 'greenworld_cat_hierarchy_v1' ) === 'done' ) {
+		return;
+	}
+	if ( taxonomy_exists( 'product_cat' ) === false ) {
+		return; // WooCommerce not ready yet; retried on the next admin load.
+	}
+
+	$tree = array(
+		'Vitamins & Minerals'          => array(),
+		"Women's Wellness"             => array( 'Menopause Wellness', 'Menstrual Wellness', 'Reproductive Wellness' ),
+		"Men's Wellness"               => array( "Men's Vitality", 'Prostate Wellness', 'Reproductive Wellness' ),
+		'Digestive Wellness'           => array(),
+		'Immune Support'               => array(),
+		'Bone & Joint Wellness'        => array(),
+		'Heart & Circulatory Wellness' => array(),
+		'Weight Management'            => array(),
+		'Herbal & Natural Products'    => array(),
+		'General Wellness'             => array(),
+	);
+
+	foreach ( $tree as $parent_name => $children ) {
+		$parent_id = greenworld_ensure_product_cat( (string) $parent_name, 0 );
+		if ( $parent_id <= 0 ) {
+			continue;
+		}
+		foreach ( $children as $child_name ) {
+			greenworld_ensure_product_cat( (string) $child_name, $parent_id );
+		}
+	}
+
+	update_option( 'greenworld_cat_hierarchy_v1', 'done' );
+}
+add_action( 'admin_init', 'greenworld_seed_category_hierarchy', 20 );
+
+/**
+ * Create a product_cat term under $parent if one with that exact name does
+ * not already exist there. Returns the term id (existing or new), or 0.
+ */
+function greenworld_ensure_product_cat( string $name, int $parent ): int {
+	$existing = term_exists( $name, 'product_cat', $parent );
+	if ( is_array( $existing ) && isset( $existing['term_id'] ) ) {
+		return (int) $existing['term_id'];
+	}
+	$res = wp_insert_term( $name, 'product_cat', array( 'parent' => $parent ) );
+	if ( is_wp_error( $res ) ) {
+		$maybe = get_term_by( 'name', $name, 'product_cat' );
+		return ( $maybe instanceof \WP_Term ) ? (int) $maybe->term_id : 0;
+	}
+	return ( is_array( $res ) && isset( $res['term_id'] ) ) ? (int) $res['term_id'] : 0;
+}
+
+/**
  * Build the footer menus from created pages.
  *
  * @param array<string,int> $page_ids
@@ -331,9 +396,8 @@ function greenworld_seed_footer_menus( array $page_ids ): void {
  */
 function greenworld_health_categories(): array {
 	return array(
-		'General Health', "Men's Health", "Women's Health", 'Male Fertility', 'Female Fertility',
-		'Diabetes Care', 'Kidney Care', 'Detox & Wellness', 'Weight Management', 'Digestive Care',
-		'Respiratory Health', 'Heart & Circulation', 'Bone & Joint', 'Immunity & Energy', 'Wellness & Nutrition',
+		"Men's Wellness", "Women's Wellness", 'Vitamins & Minerals', 'Digestive Wellness', 'Immune Support',
+		'Bone & Joint Wellness', 'Heart & Circulatory Wellness', 'Weight Management', 'Herbal & Natural Products', 'General Wellness',
 	);
 }
 

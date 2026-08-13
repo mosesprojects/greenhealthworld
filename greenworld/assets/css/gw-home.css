@@ -61,7 +61,7 @@
 .gw-scroller .products::-webkit-scrollbar{height:8px;}
 .gw-scroller .products::-webkit-scrollbar-thumb{background:rgba(11,63,46,.25);border-radius:4px;}
 .gw-scroller .products li.product,
-.gw-featured ul.products li.product{flex:0 0 clamp(200px,22vw,248px)!important;width:auto!important;margin:0!important;float:none!important;scroll-snap-align:start;}
+.gw-featured ul.products li.product{flex:0 0 calc((100% - 4.4rem) / 5)!important;width:auto!important;max-width:none!important;margin:0!important;float:none!important;scroll-snap-align:start;}
 .gw-scroller__nav{position:absolute;top:38%;transform:translateY(-50%);z-index:4;width:44px;height:44px;border-radius:50%;border:1px solid rgba(11,63,46,.12);cursor:pointer;background:#fff;color:var(--gw-ink);font-size:1.5rem;line-height:1;display:grid;place-items:center;box-shadow:var(--gw-shadow);transition:transform .2s ease;}
 .gw-scroller__nav:hover{transform:translateY(-50%) scale(1.06);}
 .gw-scroller__nav--prev{left:-10px;}
@@ -93,14 +93,15 @@
 
 /* ---------- Product grid alignment fix (shop / archives) ---------- */
 .woocommerce ul.products,
-ul.products{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin:0 0 1.75rem;padding:0;list-style:none;}
+ul.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.25rem;margin:0 0 1.75rem;padding:0;list-style:none;}
 .woocommerce ul.products li.product,
 ul.products li.product{width:auto!important;margin:0!important;float:none!important;clear:none!important;}
 .woocommerce ul.products li.product::before,
 ul.products li.product::before{display:none!important;content:none!important;}
 .gw-wc--shop ul.products,
-.woocommerce.columns-3 ul.products{grid-template-columns:repeat(3,1fr);}
-@media (max-width:1024px){.woocommerce ul.products,ul.products{grid-template-columns:repeat(3,1fr);}}
+.gw-wc--shop .gw-wc__main ul.products,
+.woocommerce.columns-3 ul.products{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+@media (max-width:1024px){.woocommerce ul.products,ul.products{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media (max-width:640px){.woocommerce ul.products,ul.products{grid-template-columns:repeat(2,1fr);gap:.85rem;}}
 
 /* Scroller must override the product-grid rule above */
@@ -149,7 +150,7 @@ ul.products li.product::before{display:none!important;content:none!important;}
 /* ---------- Category product shelves (replaces "Shop by person") ---------- */
 .gw-shelves .gw-shelf{margin-bottom:2.4rem;}
 .gw-shelves .gw-shelf:last-child{margin-bottom:0;}
-.gw-scroller--shelf .products li.product{flex:0 0 clamp(155px,15vw,188px)!important;}
+.gw-scroller--shelf .products li.product{flex:0 0 calc((100% - 4.4rem) / 5)!important;}
 /* Screenshot-style section heading: bold title + short green underline accent */
 .gw-shelves .gw-shelf .gw-sec__head{align-items:flex-end;border-bottom:1px solid #e6efe8;padding-bottom:.55rem;margin-bottom:1.25rem;}
 .gw-shelves .gw-shelf .gw-sec__title{position:relative;padding-bottom:.55rem;margin-bottom:-.55rem;font-size:clamp(1.15rem,1rem+1vw,1.6rem);text-transform:uppercase;letter-spacing:.01em;color:var(--gw-ink,#0B3F2E);}
@@ -160,4 +161,44 @@ ul.products li.product::before{display:none!important;content:none!important;}
 @media (max-width:640px){
   .gw-featured ul.products li.product,
   .gw-scroller .products li.product{flex:0 0 calc(50% - .55rem)!important;}
+}
+
+
+/* =====================================================================
+   v1.6.4 (2026-08-13) - homepage product rows + category-archive grid.
+   Appended last: at equal specificity later source wins, so these are the
+   authoritative item sizes and override any earlier width rules.
+   * Featured + the three category shelves: exactly 5 fully-visible cards
+     per row on desktop, the rest reachable by horizontal scroll.
+     3-up on tablet, 2-up on phone.
+   * Category / shop archive grid: 3 equal cards per row. minmax(0,1fr)
+     lets tracks shrink so cards never wrap early and leave a blank column.
+   ===================================================================== */
+.gw-scroller .products li.product,
+.gw-scroller--shelf .products li.product,
+.gw-featured ul.products li.product{
+  flex:0 0 calc((100% - 4.4rem) / 5)!important;
+  width:auto!important;max-width:none!important;
+}
+@media (max-width:1024px){
+  .gw-scroller .products li.product,
+  .gw-scroller--shelf .products li.product,
+  .gw-featured ul.products li.product{flex:0 0 calc((100% - 2.2rem) / 3)!important;}
+}
+@media (max-width:640px){
+  .gw-scroller .products li.product,
+  .gw-scroller--shelf .products li.product,
+  .gw-featured ul.products li.product{flex:0 0 calc((100% - 1.1rem) / 2)!important;}
+}
+.gw-wc--shop ul.products,
+.gw-wc--shop .gw-wc__main ul.products{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:1.25rem!important;
+}
+@media (max-width:1100px){
+  .gw-wc--shop ul.products,
+  .gw-wc--shop .gw-wc__main ul.products{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+}
+@media (max-width:560px){
+  .gw-wc--shop ul.products,
+  .gw-wc--shop .gw-wc__main ul.products{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.8rem!important;}
 }

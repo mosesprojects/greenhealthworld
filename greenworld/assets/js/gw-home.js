@@ -60,10 +60,10 @@
 	}
 
 	function initScroller( root ) {
-		var track = root.querySelector( '.products' );
+		var track = root.querySelector( '.products, .gw-pillars__grid' );
 		if ( ! track ) { return; }
 		function step() {
-			var card = track.querySelector( 'li.product' );
+			var card = track.querySelector( 'li.product, li' );
 			var w = card ? card.getBoundingClientRect().width + 18 : 260;
 			var per = Math.max( 1, Math.floor( track.clientWidth / w ) );
 			return w * per;

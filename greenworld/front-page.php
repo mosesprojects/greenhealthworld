@@ -18,9 +18,13 @@ Home::shop_by_category();
 
 if ( class_exists( '\GreenWorld\Content\Relations' ) ) {
 	echo '<section class="gw-container gw-section gw-home-authority">';
-	echo '<h2 class="gw-section__title">Explore our world of wellness</h2>';
+	echo '<div class="gw-sec__head"><div class="gw-sec__heads"><span class="gw-eyebrow">Explore</span><h2 class="gw-sec__title">Explore our world of wellness</h2></div>';
+	echo '<a class="gw-sec__more" href="' . esc_url( \GreenWorld\Content\Relations::hub_url() ) . '">Health &amp; Wellness Guide &rarr;</a></div>';
+	echo '<div class="gw-scroller gw-scroller--pillars" data-gw-scroller>';
+	echo '<button type="button" class="gw-scroller__nav gw-scroller__nav--prev" data-gw-scroll="prev" aria-label="Scroll left">&#8249;</button>';
 	echo do_shortcode( '[gw_pillars]' );
-	echo '<p class="gw-home-authority__more"><a class="gw-btn" href="' . esc_url( \GreenWorld\Content\Relations::hub_url() ) . '">Visit the Health &amp; Wellness Guide &rarr;</a></p>';
+	echo '<button type="button" class="gw-scroller__nav gw-scroller__nav--next" data-gw-scroll="next" aria-label="Scroll right">&#8250;</button>';
+	echo '</div>';
 	echo '</section>';
 }
 

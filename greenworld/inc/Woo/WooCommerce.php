@@ -37,6 +37,12 @@ final class WooCommerce implements Bootable {
 
 		add_filter( 'woocommerce_add_to_cart_fragments', [ $this, 'cart_fragments' ] );
 
+		// Single-product layout rebuild (v1.10.0).
+		add_filter( 'body_class', [ $this, 'product_body_class' ] );
+		add_action( 'woocommerce_single_product_summary', [ $this, 'availability' ], 15 );
+		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
+		add_action( 'woocommerce_after_single_product_summary', [ $this, 'stacked_sections' ], 10 );
+
 		// Clean shop chrome; the theme provides its own wrappers.
 		remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );
 		remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10 );
@@ -256,4 +262,85 @@ final class WooCommerce implements Bootable {
 			esc_html__( 'Add to Cart', 'greenworld' )
 		);
 	}
+
+	/* ------------------------------------------------------------------ */
+	/*  Single-product layout rebuild (v1.10.0)                           */
+	/* ------------------------------------------------------------------ */
+
+	/**
+	 * Adds gw-has-productimg / gw-no-productimg to <body> on single-product
+	 * pages so the layout can shrink the gallery column when there is no image.
+	 *
+	 * @param array<int,string> $classes
+	 * @return array<int,string>
+	 */
+	public function product_body_class( array $classes ): array {
+		if ( function_exists( 'is_product' ) && is_product() ) {
+			$product = isset( $GLOBALS['product'] ) ? $GLOBALS['product'] : null;
+			if ( $product instanceof \WC_Product ) {
+				$has = ( $product->get_image_id() || count( (array) $product->get_gallery_image_ids() ) > 0 );
+				$classes[] = $has ? 'gw-has-productimg' : 'gw-no-productimg';
+			} else {
+				$classes[] = 'gw-no-productimg';
+			}
+		}
+		return $classes;
+	}
+
+	/**
+	 * Clear In stock / Out of stock pill shown in the product summary.
+	 */
+	public function availability(): void {
+		$product = isset( $GLOBALS['product'] ) ? $GLOBALS['product'] : null;
+		if ( $product instanceof \WC_Product ) {
+			$in    = $product->is_in_stock();
+			$label = $in ? __( 'In stock', 'greenworld' ) : __( 'Out of stock', 'greenworld' );
+			$cls   = $in ? 'is-in' : 'is-out';
+			echo '<p class="gw-avail ' . esc_attr( $cls ) . '"><span class="gw-avail__dot" aria-hidden="true"></span>' . esc_html( $label ) . '</p>';
+		}
+	}
+
+	/**
+	 * Renders product information as stacked, collapsible sections instead of
+	 * horizontal tabs. Reuses the woocommerce_product_tabs data, so Description,
+	 * Ingredients, How to Use, Delivery and Reviews all appear as open-able
+	 * panels (native details/summary, no JavaScript required). First panel open.
+	 */
+	public function stacked_sections(): void {
+		$product = isset( $GLOBALS['product'] ) ? $GLOBALS['product'] : null;
+		if ( $product instanceof \WC_Product ) {
+			$tabs = apply_filters( 'woocommerce_product_tabs', array() );
+			if ( is_array( $tabs ) && count( $tabs ) > 0 ) {
+				uasort(
+					$tabs,
+					static function ( $a, $b ): int {
+						$pa = isset( $a['priority'] ) ? (int) $a['priority'] : 10;
+						$pb = isset( $b['priority'] ) ? (int) $b['priority'] : 10;
+						return $pa <=> $pb;
+					}
+				);
+				echo '<div class="gw-psections" id="gw-product-sections">';
+				$first = true;
+				foreach ( $tabs as $key => $tab ) {
+					$cb = isset( $tab['callback'] ) ? $tab['callback'] : null;
+					if ( is_callable( $cb ) ) {
+						ob_start();
+						call_user_func( $cb, (string) $key, $tab );
+						$body = trim( (string) ob_get_clean() );
+						if ( $body === '' ) {
+							continue;
+						}
+						$title = isset( $tab['title'] ) ? (string) $tab['title'] : '';
+						echo '<details class="gw-psection"' . ( $first ? ' open' : '' ) . '>';
+						echo '<summary class="gw-psection__head"><span class="gw-psection__title">' . esc_html( $title ) . '</span><svg class="gw-psection__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>';
+						echo '<div class="gw-psection__body gw-richtext">' . $body . '</div>';
+						echo '</details>';
+						$first = false;
+					}
+				}
+				echo '</div>';
+			}
+		}
+	}
+
 }

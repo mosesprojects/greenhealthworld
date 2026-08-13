@@ -2,6 +2,15 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.10.0 - Single-product layout rebuild
+
+- Rebuilt the single-product page into a capped two-column grid (gallery left, summary right). The gallery is now a neat square frame instead of expanding to half the page, and the summary gets the extra room.
+- Graceful no-image state: products without a featured image now get a gw-no-productimg body class and a compact branded tile, instead of a large empty well. (The data-URI placeholder from v1.8.1 still applies.)
+- Added a clear In stock / Out of stock availability pill to the product summary.
+- Converted the horizontal product tabs into stacked, collapsible sections using native details/summary (no JavaScript): Description (Overview, Key Features, Product Details, FAQs and so on), Ingredients, How to Use, Delivery and Reviews render as open-able panels, first one open. Related products follow below.
+- WooCommerce.php: added product_body_class(), availability() and stacked_sections(); removed WooCommerce's default tabs output in favour of the stacked renderer.
+- Version bump to 1.10.0.
+
 ## v1.9.0 — Company & policy pages filled from single-sourced Trust Center content
 
 - About Us, Shipping & Delivery, Returns & Refunds, Privacy Policy, Contact Us and Terms & Conditions now render rich, consistent content via slug page templates (page-*.php) that call new TrustCenter::*_page() renderers. Previously these footer pages showed thin or empty WordPress content.

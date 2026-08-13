@@ -2,6 +2,12 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.2 — Homepage cleanup + category shelf styling
+
+- **Removed the homepage medical-disclaimer band and the "Join our wellness list" newsletter block.** (The disclaimer still appears in the footer, and the footer promise badges/columns are unchanged.)
+- **Restyled the three category shelves** (Men's / Women's / General Health) to match the reference: a bold uppercase section title with a short green underline accent and a "View all" link on the right, dropping the repeated "Shop by category" eyebrow. They remain 6/5-per-row scrollers (2-up on mobile) sitting immediately after Featured Health & Wellness Products, randomized on every load.
+- Bumped version to `1.6.2` (parent + child) to cache-bust CSS/JS.
+
 ## 1.6.1 — Homepage follow-ups
 
 - **"Explore our world of wellness"** now scrolls **continuously on its own** (a seamless auto-marquee) instead of needing arrow clicks. It pauses on hover/focus and falls back to a static, no-motion layout for visitors who prefer reduced motion.

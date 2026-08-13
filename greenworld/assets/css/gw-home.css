@@ -147,9 +147,14 @@ ul.products li.product::before{display:none!important;content:none!important;}
 }
 
 /* ---------- Category product shelves (replaces "Shop by person") ---------- */
-.gw-shelves .gw-shelf{margin-bottom:2.2rem;}
+.gw-shelves .gw-shelf{margin-bottom:2.4rem;}
 .gw-shelves .gw-shelf:last-child{margin-bottom:0;}
 .gw-scroller--shelf .products li.product{flex:0 0 clamp(155px,15vw,188px)!important;}
+/* Screenshot-style section heading: bold title + short green underline accent */
+.gw-shelves .gw-shelf .gw-sec__head{align-items:flex-end;border-bottom:1px solid #e6efe8;padding-bottom:.55rem;margin-bottom:1.25rem;}
+.gw-shelves .gw-shelf .gw-sec__title{position:relative;padding-bottom:.55rem;margin-bottom:-.55rem;font-size:clamp(1.15rem,1rem+1vw,1.6rem);text-transform:uppercase;letter-spacing:.01em;color:var(--gw-ink,#0B3F2E);}
+.gw-shelves .gw-shelf .gw-sec__title::after{content:"";position:absolute;left:0;bottom:-1px;width:72px;height:3px;border-radius:2px;background:var(--gw-ink,#0B3F2E);}
+.gw-shelves .gw-shelf .gw-sec__more{white-space:nowrap;font-weight:600;color:var(--gw-ink,#0B3F2E);}
 
 /* Featured + shelves: show two products per row on mobile, clearly visible */
 @media (max-width:640px){

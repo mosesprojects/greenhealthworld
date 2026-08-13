@@ -239,7 +239,7 @@ final class Home {
 				$printed = true;
 			}
 			echo '<div class="gw-shelf">';
-			self::section_head( __( 'Shop by category', 'greenworld' ), (string) $row['title'], self::category_link( (string) $row['q'] ), __( 'View all', 'greenworld' ) );
+			self::section_head( '', (string) $row['title'], self::category_link( (string) $row['q'] ), __( 'View all', 'greenworld' ) );
 			echo '<div class="gw-scroller gw-scroller--shelf" data-gw-scroller>';
 			echo '<button type="button" class="gw-scroller__nav gw-scroller__nav--prev" data-gw-scroll="prev" aria-label="' . esc_attr__( 'Scroll left', 'greenworld' ) . '">&#8249;</button>';
 			self::render_products( $ids, 6 );

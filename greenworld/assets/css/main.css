@@ -189,6 +189,8 @@ body.gw-nav-open .gw-nav-scrim{opacity:1}
 
 /* ---------- product grid (WooCommerce loop) ---------- */
 .woocommerce ul.products,ul.products{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:1.3rem;margin:0!important;padding:0!important;list-style:none}
+/* v1.8.2: In a display:grid product list, WooCommerce's float-era clearfix pseudo-elements (ul.products::before/::after) become phantom GRID ITEMS - the ::before eats the first cell and shifts every product over one, leaving an empty leading cell. Neutralise them so products fill 3-in-a-row. */
+.woocommerce ul.products::before,.woocommerce ul.products::after,ul.products::before,ul.products::after{content:none!important;display:none!important;}
 .woocommerce ul.products li.product,ul.products li.product{width:auto!important;margin:0!important;float:none!important;background:#fff;border:1px solid var(--gw-line);border-radius:var(--gw-r-lg);padding:0!important;overflow:hidden;display:flex;flex-direction:column;position:relative;transition:transform .2s var(--gw-ease),box-shadow .2s,border-color .2s}
 .woocommerce ul.products li.product:hover{transform:translateY(-3px);box-shadow:var(--gw-shadow);border-color:var(--gw-sage-line)}
 .woocommerce ul.products li.product a img,ul.products li.product img{margin:0;border-radius:0;aspect-ratio:1/1;object-fit:cover;background:#fff;transition:transform .4s var(--gw-ease)}

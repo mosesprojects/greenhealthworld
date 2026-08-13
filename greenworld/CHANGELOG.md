@@ -2,6 +2,10 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.8.2 - Fix empty leading cell on category / shop / search grids
+
+- **Products now fill 3-in-a-row from the first column.** On category, shop and search pages the product grid left an empty top-left cell (products started in column 2, e.g. 5 results showing as 2 + gap, then 3). Cause: with the product list set to `display:grid`, WooCommerce's old float-era clearfix pseudo-elements (`ul.products::before` / `::after`) are promoted to real grid items - the `::before` occupies the first cell and pushes every product across by one. Those pseudo-elements are now neutralised, so the grid packs cleanly with no gap. Homepage shelves (flex scrollers) were unaffected and are unchanged.
+
 ## 1.8.1 - Shelves scroll as one 5-up row; placeholder that always renders
 
 - **Homepage shelves now show one row of 5 products and scroll**, instead of wrapping into a 3-up grid. The shelf scroller was being overridden by the base category grid (`.woocommerce ul.products{display:grid}` outranks `.gw-scroller .products`); a higher-specificity `.gw-scroller[data-gw-scroller]` rule now wins, forcing a single horizontal flex row (5-up desktop, 4 on laptop, 3 on tablet, 2 on mobile). Product sorting into the shelves is unchanged (fixed in 1.8.0).

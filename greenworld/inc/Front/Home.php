@@ -21,65 +21,44 @@ final class Home {
 
 	/** @return array<int,int> */
 	private static function product_ids( array $args ): array {
-		$defaults = array( 'post_type' => 'product', 'post_status' => 'publish', 'posts_per_page' => 8, 'fields' => 'ids', 'no_found_rows' => true, 'ignore_sticky_posts' => true );
-		$q = new \WP_Query( array_merge( $defaults, $args ) );
-		return array_map( 'intval', (array) $q->posts );
-	}
-
-	private static function render_products( array $ids, int $cols = 4 ): void {
-		if ( count( $ids ) === 0 ) {
-			return;
-		}
-		echo do_shortcode( sprintf( '[products ids="%s" columns="%d" limit="%d"]', esc_attr( implode( ',', array_map( 'strval', $ids ) ) ), $cols, count( $ids ) ) );
-	}
-
-	private static function section_head( string $eyebrow, string $title, string $link = '', string $link_text = '' ): void {
-		echo '<div class="gw-sec__head">';
-		echo '<div class="gw-sec__heads">';
-		if ( $eyebrow !== '' ) { echo '<span class="gw-eyebrow">' . esc_html( $eyebrow ) . '</span>'; }
-		echo '<h2 class="gw-sec__title">' . esc_html( $title ) . '</h2>';
-		echo '</div>';
-		if ( $link !== '' && $link_text !== '' ) {
-			echo '<a class="gw-sec__more" href="' . esc_url( $link ) . '">' . esc_html( $link_text ) . '</a>';
-		}
-		echo '</div>';
-	}
-
-	/* --------------------------------------------------------------------- */
-
-	/**
-	 * Built-in + Customizer-driven hero slides. Defaults to three premium
-	 * slides (general / women / men) so the carousel looks complete out of the box.
-	 *
-	 * @return array<int,array<string,string>>
-	 */
-	private static function hero_slides(): array {
 		$defaults = array(
 			array(
-				'img'   => 'assets/img/hero-general.jpg',
-				'eye'   => __( 'Trusted health & wellness in Kenya', 'greenworld' ),
-				'title' => __( 'Your Health. Your Wellness. Your Better Tomorrow.', 'greenworld' ),
-				'sub'   => __( 'Discover carefully selected health and wellness products designed to support healthier everyday living.', 'greenworld' ),
-				'cta'   => __( 'Shop Health Products', 'greenworld' ),
+				'img'   => 'assets/img/slides/hero-weight-loss.jpg',
+				'eye'   => __( 'Weight Management', 'greenworld' ),
+				'title' => __( 'Weight Loss Without Exercise', 'greenworld' ),
+				'sub'   => __( 'Natural slimming teas and capsules to support your weight goals.', 'greenworld' ),
+				'cta'   => __( 'Shop Weight Management', 'greenworld' ),
+				'url'   => add_query_arg( array( 's' => rawurlencode( 'Weight Management' ), 'post_type' => 'product' ), home_url( '/' ) ),
 			),
 			array(
-				'img'   => 'assets/img/hero-women.jpg',
-				'eye'   => __( "Women's Health", 'greenworld' ),
-				'title' => __( "Natural Care Made for Women's Wellness", 'greenworld' ),
-				'sub'   => __( 'From daily balance to gentle self-care, explore products chosen with women in mind.', 'greenworld' ),
-				'cta'   => __( "Shop Women's Health", 'greenworld' ),
+				'img'   => 'assets/img/slides/hero-men.jpg',
+				'eye'   => __( "Men's Wellness", 'greenworld' ),
+				'title' => __( 'Confidence Starts With You', 'greenworld' ),
+				'sub'   => __( 'Support performance, stamina and everyday vitality with our range for men.', 'greenworld' ),
+				'cta'   => __( "Shop Men's Wellness", 'greenworld' ),
+				'url'   => add_query_arg( array( 's' => rawurlencode( "Men's Wellness" ), 'post_type' => 'product' ), home_url( '/' ) ),
 			),
 			array(
-				'img'   => 'assets/img/hero-men.jpg',
-				'eye'   => __( "Men's Health", 'greenworld' ),
-				'title' => __( 'Strength, Energy & Vitality for Men', 'greenworld' ),
-				'sub'   => __( 'Support performance, stamina and everyday wellbeing with our range for men.', 'greenworld' ),
-				'cta'   => __( "Shop Men's Health", 'greenworld' ),
+				'img'   => 'assets/img/slides/hero-women.jpg',
+				'eye'   => __( "Women's Wellness", 'greenworld' ),
+				'title' => __( 'Natural Care Made for Women', 'greenworld' ),
+				'sub'   => __( 'From hormonal balance to gentle intimate care, chosen with women in mind.', 'greenworld' ),
+				'cta'   => __( "Shop Women's Wellness", 'greenworld' ),
+				'url'   => add_query_arg( array( 's' => rawurlencode( "Women's Wellness" ), 'post_type' => 'product' ), home_url( '/' ) ),
+			),
+			array(
+				'img'   => 'assets/img/slides/hero-general.jpg',
+				'eye'   => __( 'Health & Wellness', 'greenworld' ),
+				'title' => __( 'Premium Health Supplements', 'greenworld' ),
+				'sub'   => __( 'Quality-selected natural products for healthier everyday living.', 'greenworld' ),
+				'cta'   => __( 'Shop All Products', 'greenworld' ),
+				'url'   => self::shop(),
 			),
 		);
 
 		$slides = array();
-		for ( $i = 1; $i <= 3; $i++ ) {
+		$total = count( $defaults );
+		for ( $i = 1; $i <= $total; $i++ ) {
 			$d        = $defaults[ $i - 1 ];
 			$slides[] = array(
 				'image'   => (string) get_theme_mod( "gw_hero{$i}_image", GREENWORLD_URI . $d['img'] ),
@@ -87,7 +66,7 @@ final class Home {
 				'title'   => (string) get_theme_mod( "gw_hero{$i}_title", $d['title'] ),
 				'sub'     => (string) get_theme_mod( "gw_hero{$i}_sub", $d['sub'] ),
 				'cta'     => (string) get_theme_mod( "gw_hero{$i}_cta", $d['cta'] ),
-				'url'     => (string) get_theme_mod( "gw_hero{$i}_url", self::shop() ),
+				'url'     => (string) get_theme_mod( "gw_hero{$i}_url", isset( $d['url'] ) ? (string) $d['url'] : self::shop() ),
 			);
 		}
 
@@ -103,22 +82,17 @@ final class Home {
 		if ( $count === 0 ) { return; }
 		$shop = self::shop();
 
-		echo '<section class="gw-herocar" data-gw-hero aria-roledescription="carousel" aria-label="' . esc_attr__( 'Featured', 'greenworld' ) . '">';
+		echo '<section class="gw-herocar gw-herocar--banner" data-gw-hero aria-roledescription="carousel" aria-label="' . esc_attr__( 'Featured', 'greenworld' ) . '">';
 		echo '<div class="gw-herocar__track" data-gw-hero-track>';
 		foreach ( $slides as $i => $s ) {
-			$style = ( $s['image'] !== '' )
-				? ' style="background-image:linear-gradient(90deg, rgba(11,63,46,.86), rgba(11,63,46,.42) 55%, rgba(11,63,46,.12)), url(' . esc_url( $s['image'] ) . ')"'
-				: '';
-			$tag = ( 0 === $i ) ? 'h1' : 'h2';
-			echo '<article class="gw-herocar__slide' . ( 0 === $i ? ' is-active' : '' ) . '"' . $style . ' data-gw-hero-slide="' . (int) $i . '" aria-hidden="' . ( 0 === $i ? 'false' : 'true' ) . '">';
-			echo '<div class="gw-container gw-herocar__inner"><div class="gw-hero__copy">';
-			if ( $s['eyebrow'] !== '' ) { echo '<span class="gw-hero__eyebrow">' . esc_html( $s['eyebrow'] ) . '</span>'; }
-			echo '<' . $tag . ' class="gw-hero__title">' . esc_html( $s['title'] ) . '</' . $tag . '>';
-			if ( $s['sub'] !== '' ) { echo '<p class="gw-hero__sub">' . esc_html( $s['sub'] ) . '</p>'; }
-			echo '<div class="gw-hero__cta">';
-			echo '<a class="button gw-btn--gold" href="' . esc_url( $s['url'] !== '' ? $s['url'] : $shop ) . '">' . esc_html( $s['cta'] !== '' ? $s['cta'] : __( 'Shop now', 'greenworld' ) ) . '</a>';
-			echo '<a class="button button-ghost gw-btn--onhero" href="' . esc_url( $shop ) . '">' . esc_html__( 'Explore Categories', 'greenworld' ) . '</a>';
-			echo '</div></div></div></article>';
+			$href = ( '' === $s['url'] ) ? $shop : $s['url'];
+			$alt  = ( '' === $s['title'] ) ? $s['eyebrow'] : $s['title'];
+			echo '<article class="gw-herocar__slide' . ( 0 === $i ? ' is-active' : '' ) . '" data-gw-hero-slide="' . (int) $i . '" aria-hidden="' . ( 0 === $i ? 'false' : 'true' ) . '">';
+			echo '<a class="gw-herocar__banner" href="' . esc_url( $href ) . '" aria-label="' . esc_attr( $alt ) . '">';
+			if ( '' !== $s['image'] ) {
+				echo '<img class="gw-herocar__img" src="' . esc_url( $s['image'] ) . '" alt="' . esc_attr( $alt ) . '"' . ( 0 === $i ? ' fetchpriority="high"' : ' loading="lazy"' ) . '>';
+			}
+			echo '</a></article>';
 		}
 		echo '</div>';
 
@@ -385,6 +359,20 @@ final class Home {
 	}
 
 	/** Bookable "Computerized Full Body Scan" promo band (Customizer-driven). */
+	/** Full-width deliveries banner (image overridable in the Customizer). */
+	public static function deliveries(): void {
+		$img = (string) get_theme_mod( 'gw_delivery_image', GREENWORLD_URI . 'assets/img/slides/delivery.webp' );
+		if ( '' === $img ) {
+			return;
+		}
+		$shop = self::shop();
+		echo '<section class="gw-section gw-deliveries"><div class="gw-container">';
+		echo '<a class="gw-deliveries__banner" href="' . esc_url( $shop ) . '" aria-label="' . esc_attr__( 'We deliver across Kenya with pay on delivery, and internationally via DHL', 'greenworld' ) . '">';
+		echo '<img class="gw-deliveries__img" src="' . esc_url( $img ) . '" alt="' . esc_attr__( 'Premium health supplements delivered across Kenya (pay on delivery) and internationally via DHL', 'greenworld' ) . '" loading="lazy">';
+		echo '</a>';
+		echo '</div></section>';
+	}
+
 	public static function full_body_scan(): void {
 		if ( '1' !== (string) get_theme_mod( 'gw_scan_enable', '1' ) ) { return; }
 		$title = (string) get_theme_mod( 'gw_scan_title', __( 'Computerized Full Body Health Scan', 'greenworld' ) );

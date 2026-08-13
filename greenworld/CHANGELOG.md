@@ -2,6 +2,13 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.6 - Banner hero + deliveries band
+
+- **New homepage hero: a 4-slide banner carousel** using your real marketing banners (Weight Loss Without Exercise, Men's Wellness, Women's Wellness, Premium Supplements). Each banner is shown complete (no cropping, no dark overlay), cross-fades every 6s, pauses on hover, supports swipe, and links to the matching category search. Images are bundled in the theme and can be swapped per slide in the Customizer (gw_hero1..4_image).
+- **New full-width deliveries band** below the category shelves, using your 'We Deliver Internationally / DHL / Pay on Delivery Kenya' banner, linking to the shop. Image overridable via the Customizer (gw_delivery_image).
+- Bundled banner assets under assets/img/slides/ (integrity-verified).
+- Bumped version to `1.6.6` (parent + child).
+
 ## 1.6.5 - Homepage shelves aligned to the Wellness catalog
 
 - **The three homepage product rows now pull from your live catalog categories: Men's Wellness, Women's Wellness, and Vitamins & Minerals** (previously Men's / Women's / General Health). Each row resolves products in this order: exact product category (incl. sub-categories) -> the on-site product search for that term (mirrors /?s=Men's%20Wellness&post_type=product) -> title-keyword match. So the rows match what your `?s=` search pages show, and stay populated as you assign products.

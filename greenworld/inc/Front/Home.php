@@ -224,24 +224,27 @@ final class Home {
 	public static function health_focus(): void {
 		$rows = array(
 			array(
-				'title'      => __( "Men's Health", 'greenworld' ),
-				'q'          => "Men's Health",
-				'candidates' => array( "Men's Health", 'Men Health', 'Mens Health', "Men's Wellness", 'Male Fertility', "Men's Vitality", 'Prostate Wellness' ),
+				'title'      => __( "Men's Wellness", 'greenworld' ),
+				'q'          => "Men's Wellness",
+				'search'     => "Men's Wellness",
+				'candidates' => array( "Men's Wellness", "Men's Vitality", 'Prostate Wellness', "Men's Health", 'Male Fertility', 'Reproductive Wellness' ),
 				'include'    => '/(\bmen\b|\bmens\b|\bmale\b|prostate|sperm|azoospermia|oligospermia|vigpower|a-?power|golden knight|testoster|androl)/i',
 				'exclude'    => '/(\bwomen\b|\bfemale\b|menopaus|menstru|fibroid|ovar|uterus|uterine|breast|vaginal|silver eva|\bperiod\b)/i',
 			),
 			array(
-				'title'      => __( "Women's Health", 'greenworld' ),
-				'q'          => "Women's Health",
-				'candidates' => array( "Women's Health", 'Women Health', 'Womens Health', "Women's Wellness", 'Female Fertility', 'Menopause Wellness', 'Menstrual Wellness', 'Reproductive Wellness' ),
+				'title'      => __( "Women's Wellness", 'greenworld' ),
+				'q'          => "Women's Wellness",
+				'search'     => "Women's Wellness",
+				'candidates' => array( "Women's Wellness", 'Menopause Wellness', 'Menstrual Wellness', 'Reproductive Wellness', "Women's Health", 'Female Fertility' ),
 				'include'    => '/(\bwomen\b|\bwoman\b|\bwomens\b|\bfemale\b|menopaus|menstru|fibroid|\bovary\b|ovarian|uterus|uterine|breast|vaginal|\bperiod\b|silver eva)/i',
 				'exclude'    => '/(\bmen\b|\bmale\b|prostate|sperm|azoospermia|oligospermia|vigpower|a-?power|golden knight)/i',
 			),
 			array(
-				'title'      => __( 'General Health', 'greenworld' ),
-				'q'          => 'General Health',
-				'candidates' => array( 'General Health', 'General Wellness', 'Wellness & Nutrition', 'Immunity & Energy', 'Vitamins & Minerals' ),
-				'include'    => '',
+				'title'      => __( 'Vitamins & Minerals', 'greenworld' ),
+				'q'          => 'Vitamins & Minerals',
+				'search'     => 'Vitamins & Minerals',
+				'candidates' => array( 'Vitamins & Minerals', 'Vitamins and Minerals', 'Immune Support', 'General Wellness' ),
+				'include'    => '/(vitamin|mineral|calcium|zinc|iron|selenium|magnesi|multivit|omega|fish oil|immun|antioxidant|spirulina|ginseng|nutrition)/i',
 				'exclude'    => '/(\bmen\b|\bmens\b|\bmale\b|prostate|sperm|azoospermia|oligospermia|vigpower|a-?power|golden knight|\bwomen\b|\bwomens\b|\bfemale\b|menopaus|menstru|fibroid|ovar|uterus|breast|vaginal|silver eva|\bperiod\b|reproduct|fertilit)/i',
 			),
 		);
@@ -310,6 +313,13 @@ final class Home {
 				}
 			}
 		}
+		$term = (string) ( $row['search'] ?? ( $row['q'] ?? '' ) );
+		if ( '' !== trim( $term ) ) {
+			$ids = self::products_by_search( $term, $n );
+			if ( count( $ids ) >= 2 ) {
+				return $ids;
+			}
+		}
 		return self::products_by_title( (string) ( $row['include'] ?? '' ), (string) ( $row['exclude'] ?? '' ), $n );
 	}
 
@@ -340,6 +350,24 @@ final class Home {
 			shuffle( $matched );
 		}
 		return array_slice( $matched, 0, max( 1, $n ) );
+	}
+
+	/**
+	 * Shelf resolver that mirrors the on-site product search
+	 * (/?s=<term>&post_type=product): published products matching the
+	 * term, randomised so the row refreshes on every load.
+	 *
+	 * @return array<int,int>
+	 */
+	private static function products_by_search( string $term, int $n ): array {
+		if ( '' === trim( $term ) ) {
+			return array();
+		}
+		return self::product_ids( array(
+			'posts_per_page' => max( 2, $n ),
+			's'              => $term,
+			'orderby'        => 'rand',
+		) );
 	}
 
 	/** Best URL for a category name: its term archive, else a product search. */

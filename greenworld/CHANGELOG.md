@@ -2,6 +2,13 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.5 - Homepage shelves aligned to the Wellness catalog
+
+- **The three homepage product rows now pull from your live catalog categories: Men's Wellness, Women's Wellness, and Vitamins & Minerals** (previously Men's / Women's / General Health). Each row resolves products in this order: exact product category (incl. sub-categories) -> the on-site product search for that term (mirrors /?s=Men's%20Wellness&post_type=product) -> title-keyword match. So the rows match what your `?s=` search pages show, and stay populated as you assign products.
+- Added a `products_by_search()` shelf resolver that reuses WooCommerce search, randomised on every load like the other rows.
+- Each row still shows 5 fully-visible cards on desktop (from 1.6.4) with the rest in a horizontal scroller; category/search archive pages remain 3-up.
+- Bumped version to `1.6.5` (parent + child).
+
 ## 1.6.4 - Category-page grid, professional filters, homepage 5-up rows
 
 - **Category / shop pages now show 3 products per row** (was 2 with a blank column). The archive product grid uses `minmax(0,1fr)` tracks so cards shrink to fit instead of wrapping early and leaving empty space; 2-up on tablet/mobile.

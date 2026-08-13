@@ -2,6 +2,14 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.9.0 — Company & policy pages filled from single-sourced Trust Center content
+
+- About Us, Shipping & Delivery, Returns & Refunds, Privacy Policy, Contact Us and Terms & Conditions now render rich, consistent content via slug page templates (page-*.php) that call new TrustCenter::*_page() renderers. Previously these footer pages showed thin or empty WordPress content.
+- TrustCenter refactored: render() intro is now parameterizable (shared by the Trust Center and the About page); delivery, business-facts and team markup extracted into reusable helpers; added about_page(), shipping_page(), returns_page(), privacy_page(), contact_page(), terms_page().
+- Conservative sourcing wording: replaced "authorized Green World distributor" claims with the substantiated "supplies genuine Green World brand products, sourced through the group supply chain" across the About/sourcing copy and the homepage trust band.
+- Added a Customizer-editable Terms & Conditions text area (Kenya governing law, KES pricing, no medical claims) under GreenWorld Theme > Trust Center.
+- All copy stays Customizer-editable; no registration numbers, team names or approval badges were invented.
+
 ## 1.8.2 - Fix empty leading cell on category / shop / search grids
 
 - **Products now fill 3-in-a-row from the first column.** On category, shop and search pages the product grid left an empty top-left cell (products started in column 2, e.g. 5 results showing as 2 + gap, then 3). Cause: with the product list set to `display:grid`, WooCommerce's old float-era clearfix pseudo-elements (`ul.products::before` / `::after`) are promoted to real grid items - the `::before` occupies the first cell and pushes every product across by one. Those pseudo-elements are now neutralised, so the grid packs cleanly with no gap. Homepage shelves (flex scrollers) were unaffected and are unchanged.

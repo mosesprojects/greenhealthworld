@@ -223,15 +223,33 @@ final class Home {
 	 */
 	public static function health_focus(): void {
 		$rows = array(
-			array( 'title' => __( "Men's Health", 'greenworld' ),   'q' => "Men's Health" ),
-			array( 'title' => __( "Women's Health", 'greenworld' ), 'q' => "Women's Health" ),
-			array( 'title' => __( 'General Health', 'greenworld' ), 'q' => 'General Health' ),
+			array(
+				'title'      => __( "Men's Health", 'greenworld' ),
+				'q'          => "Men's Health",
+				'candidates' => array( "Men's Health", 'Men Health', 'Mens Health', "Men's Wellness", 'Male Fertility', "Men's Vitality", 'Prostate Wellness' ),
+				'include'    => '/(\bmen\b|\bmens\b|\bmale\b|prostate|sperm|azoospermia|oligospermia|vigpower|a-?power|golden knight|testoster|androl)/i',
+				'exclude'    => '/(\bwomen\b|\bfemale\b|menopaus|menstru|fibroid|ovar|uterus|uterine|breast|vaginal|silver eva|\bperiod\b)/i',
+			),
+			array(
+				'title'      => __( "Women's Health", 'greenworld' ),
+				'q'          => "Women's Health",
+				'candidates' => array( "Women's Health", 'Women Health', 'Womens Health', "Women's Wellness", 'Female Fertility', 'Menopause Wellness', 'Menstrual Wellness', 'Reproductive Wellness' ),
+				'include'    => '/(\bwomen\b|\bwoman\b|\bwomens\b|\bfemale\b|menopaus|menstru|fibroid|\bovary\b|ovarian|uterus|uterine|breast|vaginal|\bperiod\b|silver eva)/i',
+				'exclude'    => '/(\bmen\b|\bmale\b|prostate|sperm|azoospermia|oligospermia|vigpower|a-?power|golden knight)/i',
+			),
+			array(
+				'title'      => __( 'General Health', 'greenworld' ),
+				'q'          => 'General Health',
+				'candidates' => array( 'General Health', 'General Wellness', 'Wellness & Nutrition', 'Immunity & Energy', 'Vitamins & Minerals' ),
+				'include'    => '',
+				'exclude'    => '/(\bmen\b|\bmens\b|\bmale\b|prostate|sperm|azoospermia|oligospermia|vigpower|a-?power|golden knight|\bwomen\b|\bwomens\b|\bfemale\b|menopaus|menstru|fibroid|ovar|uterus|breast|vaginal|silver eva|\bperiod\b|reproduct|fertilit)/i',
+			),
 		);
 
 		$printed = false;
 		foreach ( $rows as $row ) {
-			$ids = self::category_product_ids( (string) $row['q'], 14 );
-			if ( count( $ids ) < 3 ) {
+			$ids = self::shelf_product_ids( $row, 14 );
+			if ( count( $ids ) < 2 ) {
 				continue; // Skip a shelf with too few products rather than show a thin row.
 			}
 			if ( ! $printed ) {
@@ -252,25 +270,76 @@ final class Home {
 	}
 
 	/**
-	 * Random product IDs from a named product category (fresh on every load).
+	 * Products for one homepage shelf, resilient to how the catalogue is
+	 * organised. Order of preference (random/fresh on every load):
+	 *   1. Membership of the shelf's product categories (incl. sub-categories).
+	 *   2. If those categories are missing/empty, match by product-title
+	 *      keywords with word boundaries, so "...for Men" lands under Men's
+	 *      Health while "Menopause..."/"...for Women" land under Women's Health.
+	 *
+	 * This is why a row can look empty: if products are not assigned to a
+	 * "Men's/Women's/General Health" category (the Shop-by-Category tiles then
+	 * read "Explore" with no count), the category path yields nothing and we
+	 * fall back to titles. Assigning products to those categories in
+	 * WooCommerce makes the rows use exact category membership automatically.
+	 *
+	 * @param array<string,mixed> $row
+	 * @return array<int,int>
+	 */
+	private static function shelf_product_ids( array $row, int $n ): array {
+		if ( taxonomy_exists( 'product_cat' ) ) {
+			$term_ids = array();
+			$names    = isset( $row['candidates'] ) ? (array) $row['candidates'] : array( (string) ( $row['q'] ?? '' ) );
+			foreach ( $names as $name ) {
+				$t = get_term_by( 'name', (string) $name, 'product_cat' );
+				if ( $t instanceof \WP_Term ) {
+					$term_ids[] = (int) $t->term_id;
+				}
+			}
+			$term_ids = array_values( array_unique( array_filter( $term_ids ) ) );
+			if ( count( $term_ids ) > 0 ) {
+				$ids = self::product_ids( array(
+					'posts_per_page' => $n,
+					'orderby'        => 'rand',
+					'tax_query'      => array(
+						array( 'taxonomy' => 'product_cat', 'field' => 'term_id', 'terms' => $term_ids, 'operator' => 'IN', 'include_children' => true ),
+					),
+				) );
+				if ( count( $ids ) >= 2 ) {
+					return $ids;
+				}
+			}
+		}
+		return self::products_by_title( (string) ( $row['include'] ?? '' ), (string) ( $row['exclude'] ?? '' ), $n );
+	}
+
+	/**
+	 * Fallback shelf resolver: published products whose title matches the
+	 * include pattern (empty = any) and does not match the exclude pattern.
+	 * Randomised so the row still refreshes on every load.
 	 *
 	 * @return array<int,int>
 	 */
-	private static function category_product_ids( string $name, int $n ): array {
-		if ( ! taxonomy_exists( 'product_cat' ) ) {
-			return array();
+	private static function products_by_title( string $include, string $exclude, int $n ): array {
+		$pool    = self::product_ids( array( 'posts_per_page' => 200, 'orderby' => 'date', 'order' => 'DESC' ) );
+		$matched = array();
+		foreach ( $pool as $id ) {
+			$title = strtolower( (string) get_the_title( (int) $id ) );
+			if ( '' === $title ) {
+				continue;
+			}
+			if ( '' !== $include && ! preg_match( $include, $title ) ) {
+				continue;
+			}
+			if ( '' !== $exclude && preg_match( $exclude, $title ) ) {
+				continue;
+			}
+			$matched[] = (int) $id;
 		}
-		$term = get_term_by( 'name', $name, 'product_cat' );
-		if ( ! $term || is_wp_error( $term ) ) {
-			return array();
+		if ( count( $matched ) > 1 ) {
+			shuffle( $matched );
 		}
-		return self::product_ids( array(
-			'posts_per_page' => $n,
-			'orderby'        => 'rand',
-			'tax_query'      => array(
-				array( 'taxonomy' => 'product_cat', 'field' => 'term_id', 'terms' => (int) $term->term_id ),
-			),
-		) );
+		return array_slice( $matched, 0, max( 1, $n ) );
 	}
 
 	/** Best URL for a category name: its term archive, else a product search. */

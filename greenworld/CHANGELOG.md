@@ -2,6 +2,12 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.6.3 — Category shelves now populate reliably
+
+- **Fixed the three homepage category rows (Men's / Women's / General Health) showing empty.** They now resolve products in this order: (1) membership of the matching product categories, including sub-categories and several alternate category names; (2) if those categories are missing or empty, a fallback that matches products by title keywords with word boundaries (so "…for Men" lands under Men's Health and "Menopause…"/"…for Women" under Women's Health). Rows still show 6/5 per row (2-up on mobile) with scroll + View all, randomized each load.
+- Root cause: products were not assigned to categories named exactly "Men's Health" / "Women's Health" / "General Health" (the Shop-by-Category tiles read "Explore" with no count). Assigning products to those categories in WooCommerce makes the rows switch back to exact category membership automatically.
+- Bumped version to `1.6.3` (parent + child).
+
 ## 1.6.2 — Homepage cleanup + category shelf styling
 
 - **Removed the homepage medical-disclaimer band and the "Join our wellness list" newsletter block.** (The disclaimer still appears in the footer, and the footer promise badges/columns are unchanged.)

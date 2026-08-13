@@ -2,6 +2,11 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.8.1 - Shelves scroll as one 5-up row; placeholder that always renders
+
+- **Homepage shelves now show one row of 5 products and scroll**, instead of wrapping into a 3-up grid. The shelf scroller was being overridden by the base category grid (`.woocommerce ul.products{display:grid}` outranks `.gw-scroller .products`); a higher-specificity `.gw-scroller[data-gw-scroller]` rule now wins, forcing a single horizontal flex row (5-up desktop, 4 on laptop, 3 on tablet, 2 on mobile). Product sorting into the shelves is unchanged (fixed in 1.8.0).
+- **Branded placeholder now renders everywhere.** The 1.8.0 placeholder pointed at a theme file that could 404 on the live host, so image-less products fell back to the blank WooCommerce placeholder (the white boxes / gaps). The placeholder is now an inline data-URI, so it renders regardless of file deployment or server MIME config. Products still need real featured images and prices added in WooCommerce for the best result.
+
 ## 1.8.0 - Captioned slider + delivery slide, sorted shelves, no empty cards
 
 - **Hero slider shows captions again.** The homepage carousel was rebuilt from the caption-less banner mode back to a captioned hero: each slide shows the real product banner as a full-bleed cover background under a brand-green scrim, with the eyebrow, headline, description and call-to-action rendered as real text on top, sized to fit the hero band (no letterboxed "half" banner).

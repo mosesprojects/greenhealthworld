@@ -156,6 +156,12 @@ ul.products li.product::before{display:none!important;content:none!important;}
 .gw-shelves .gw-shelf{margin-bottom:2.4rem;}
 .gw-shelves .gw-shelf:last-child{margin-bottom:0;}
 .gw-scroller--shelf .products li.product{flex:0 0 calc((100% - 4.4rem) / 5)!important;}
+/* v1.8.1: shelves + featured must render as ONE 5-up row that scrolls, not wrap into the base 3-up product grid (which outranks the plain .gw-scroller flex rule). */
+.gw-scroller[data-gw-scroller] .products{display:flex!important;grid-template-columns:none!important;flex-wrap:nowrap!important;overflow-x:auto;gap:1.1rem;margin:0!important;padding:.35rem .1rem 1rem!important;scroll-snap-type:x mandatory;}
+.gw-scroller[data-gw-scroller] .products li.product{flex:0 0 calc((100% - 4.4rem) / 5)!important;width:auto!important;max-width:none!important;margin:0!important;float:none!important;scroll-snap-align:start;}
+@media (max-width:1024px){.gw-scroller[data-gw-scroller] .products li.product{flex:0 0 calc((100% - 3.3rem) / 4)!important;}}
+@media (max-width:900px){.gw-scroller[data-gw-scroller] .products li.product{flex:0 0 calc((100% - 2.2rem) / 3)!important;}}
+@media (max-width:640px){.gw-scroller[data-gw-scroller] .products li.product{flex:0 0 calc((100% - 1.1rem) / 2)!important;}}
 /* Screenshot-style section heading: bold title + short green underline accent */
 .gw-shelves .gw-shelf .gw-sec__head{align-items:flex-end;border-bottom:1px solid #e6efe8;padding-bottom:.55rem;margin-bottom:1.25rem;}
 .gw-shelves .gw-shelf .gw-sec__title{position:relative;padding-bottom:.55rem;margin-bottom:-.55rem;font-size:clamp(1.15rem,1rem+1vw,1.6rem);text-transform:uppercase;letter-spacing:.01em;color:var(--gw-ink,#0B3F2E);}

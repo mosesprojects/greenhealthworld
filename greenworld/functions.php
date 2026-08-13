@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.8.0' );
+define( 'GREENWORLD_VERSION', '1.8.1' );
 
 /**
  * Emit the theme version into the page head so the running build is verifiable
@@ -48,8 +48,8 @@ define( 'GREENWORLD_URI', trailingslashit( get_template_directory_uri() ) );
 add_filter(
 	'woocommerce_placeholder_img_src',
 	static function ( $src ) {
-		$rel = 'assets/img/placeholder-product.svg';
-		return is_readable( GREENWORLD_DIR . $rel ) ? GREENWORLD_URI . $rel : $src;
+		unset( $src );
+		return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MDAgNjAwIiB3aWR0aD0iNjAwIiBoZWlnaHQ9IjYwMCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZWVmNGVlIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZDllNmRjIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9InVybCgjZykiLz48ZyBmaWxsPSIjMUU1QjNFIiBvcGFjaXR5PSIwLjUiPjxwYXRoIGQ9Ik0zMDAgMTUwIEMyMTQgMTk2IDE5MCAzMDYgMzAwIDQ0MiBDNDEwIDMwNiAzODYgMTk2IDMwMCAxNTAgWiIvPjwvZz48cGF0aCBkPSJNMzAwIDIxMCBMMzAwIDQ0MiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjYiIGZpbGw9Im5vbmUiIG9wYWNpdHk9IjAuNjUiLz48dGV4dCB4PSIzMDAiIHk9IjUyNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsIHNlcmlmIiBmb250LXNpemU9IjQwIiBmaWxsPSIjMUU1QjNFIiBvcGFjaXR5PSIwLjcyIj5HcmVlbiBXb3JsZDwvdGV4dD48L3N2Zz4=';
 	}
 );
 

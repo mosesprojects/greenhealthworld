@@ -25,7 +25,19 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.6.9' );
+define( 'GREENWORLD_VERSION', '1.7.0' );
+
+/**
+ * Emit the theme version into the page head so the running build is verifiable
+ * from View Source (helps confirm a deploy actually took effect).
+ */
+add_action(
+	'wp_head',
+	static function (): void {
+		echo "\n<!-- GreenWorld theme v" . GREENWORLD_VERSION . " -->\n";
+	},
+	1
+);
 define( 'GREENWORLD_DIR', trailingslashit( get_template_directory() ) );
 define( 'GREENWORLD_URI', trailingslashit( get_template_directory_uri() ) );
 

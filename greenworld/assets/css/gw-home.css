@@ -210,9 +210,10 @@ ul.products li.product::before{display:none!important;content:none!important;}
    carousel JS. Deliveries band is one wide banner linking to the shop.
    ===================================================================== */
 .gw-herocar--banner{background:var(--gw-ink,#0B3F2E);}
-.gw-herocar--banner .gw-herocar__slide{display:block;position:relative;min-height:0;aspect-ratio:2/1;padding:0;background:none;overflow:hidden;}
-.gw-herocar--banner .gw-herocar__banner{display:block;width:100%;height:100%;}
-.gw-herocar--banner .gw-herocar__img{display:block;width:100%;height:100%;object-fit:cover;border-radius:0;box-shadow:none;max-width:none;max-height:none;}
+.gw-herocar--banner .gw-herocar__slide{display:block;position:relative;min-height:0;height:clamp(240px,26vw,400px);padding:0;background:none;overflow:hidden;}
+.gw-herocar--banner .gw-herocar__banner{position:relative;display:block;width:100%;height:100%;overflow:hidden;}
+.gw-herocar--banner .gw-herocar__bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(28px) brightness(.72);transform:scale(1.14);z-index:0;}
+.gw-herocar--banner .gw-herocar__img{position:relative;z-index:2;display:block;height:100%;width:auto;max-width:96%;margin:0 auto;object-fit:contain;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.28);}
 .gw-herocar--banner .gw-herocar__nav{background:rgba(11,63,46,.14);color:var(--gw-ink,#0B3F2E);}
 .gw-herocar--banner .gw-herocar__nav:hover{background:rgba(11,63,46,.26);}
 .gw-herocar--banner .gw-herocar__dot{background:rgba(11,63,46,.26);}
@@ -221,6 +222,6 @@ ul.products li.product::before{display:none!important;content:none!important;}
 .gw-deliveries .gw-deliveries__banner:hover{transform:translateY(-2px);box-shadow:0 20px 48px rgba(11,63,46,.18);}
 .gw-deliveries .gw-deliveries__img{display:block;width:100%;height:auto;}
 @media (max-width:640px){
-  .gw-herocar--banner .gw-herocar__slide{aspect-ratio:2/1;min-height:0;padding:0;}
-  .gw-herocar--banner .gw-herocar__img{border-radius:0;}
+  .gw-herocar--banner .gw-herocar__slide{height:clamp(200px,50vw,300px);min-height:0;padding:0;}
+  .gw-herocar--banner .gw-herocar__img{border-radius:10px;max-width:98%;}
 }

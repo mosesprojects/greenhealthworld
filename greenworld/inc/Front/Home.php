@@ -125,6 +125,7 @@ final class Home {
 			echo '<article class="gw-herocar__slide' . ( 0 === $i ? ' is-active' : '' ) . '" data-gw-hero-slide="' . (int) $i . '" aria-hidden="' . ( 0 === $i ? 'false' : 'true' ) . '">';
 			echo '<a class="gw-herocar__banner" href="' . esc_url( $href ) . '" aria-label="' . esc_attr( $alt ) . '">';
 			if ( '' !== $s['image'] ) {
+				echo '<img class="gw-herocar__bg" src="' . esc_url( $s['image'] ) . '" alt="" aria-hidden="true" loading="lazy">';
 				echo '<img class="gw-herocar__img" src="' . esc_url( $s['image'] ) . '" alt="' . esc_attr( $alt ) . '"' . ( 0 === $i ? ' fetchpriority="high"' : ' loading="lazy"' ) . '>';
 			}
 			echo '</a></article>';
@@ -322,6 +323,13 @@ final class Home {
 				}
 			}
 		}
+		// Prefer title keywords with word boundaries over raw WP search: a search
+		// for "Men's ..." also matches "woMEN", "MENopause", "MENstrual" and pulls
+		// women's items into the men's shelf (and vice versa).
+		$title_ids = self::products_by_title( (string) ( $row['include'] ?? '' ), (string) ( $row['exclude'] ?? '' ), $n );
+		if ( count( $title_ids ) >= 2 ) {
+			return $title_ids;
+		}
 		$term = (string) ( $row['search'] ?? ( $row['q'] ?? '' ) );
 		if ( '' !== trim( $term ) ) {
 			$ids = self::products_by_search( $term, $n );
@@ -329,7 +337,7 @@ final class Home {
 				return $ids;
 			}
 		}
-		return self::products_by_title( (string) ( $row['include'] ?? '' ), (string) ( $row['exclude'] ?? '' ), $n );
+		return $title_ids;
 	}
 
 	/**

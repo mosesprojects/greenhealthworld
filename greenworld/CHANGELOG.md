@@ -2,6 +2,14 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## 1.7.0 - Shorter hero, de-polluted shelves, 3-up base grid
+
+- **Hero height halved.** v1.6.9 made the banner a full-width 2:1 block, which is very tall on desktop. The slide is now a fixed, modest band (clamp 240-400px) with the real banner shown crisp and complete (object-fit:contain) over a blurred, darkened copy of itself that fills the frame - so it is short AND full, never letterboxed. Reverted to the raw banner images (the 2:1 composites are no longer needed).
+- **Homepage shelves + category relevance fixed at the source of the bug.** A WordPress search for "Men's Wellness" also matches "woMEN", "MENopause", "MENstrual", so the Men's shelf was full of women's products. Shelves now resolve by category first, then by title keywords with word boundaries (which correctly separate men / women / vitamins), and only fall back to raw search as a last resort.
+- **Category / shop / search grid is now 3-up on desktop by default** (base grid changed from 4 to 3 columns with !important), so it no longer depends on a wrapper class and can't fall back to a ragged 2-up. Mobile stays 2-up.
+- **Build is now verifiable:** the running theme version is printed as an HTML comment in the page head (View Source) so you can confirm a deploy took effect.
+- Note: products with a missing price/image (e.g. 'Ovary Nutrition Capsules') still render a thin card - that is a WooCommerce data fix (add a price/image or mark out-of-stock), not a theme issue.
+
 ## 1.6.9 - Full-bleed hero banners + 3-up category grid
 
 - **Hero banners now fill the slider edge-to-edge** instead of floating letterboxed ("half"). All four banners (Weight Loss, Men's, Women's, General) were rebuilt onto a uniform 1600x800 (2:1) canvas: the real Green World banner sits crisp and centred on a soft blurred, brand-tinted backdrop, so nothing is cropped and the frame is always full. The slider CSS switched from object-fit:contain to a fixed 2:1 slide with object-fit:cover.

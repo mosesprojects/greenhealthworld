@@ -108,6 +108,23 @@ final class Consultation implements Bootable {
 
 		$this->notify( $name, $phone, $email, $age, $gender, $prefer, $using, $concern );
 
+		/**
+		 * Let companion plugins (e.g. WhatsApp alerts) react to a new consultation.
+		 */
+		do_action(
+			'greenworld/consultation_submitted',
+			array(
+				'name'    => $name,
+				'phone'   => $phone,
+				'email'   => $email,
+				'age'     => $age,
+				'gender'  => $gender,
+				'prefer'  => $prefer,
+				'using'   => $using,
+				'concern' => $concern,
+			)
+		);
+
 		wp_send_json_success( array( 'message' => __( 'Thank you. Your request has been received and our team will contact you shortly.', 'greenworld' ) ) );
 	}
 

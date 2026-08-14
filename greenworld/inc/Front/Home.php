@@ -457,7 +457,11 @@ final class Home {
 					<span class="gw-eyebrow"><?php esc_html_e( 'Book an appointment', 'greenworld' ); ?></span>
 					<h2><?php echo esc_html( $title ); ?></h2>
 					<p><?php echo esc_html( $desc ); ?></p>
-					<a class="button gw-btn--gold" href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'Book your scan', 'greenworld' ); ?></a>
+					<?php if ( shortcode_exists( 'gw_scan_form' ) ) : ?>
+						<?php echo do_shortcode( '[gw_scan_form]' ); ?>
+					<?php else : ?>
+						<a class="button gw-btn--gold" href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'Book your scan', 'greenworld' ); ?></a>
+					<?php endif; ?>
 				</div>
 				<div class="gw-scanband__price" aria-hidden="true">
 					<span class="gw-scanband__from"><?php esc_html_e( 'Only', 'greenworld' ); ?></span>

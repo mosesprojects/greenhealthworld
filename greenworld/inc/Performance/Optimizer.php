@@ -20,7 +20,6 @@ final class Optimizer implements Bootable {
 		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 		remove_action( 'wp_print_styles', 'print_emoji_styles' );
 		add_filter( 'wp_lazy_loading_enabled', '__return_true' );
-		add_filter( 'style_loader_tag', [ $this, 'async_noncritical_css' ], 10, 4 );
 		add_action( 'init', [ $this, 'trim_head' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'trim_block_styles' ], 100 );
 		add_filter( 'get_custom_logo', [ $this, 'lighten_logo' ], 20 );
@@ -39,33 +38,30 @@ final class Optimizer implements Bootable {
 
 	public function preload(): void {
 		printf( '<link rel="preload" href="%s" as="style" />' . "\n", esc_url( GREENWORLD_URI . 'assets/css/main.css' ) );
+		if ( is_front_page() ) {
+			$hero = (string) get_theme_mod( 'gw_hero_image', GREENWORLD_URI . 'assets/img/hero.jpg' );
+			if ( $hero ) {
+				printf( '<link rel="preload" href="%s" as="image" fetchpriority="high" />' . "\n", esc_url( $hero ) );
+			}
+		}
 	}
 
 	/**
+	 * Preconnect to Google Maps only on the contact page, where the map iframe
+	 * loads. The theme otherwise uses a system font stack, so there are no font
+	 * origins worth hinting.
+	 *
 	 * @param array<int,string> $hints
 	 * @return array<int,string>
 	 */
 	public function resource_hints( array $hints, string $relation ): array {
-		// GreenWorld uses a system font stack, so there are no external font
-		// origins worth hinting. Returning hints unchanged avoids wasted
-		// preconnects that Lighthouse flags.
-		unset( $relation );
+		if ( 'preconnect' === $relation && ( is_page( 'contact-us' ) || is_page( 'contact' ) ) ) {
+			$hints[] = 'https://www.google.com';
+			$hints[] = 'https://maps.gstatic.com';
+		}
 		return $hints;
 	}
 
-	public function async_noncritical_css( string $tag, string $handle, string $href, string $media ): string {
-		// Keep the theme's critical stylesheet render-blocking; async the rest.
-		if ( 'greenworld-main' === $handle ) {
-			return $tag;
-		}
-		return $tag;
-	}
-
-	/**
-	 * Drop WordPress core block-library CSS on the front end for classic
-	 * (non-block) content. Removes unused CSS flagged by Lighthouse without
-	 * affecting pages actually built with blocks.
-	 */
 	public function trim_block_styles(): void {
 		if ( is_admin() ) {
 			return;

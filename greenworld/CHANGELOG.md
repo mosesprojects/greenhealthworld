@@ -2,6 +2,21 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.21.0 — Phase 2a: front-end performance
+
+- Assets: defer the home and setup-wizard scripts too (previously only the main
+  app script was deferred), keeping the main thread free for INP/TBT.
+- Optimizer: preload the LCP hero image with `fetchpriority="high"` on the front
+  page so the largest paint starts downloading immediately.
+- Optimizer: `resource_hints()` now preconnects to Google Maps only on the
+  contact page (where the map iframe loads) instead of doing nothing.
+- Optimizer: removed the dead `async_noncritical_css` no-op filter (it returned
+  every tag unchanged) — one fewer hook on every stylesheet.
+
+Server-side wins still required for the 1–3s / top PageSpeed target (outside
+theme code): WebP + image compression, page cache + CSS/JS minify at the plugin
+layer, and a CDN. These are configured in wp-optimize / hosting, not the theme.
+
 ## v1.20.0
 
 Content pages (Phase 1 of the site overhaul). All fixes are theme-code only and need no WordPress-admin steps.

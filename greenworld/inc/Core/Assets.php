@@ -38,7 +38,7 @@ final class Assets implements Bootable {
 	 * Defer all theme JavaScript to keep the main thread free (INP/TBT).
 	 */
 	public function defer( string $tag, string $handle, string $src ): string {
-		if ( in_array( $handle, [ 'greenworld-app' ], true ) ) {
+		if ( in_array( $handle, [ 'greenworld-app', 'gw-home', 'greenworld-wizard' ], true ) ) {
 			return str_replace( ' src', ' defer src', $tag );
 		}
 		return $tag;

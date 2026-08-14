@@ -2,6 +2,16 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.20.0
+
+Content pages (Phase 1 of the site overhaul). All fixes are theme-code only and need no WordPress-admin steps.
+
+- Trust Center: fixed the blank /trust-center/ page. It relied on the assignable "Trust Center" page template being selected; added a slug-based page-trust-center.php so the full, single-sourced Trust Center content renders automatically at that URL.
+- FAQ: added page-faq.php rendering an accessible, no-JS accordion (native details/summary) from a greatly expanded, on-brand FAQ bank (14 questions covering ordering, payment, delivery, international shipping, tracking, returns, authenticity, the free consultation, and contact). Extended Schema::faq_from_map() so the /faq/ page also emits FAQPage structured data from the same bank, keeping visible content and rich results in sync.
+- Health Disclaimer: added page-health-disclaimer.php with an illustrated, structured disclaimer (inline-SVG icon cards, no extra requests) plus the single-sourced core statement from the Customizer.
+- Contact Us: added a keyless, lazy-loaded Google Map embed and a Get directions link to the Contact page (TrustCenter::map_html(), Customizer-overridable via gw_tc_map).
+- Added TrustCenter::contact_cta() so standalone templates reuse the single-sourced WhatsApp/email CTA.
+
 ## v1.19.0
 
 Deliver the single-product layout fixes reliably by printing the critical CSS inline. Diagnosis (confirmed from live DevTools): the site serves a cached, combined CSS bundle (`wpo-minify-*.min.css`) that still contains the old `main.css` — `div.images{float:left;width:48%}` and the 1:1 square-box gallery rule — so the v1.16 to v1.18 fixes committed to `main.css` were never reaching the page. This release adds `WooCommerce::critical_product_css()` on `wp_head` (priority 9999, product pages only) which emits an inline `<style id="gw-critical-product">` block, after all enqueued stylesheets, containing the authoritative product layout: 2-column grid (image left, title/summary right), gallery/image fill, square-box removed so portrait images fill the column, full-width variations, and mobile single-column stack. Because it is inline and regenerated every request, it cannot be defeated by a stale minified bundle. No `main.css` rules were removed; this guarantees delivery regardless of CSS caching.

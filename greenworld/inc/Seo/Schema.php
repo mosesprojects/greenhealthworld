@@ -707,6 +707,9 @@ final class Schema implements Bootable {
 				$bank = \GreenWorld\Content\TopicMap::general_faqs();
 			}
 		}
+		if ( count( $bank ) === 0 && in_array( $obj->post_name, array( 'faq', 'faqs', 'frequently-asked-questions' ), true ) ) {
+			$bank = \GreenWorld\Content\TopicMap::general_faqs();
+		}
 		$out = [];
 		foreach ( $bank as $qa ) {
 			$out[] = [ '@type' => 'Question', 'name' => (string) $qa[0], 'acceptedAnswer' => [ '@type' => 'Answer', 'text' => (string) $qa[1] ] ];

@@ -206,10 +206,20 @@ final class TopicMap {
 	/** General FAQs used on the commercial hub and homepage. */
 	public static function general_faqs(): array {
 		return [
-			[ 'Where is Green World Health Solutions located?', 'We are at Development House, 11th Floor, Room 7, Nairobi. You can also reach us on 0723 579 873 or info@greenworldheath.com.' ],
-			[ 'How do I place an order?', 'Add products to your cart and check out online, or contact us on WhatsApp at 0723 579 873. See the How to place an order guide for a step-by-step walkthrough.' ],
-			[ 'What payment methods do you accept?', 'We accept M-Pesa, Cash on Delivery and Bank Transfer.' ],
-			[ 'Do you deliver across Kenya?', 'Yes, we deliver nationwide. Delivery timing depends on your location.' ],
+			[ 'Where is Green World Health Solutions located?', 'We are at Development House, 11th Floor, Room 7, Nairobi. You are welcome to visit during business hours, Monday to Saturday, 8:30 AM to 6:00 PM. You can also reach us on 0723 579 873 or info@greenworldheath.com.' ],
+			[ 'Are your products genuine Green World products?', 'Yes. Every item we sell is a genuine Green World brand product sourced through the group supply chain, never counterfeit or grey-market stock. If you would like to verify a product, contact us and we will help you check it.' ],
+			[ 'How do I place an order?', 'Add the products you want to your cart and check out online, or message us on WhatsApp at 0723 579 873 and we will place the order for you. We then confirm the order and arrange delivery.' ],
+			[ 'What payment methods do you accept?', 'We accept M-Pesa, bank transfer, and cash (on delivery within Nairobi or on pickup at our office). All online payments run over a secure, encrypted connection.' ],
+			[ 'Do you deliver across Kenya?', 'Yes, we deliver nationwide. Nairobi orders placed before 5:00 PM can arrive the same day. Major towns are typically next day, and other areas take about 2 to 3 days via trusted bus, shuttle or courier services such as Wells Fargo and G4S.' ],
+			[ 'How much does delivery cost?', 'Delivery within Nairobi can be free for same-day orders. Countrywide parcel delivery starts from around KSh 300 by bus or shuttle, and courier delivery from around KSh 550, depending on your location and parcel size. We confirm the exact cost when we confirm your order.' ],
+			[ 'Do you ship internationally?', 'Yes. We ship worldwide via DHL for parcels of about 0.5 kg or less, typically arriving in 3 to 5 working days. We have delivered to customers across Africa, Europe, Asia and North America.' ],
+			[ 'Can I track my order?', 'Yes. Once your order is dispatched we share the tracking or waybill details on WhatsApp so you can follow it to your door or nearest pickup branch.' ],
+			[ 'What is your returns and refund policy?', 'Contact us within 7 days of delivery with your order number. Damaged, defective or incorrect items are replaced free or fully refunded. Sealed, unopened non-consumable items can be returned within 7 days. For safety and hygiene, opened health or supplement products cannot be returned unless they arrived damaged or incorrect. Approved refunds are sent to your M-Pesa or bank account within 3 to 5 business days.' ],
+			[ 'Do I need an account to order?', 'No. You can check out as a guest. Creating an account is optional and simply makes it faster to reorder and to view your order history.' ],
+			[ 'How do I choose the right product?', 'Start with the product information on each page, or use our free wellness consultation and a real advisor will suggest suitable options for your goals. Always consult a qualified health professional before starting a new product.' ],
+			[ 'Is the product information medical advice?', 'No. Our product information is for general wellness purposes only and is not a substitute for professional medical advice, diagnosis or treatment. Please read the label and speak to a qualified healthcare professional before use, especially if you are pregnant, nursing, taking medication or managing a condition.' ],
+			[ 'Is the free health consultation really free?', 'Yes. The consultation is free and carries no obligation to buy. Anything you share about your health is treated as private, used only to guide product suggestions, and is never sold or shared for marketing.' ],
+			[ 'How do I contact customer care?', 'Message or call us on WhatsApp at 0723 579 873, email info@greenworldheath.com, or visit our Nairobi office during business hours, Monday to Saturday, 8:30 AM to 6:00 PM. We are glad to help.' ],
 		];
 	}
 

@@ -335,10 +335,36 @@ final class TrustCenter implements Bootable {
 		);
 		echo '<section class="gw-trust__sec gw-trust__contact">';
 		self::facts_html();
+		self::map_html();
 		echo self::cta_html();
 		echo '<p>' . esc_html( sprintf( 'We reply during business hours: %s.', $c['hours'] ) ) . '</p>';
 		echo '</section>';
 		self::page_close();
+	}
+
+	/**
+	 * Public wrapper for the single-sourced WhatsApp + email call-to-action so
+	 * standalone page templates (FAQ, Health Disclaimer) can reuse it.
+	 */
+	public static function contact_cta(): void {
+		echo self::cta_html(); // phpcs:ignore WordPress.Security.EscapeOutput
+	}
+
+	/**
+	 * Keyless Google Map embed for the office. Uses the maps query-embed
+	 * endpoint (no API key required). The map query is Customizer-overridable via
+	 * gw_tc_map so a precise place link can be pasted; it defaults to the office
+	 * building so the map always resolves. Lazy-loaded to protect Core Web Vitals.
+	 */
+	public static function map_html(): void {
+		$c     = self::contact_bits();
+		$query = self::v( 'map', 'Development House, Nairobi, Kenya' );
+		$src   = 'https://www.google.com/maps?q=' . rawurlencode( $query ) . '&output=embed';
+		$dir   = 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode( $query );
+		echo '<div class="gw-trust__map" style="margin:1.25rem 0">';
+		echo '<iframe title="' . esc_attr__( 'Our location on Google Maps', 'greenworld' ) . '" src="' . esc_url( $src ) . '" width="100%" height="360" style="border:0;border-radius:12px;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>';
+		echo '<p style="margin:.6rem 0 0"><a class="button" href="' . esc_url( $dir ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Get directions', 'greenworld' ) . '</a></p>';
+		echo '</div>';
 	}
 
 	public static function why_trust(): void {

@@ -146,15 +146,15 @@ final class TrustCenter implements Bootable {
 
 	/** Team roles grid, shared by render() and about_page(). */
 	private static function team_html(): void {
-		echo '<p>' . esc_html__( 'Real photos and names are on the way. Until then, these are the roles that look after you. We will never invent names or credentials.', 'greenworld' ) . '</p>';
+		echo '<p>' . esc_html__( 'A small, dedicated team looks after every order and every question. These are the people behind Green World Health Solutions and how they help you.', 'greenworld' ) . '</p>';
 		echo '<div class="gw-team__grid">';
 		$roles = array(
-			__( 'Founder / Managing Director', 'greenworld' ),
-			__( 'Wellness Product Advisor', 'greenworld' ),
-			__( 'Customer Care & Orders', 'greenworld' ),
+			array( 'role' => __( 'Founder / Managing Director', 'greenworld' ), 'desc' => __( 'Sets our standards for genuine Green World products and honest, no-pressure wellness guidance.', 'greenworld' ) ),
+			array( 'role' => __( 'Wellness Product Advisor', 'greenworld' ), 'desc' => __( 'Helps you choose products suited to your goals and answers your questions before you buy.', 'greenworld' ) ),
+			array( 'role' => __( 'Customer Care & Orders', 'greenworld' ), 'desc' => __( 'Looks after orders, payments, delivery and follow-up so your experience is smooth.', 'greenworld' ) ),
 		);
-		foreach ( $roles as $role ) {
-			echo '<div class="gw-team__card">' . self::avatar() . '<strong>' . esc_html( $role ) . '</strong><span>' . esc_html__( 'Photo & bio coming soon', 'greenworld' ) . '</span></div>';
+		foreach ( $roles as $r ) {
+			echo '<div class="gw-team__card">' . self::avatar() . '<strong>' . esc_html( (string) $r['role'] ) . '</strong><span>' . esc_html( (string) $r['desc'] ) . '</span></div>';
 		}
 		echo '</div>';
 	}

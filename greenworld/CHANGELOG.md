@@ -2,6 +2,20 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.23.0 — Phase 2c: code cleanup + wellness content
+
+- TrustCenter: replaced the team-section placeholders ("Real photos and names
+  are on the way" and "Photo & bio coming soon") with substantive, honest role
+  descriptions (Founder / MD, Wellness Product Advisor, Customer Care & Orders).
+  No names or credentials are invented, per the theme's standing policy.
+- Verified the homepage "world of wellness" sections — Wellness Collections, the
+  free-consultation band, Why Choose, and the Health & Wellness Journal — plus
+  the Health & Wellness Guide pillar/landing content are already single-sourced
+  and substantive in theme code (Front/Home.php, Content/TopicMap.php,
+  Content/Seeder.php). Where a live wellness page still looks thin, the gap is
+  data-side (guide posts must be seeded and product categories populated in
+  WordPress), not a theme-code change.
+
 ## v1.22.0 — Phase 2b: security hardening + anti-spam
 
 Headers/Security (inc/Security/Headers.php):

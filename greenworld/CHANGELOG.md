@@ -2,6 +2,27 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.24.0 — Mobile: product overlap, nav drawer, editable hero slides
+
+- Single product (mobile): fixed the gallery image overlapping the title/price/
+  description. The critical CSS pinned both the gallery and the summary to
+  grid-row 1; on mobile only their grid-column was reset, so they collapsed into
+  the same cell and overlapped. Now the mobile breakpoint resets grid-row:auto
+  (image stacks above the summary) and widens 768px -> 900px to match the theme's
+  mobile breakpoint. Desktop layout unchanged.
+- Mobile navigation: the hamburger drawer failed to open reliably because the
+  main.css fix lives in the stale minified bundle and the drawer was trapped in
+  the sticky header's z-index:70 stacking context (bottom nav painted over it).
+  Added inline critical nav CSS (gw_critical_nav_css on wp_head, all front-end
+  pages, like the product critical CSS) that floats the sticky header + drawer to
+  z-index:1200 while open, shows the scrim, and keeps menu items tappable.
+  Bypasses the minify cache; desktop nav untouched.
+- Hero slides: the Customizer registered only 3 of the 5 supported slides —
+  extended to all 5 (Appearance > Customize > GreenWorld > "Homepage: Hero
+  slides"), each with image, eyebrow, title, subtitle, button text and link.
+  Added a recommended-size hint (1600 x 900px, 16:9, JPG/WebP, under 300KB) on
+  the slide image control so the required size is visible while uploading.
+
 ## v1.23.0 — Phase 2c: code cleanup + wellness content
 
 - TrustCenter: replaced the team-section placeholders ("Real photos and names

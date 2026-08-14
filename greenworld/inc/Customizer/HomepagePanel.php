@@ -25,9 +25,9 @@ final class HomepagePanel implements Bootable {
 
 		/* Hero slides ------------------------------------------------ */
 		$wp->add_section( 'gw_home_hero', array( 'title' => __( 'Homepage: Hero slides', 'greenworld' ), 'panel' => 'greenworld', 'priority' => 10 ) );
-		foreach ( array( 1, 2, 3 ) as $i ) {
+		foreach ( array( 1, 2, 3, 4, 5 ) as $i ) {
 			$wp->add_setting( "gw_hero{$i}_image", array( 'sanitize_callback' => 'esc_url_raw' ) );
-			$wp->add_control( new \WP_Customize_Image_Control( $wp, "gw_hero{$i}_image", array( 'label' => sprintf( __( 'Slide %d image', 'greenworld' ), $i ), 'section' => 'gw_home_hero' ) ) );
+			$wp->add_control( new \WP_Customize_Image_Control( $wp, "gw_hero{$i}_image", array( 'label' => sprintf( __( 'Slide %d image', 'greenworld' ), $i ), 'description' => __( 'Recommended size: 1600 x 900px (16:9). Use JPG or WebP, under 300KB for fast loading.', 'greenworld' ), 'section' => 'gw_home_hero' ) ) );
 			$wp->add_setting( "gw_hero{$i}_eyebrow", array( 'sanitize_callback' => 'sanitize_text_field' ) );
 			$wp->add_control( "gw_hero{$i}_eyebrow", array( 'label' => sprintf( __( 'Slide %d eyebrow', 'greenworld' ), $i ), 'section' => 'gw_home_hero', 'type' => 'text' ) );
 			$wp->add_setting( "gw_hero{$i}_title", array( 'sanitize_callback' => 'sanitize_text_field' ) );

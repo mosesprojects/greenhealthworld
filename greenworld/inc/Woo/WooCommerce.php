@@ -528,7 +528,7 @@ final class WooCommerce implements Bootable {
 			. '.single-product div.product .woocommerce-product-gallery__image>a{display:block !important;width:100% !important;height:auto !important}'
 			. '.single-product div.product .woocommerce-product-gallery img,.single-product div.product .woocommerce-product-gallery img.wp-post-image{width:100% !important;height:auto !important;max-width:100% !important;max-height:none !important;aspect-ratio:auto !important;object-fit:contain !important;margin:0 !important}'
 			. '.single-product div.product form.variations_form,.single-product div.product form.variations_form .variations,.single-product div.product .woocommerce-variation-add-to-cart{width:100% !important}'
-			. '@media(max-width:768px){.single-product div.product{grid-template-columns:1fr !important;column-gap:0 !important}.single-product div.product>.woocommerce-product-gallery,.single-product div.product>div.images,.single-product div.product>.summary,.single-product div.product>.entry-summary{grid-column:1 / -1 !important}}'
+			. '@media(max-width:900px){.single-product div.product{grid-template-columns:1fr !important;column-gap:0 !important}.single-product div.product>.woocommerce-product-gallery,.single-product div.product>div.images,.single-product div.product>.summary,.single-product div.product>.entry-summary{grid-column:1 / -1 !important;grid-row:auto !important}}'
 			. '</style>' . "\n";
 	}
 

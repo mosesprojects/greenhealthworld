@@ -260,7 +260,27 @@ final class GWC_Distributor {
 		echo '<div class="gw-card">';
 		echo '<h3>' . esc_html__( 'Your points', 'greenworld-core' ) . '</h3>';
 		echo '<p class="gw-points">' . esc_html( number_format_i18n( $points ) ) . '</p>';
-		echo '<p class="gw-sub">' . esc_html__( 'You earn points from the product batches our team allocates to you, based on the point value of each product. Batch allocation and your points history are coming soon.', 'greenworld-core' ) . '</p>';
+		echo '<p class="gw-sub">' . esc_html__( 'You earn points from the product batches our team allocates to you, based on the point value of each product.', 'greenworld-core' ) . '</p>';
+		if ( class_exists( 'GWC_Points' ) ) {
+			$batches = GWC_Points::user_batches( $uid, 10 );
+			if ( ! empty( $batches ) ) {
+				echo '<p class="gw-sub" style="font-weight:600;color:#22322a;margin:.7rem 0 .3rem;">' . esc_html__( 'Recent points', 'greenworld-core' ) . '</p>';
+				echo '<ul style="list-style:none;margin:0;padding:0;">';
+				foreach ( $batches as $batch ) {
+					$pts   = (int) get_post_meta( (int) $batch->ID, '_gw_b_points', true );
+					$items = GWC_Points::items_summary( (int) $batch->ID );
+					$sign  = $pts < 0 ? '' : '+';
+					echo '<li style="padding:.55rem .65rem;border:1px solid rgba(0,0,0,.08);border-radius:8px;margin-bottom:.4rem;background:#fafbf9;">';
+					echo '<strong style="color:#14612b;">' . esc_html( $sign . number_format_i18n( $pts ) ) . ' ' . esc_html__( 'pts', 'greenworld-core' ) . '</strong> ';
+					echo '<span style="color:#6a776e;font-size:.8rem;">' . esc_html( get_the_date( '', $batch ) ) . '</span>';
+					if ( '' !== $items ) {
+						echo '<div class="gw-sub" style="margin:.2rem 0 0;">' . esc_html( $items ) . '</div>';
+					}
+					echo '</li>';
+				}
+				echo '</ul>';
+			}
+		}
 		echo '</div>';
 	}
 

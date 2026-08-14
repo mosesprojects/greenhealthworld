@@ -2,7 +2,7 @@
 
 Companion plugin for the GreenWorld theme. It holds the business logic that must
 survive a theme change: WhatsApp notifications, scan bookings, the customer and
-distributor dashboards, and (in a later phase) the distributor points ledger.
+distributor dashboards, and the distributor points ledger.
 
 Keeping this in a plugin — not the theme — means your bookings, customer records,
 distributor status, and points ledger are **not** lost if the theme is updated,
@@ -50,7 +50,20 @@ switched, or rebuilt.
   survives a theme change. The **Distributor** endpoint auto-registers on update
   (rewrite rules flush once per version).
 
-Phase 4 adds product **batch allocation** and the distributor **points ledger**.
+## What ships in v0.4.0 (Phase 4)
+
+- **Product point values**: each product gets a **Distributor points** field (product
+  editor, General tab) — the points a distributor earns per unit when it is
+  allocated to them.
+- **Batch allocation** at **Users -> Allocate Batch**: pick a distributor, add
+  product lines with quantities (plus an optional manual +/- adjustment and note),
+  and allocate. Points = product point value x quantity, summed across the batch.
+- **Points ledger**: every allocation is stored as a private **Point Batch** record
+  (Users -> Point Batches) with a read-only breakdown. A distributor's balance is
+  the sum of their batch totals — recomputed on every change, so it can never drift.
+- **Distributor dashboard**: the points card now shows the live balance plus a
+  history of recent batches (points, date, item summary).
+- Allocating can **notify the distributor** on WhatsApp (if configured) + email.
 
 ## Install / deploy
 
@@ -110,5 +123,9 @@ scaffolded for a later release; plain text covers the in-window case now.)
   `_gw_ref_code`, `_gw_distributor_activated`, `_gw_points_balance`. Role
   `gw_distributor`. Admin activation hook: `admin_post_gwc_dist_action`;
   My Account endpoint: `distributor`.
+- Point batches: post type `gw_batch` (private), meta `_gw_b_user`, `_gw_b_points`,
+  `_gw_b_items` (array), `_gw_b_adjust`, `_gw_b_note`, `_gw_b_by`. Product point
+  value: product meta `_gw_points`. Allocation hook: `admin_post_gwc_allocate_batch`.
+  Balance `_gw_points_balance` is recomputed from the batch ledger on each change.
 - Theme hook consumed: `do_action( 'greenworld/consultation_submitted', $data )`.
 - Hook fired: `do_action( 'greenworld/scan_booked', $post_id )`.

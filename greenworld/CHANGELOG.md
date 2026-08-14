@@ -2,6 +2,14 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.13.0 - Product page arranged to match the benchmark
+
+- Added the WooCommerce breadcrumb (Home / Category / Product) above the single product, rendered at container width. It was previously absent because the theme's woocommerce.php calls woocommerce_content() directly and never fired the default breadcrumb hook.
+- Product title now uses the clean sans family at a compact size (about 1.35 to 1.8rem) with tighter line height, so long product names wrap to about two lines instead of a large multi-line serif block, matching the benchmark.
+- Buy row: quantity, Add to cart and Order on WhatsApp now sit inline on one row. The WhatsApp button is rendered inside the cart form via woocommerce_after_add_to_cart_button, and stacks full width on small screens.
+- SKU / Category / Brand meta tidied so it groups cleanly just above the description.
+- Version bump to 1.13.0. CSS plus two WooCommerce hook changes and a new breadcrumb() method.
+
 ## v1.12.0 - Product image sized to the benchmark
 
 - The product image now renders large and column-filling, matching the reference store: the gallery column is about 47 percent wide and the image fills its width at its natural aspect ratio, instead of the smaller padded square used in v1.10-v1.11. Tall bottle photos in particular now read much bigger.

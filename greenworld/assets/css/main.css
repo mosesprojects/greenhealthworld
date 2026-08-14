@@ -737,3 +737,22 @@ ul.products li.product .onsale{display:none}
 	.single-product div.product .woocommerce-product-gallery__image{aspect-ratio:auto}
 }
 /* ===== end v1.12.0 ===== */
+/* ===== v1.13.0 product page: match benchmark layout (breadcrumb, title, buy row) ===== */
+/* Breadcrumb above the product (Home / Category / Product). */
+.single-product .woocommerce-breadcrumb{margin:.2rem 0 1.15rem;font-size:.82rem;color:var(--gw-text-muted);line-height:1.5}
+.single-product .woocommerce-breadcrumb a{color:var(--gw-green);text-decoration:none}
+.single-product .woocommerce-breadcrumb a:hover{color:var(--gw-green-deep);text-decoration:underline}
+/* Title arranged like the benchmark: clean sans, compact, fits about two lines. */
+.single-product div.product .product_title{font-family:var(--gw-sans);font-weight:700;font-size:clamp(1.35rem, 1.05rem + 1vw, 1.8rem);line-height:1.28;letter-spacing:-.01em;color:var(--gw-green-deep);margin:0 0 .55rem}
+/* Buy row: quantity + Add to cart + Order on WhatsApp on one line (WhatsApp now renders inside form.cart). */
+.single-product div.product form.cart{display:flex;flex-wrap:wrap;align-items:stretch;gap:.6rem;margin:1.1rem 0 .4rem}
+.single-product div.product form.cart .gw-wa-order--single{flex:1 1 auto;width:auto;min-height:52px;margin:0;padding:0 1.1rem;border:0;font-size:.95rem;font-weight:700}
+.single-product div.product form.cart .gw-wa-order--single svg{width:20px;height:20px}
+/* SKU / Category / Brand grouped cleanly just above the description. */
+.single-product .product_meta{margin:1.2rem 0 .2rem;border-top:1px solid var(--gw-line);padding-top:.9rem}
+.single-product .gw-brandline{margin:.15rem 0 0;font-size:.85rem;color:var(--gw-text-muted)}
+@media (max-width:520px){
+	.single-product div.product form.cart .single_add_to_cart_button,
+	.single-product div.product form.cart .gw-wa-order--single{flex:1 1 100%}
+}
+/* ===== end v1.13.0 ===== */

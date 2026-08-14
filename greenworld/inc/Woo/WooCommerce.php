@@ -24,7 +24,8 @@ final class WooCommerce implements Bootable {
 
 		// Single product.
 		add_action( 'woocommerce_single_product_summary', [ $this, 'brand_eyebrow' ], 4 );
-		add_action( 'woocommerce_single_product_summary', [ $this, 'whatsapp_button' ], 31 );
+		add_action( 'woocommerce_after_add_to_cart_button', [ $this, 'whatsapp_button' ], 20 );
+		add_action( 'woocommerce_before_single_product', [ $this, 'breadcrumb' ], 5 );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'trust_badges' ], 35 );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'delivery_estimate' ], 36 );
 		add_action( 'woocommerce_after_single_product_summary', [ $this, 'product_disclaimer' ], 6 );
@@ -144,6 +145,16 @@ final class WooCommerce implements Bootable {
 			esc_url( 'https://wa.me/' . $wa . '?text=' . rawurlencode( $msg ) ),
 			esc_html__( 'Order on WhatsApp', 'greenworld' )
 		);
+	}
+
+	/**
+	 * WooCommerce breadcrumb above the single product (Home / Category / Product),
+	 * rendered inside the theme container so the layout matches the benchmark.
+	 */
+	public function breadcrumb(): void {
+		if ( function_exists( 'woocommerce_breadcrumb' ) ) {
+			woocommerce_breadcrumb();
+		}
 	}
 
 	public function trust_badges(): void {

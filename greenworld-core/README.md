@@ -16,9 +16,23 @@ switched, or rebuilt.
 - **Consultation bridge**: when the theme's consultation form is submitted, a copy
   is forwarded to staff on WhatsApp. The existing admin record + email are kept.
 
-Later phases (2-4) add the customer dashboard (orders, refill/adjustment requests,
-progress check-ins, staff messaging), distributor onboarding + admin activation,
-and batch allocation + points.
+## What ships in v0.2.0 (Phase 2)
+
+- **Customer health dashboard** on a new **My Health** tab in WooCommerce "My Account":
+  - Lists the customer's purchased products.
+  - **Request a refill or a change** of product — saved under "Refill Requests" in
+    admin; staff are alerted on WhatsApp + email; each request has an Open/Handled
+    status you can set.
+  - **Progress check-ins** ("Doing well / Managing okay / Need help", with an
+    optional product + note) — saved under "Check-ins".
+  - **Message our team** — a two-way thread saved under "Customer Messages". Staff
+    reply from the thread's comments in wp-admin; the customer is emailed each reply
+    and sees it on the dashboard.
+- The new "My Health" endpoint auto-registers on update (rewrite rules flush once
+  per version), so no manual permalink re-save is needed after upgrading.
+
+Later phases (3-4) add distributor onboarding + admin activation, and batch
+allocation + points.
 
 ## Install / deploy
 

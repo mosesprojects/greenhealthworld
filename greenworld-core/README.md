@@ -1,8 +1,8 @@
 # Green World Core
 
 Companion plugin for the GreenWorld theme. It holds the business logic that must
-survive a theme change: WhatsApp notifications, scan bookings, and (in later
-phases) the customer and distributor dashboards with points.
+survive a theme change: WhatsApp notifications, scan bookings, the customer and
+distributor dashboards, and (in a later phase) the distributor points ledger.
 
 Keeping this in a plugin — not the theme — means your bookings, customer records,
 distributor status, and points ledger are **not** lost if the theme is updated,
@@ -31,8 +31,26 @@ switched, or rebuilt.
 - The new "My Health" endpoint auto-registers on update (rewrite rules flush once
   per version), so no manual permalink re-save is needed after upgrading.
 
-Later phases (3-4) add distributor onboarding + admin activation, and batch
-allocation + points.
+## What ships in v0.3.0 (Phase 3)
+
+- **Distributor dashboard** on a new **Distributor** tab in WooCommerce "My Account"
+  (shown only to distributor accounts):
+  - **Status** — pending, active, or on hold, with a short explanation.
+  - **Your details** — name, phone, county/town, and who referred them.
+  - **Referral code** (once active) — a stable `GW#####` code plus a ready-made
+    sign-up link, and a count of people who registered with it.
+  - **Points** — current balance with a placeholder note; the earning ledger
+    arrives in Phase 4.
+- **Admin activation** at **Users -> Distributors**: review every applicant with
+  their phone, county, sponsor and status, then **Activate** or **Put on hold**
+  with one click. Activating issues the referral code and notifies the distributor
+  on WhatsApp (if configured) + email.
+- Registration itself (the Customer/Distributor toggle and the initial "pending"
+  status) stays in the theme; the plugin reads the same user meta, so the workflow
+  survives a theme change. The **Distributor** endpoint auto-registers on update
+  (rewrite rules flush once per version).
+
+Phase 4 adds product **batch allocation** and the distributor **points ledger**.
 
 ## Install / deploy
 
@@ -87,5 +105,10 @@ scaffolded for a later release; plain text covers the in-window case now.)
   `_gw_s_phone`, `_gw_s_date`, `_gw_s_time`, `_gw_s_location`, `_gw_s_note`.
 - Settings: option `gwc_settings` (array). Last WhatsApp error: option
   `gwc_wa_last_error`.
+- Distributors: user meta `_gw_account_type`, `_gw_phone`, `_gw_county`,
+  `_gw_sponsor`, `_gw_distributor_status` (pending|active|suspended),
+  `_gw_ref_code`, `_gw_distributor_activated`, `_gw_points_balance`. Role
+  `gw_distributor`. Admin activation hook: `admin_post_gwc_dist_action`;
+  My Account endpoint: `distributor`.
 - Theme hook consumed: `do_action( 'greenworld/consultation_submitted', $data )`.
 - Hook fired: `do_action( 'greenworld/scan_booked', $post_id )`.

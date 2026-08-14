@@ -15,6 +15,7 @@ final class GWC_Plugin {
 		GWC_Consultation::instance()->boot();
 		GWC_Records::instance()->boot();
 		GWC_Account::instance()->boot();
+			GWC_Distributor::instance()->boot();
 
 		// Flush rewrite rules once per version so new endpoints (e.g. the
 		// "My Health" account tab) work after a plugin update without the
@@ -33,6 +34,7 @@ final class GWC_Plugin {
 		GWC_Scan::instance()->register_cpt();
 		GWC_Records::instance()->register_cpts();
 		GWC_Account::instance()->add_endpoint();
+			GWC_Distributor::instance()->add_endpoint();
 		flush_rewrite_rules();
 		update_option( 'gwc_rewrite_version', GWC_VERSION );
 	}

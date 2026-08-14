@@ -2,6 +2,10 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.16.0
+
+Definitive product-image fix. Root cause: the theme enables `wc-product-gallery-slider`, so the single-product gallery runs on WooCommerce flexslider, which locks each slide to the width it measures at init. In the previous grid column that width was measured too small, so the image stayed tiny regardless of CSS. This release forces the gallery container, flex viewport, and image to fill the left half (`!important`) and dispatches a resize after page load so flexslider re-measures to the real half-width column and the main image renders large, matching Tabarak.
+
 ## v1.15.0 - Single product half/half split with a full-size image; variations as a block
 
 - The single-product layout is now a true half and half split: the product image fills the entire left half (matching the benchmark) and all information sits in the right half. Previously the gallery column could collapse to a small box because it was sized as minmax(0,47%), which shrinks toward its content when the WooCommerce gallery slider is active; it is now an even 1fr / 1fr split, so the image always fills its half and appears much larger.

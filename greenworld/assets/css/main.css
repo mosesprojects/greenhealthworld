@@ -804,3 +804,14 @@ ul.products li.product .onsale{display:none}
 	.single-product div.product .woocommerce-variation-add-to-cart .gw-wa-order--single{flex:1 1 100%}
 }
 /* ===== end v1.15.0 ===== */
+/* ===== v1.16.0 gallery fill hardening (flexslider) ===== */
+/* The product gallery runs on WooCommerce flexslider, which locks the slide
+   width to whatever it measures at init. Force the container + viewport + image
+   to fill the left half so a re-measure (see gallery_boot_fix) sizes big. */
+.single-product div.product .woocommerce-product-gallery{width:100%!important;max-width:100%!important;min-width:0!important;float:none!important}
+.single-product div.product .woocommerce-product-gallery .flex-viewport{width:100%!important;max-width:100%!important}
+.single-product div.product .woocommerce-product-gallery .woocommerce-product-gallery__image{max-width:100%!important}
+.single-product div.product .woocommerce-product-gallery .woocommerce-product-gallery__image img,
+.single-product div.product .woocommerce-product-gallery img.wp-post-image{width:100%!important;height:auto!important;max-width:100%!important;max-height:none!important;object-fit:contain!important}
+/* ===== end v1.16.0 ===== */
+

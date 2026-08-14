@@ -30,6 +30,7 @@ final class WooCommerce implements Bootable {
 		add_action( 'woocommerce_single_product_summary', [ $this, 'delivery_estimate' ], 36 );
 		add_action( 'woocommerce_after_single_product_summary', [ $this, 'product_disclaimer' ], 6 );
 		add_action( 'wp_footer', [ $this, 'sticky_atc' ] );
+		add_action( 'wp_footer', [ $this, 'gallery_boot_fix' ] );
 
 		// Editable product info + tabs.
 		add_action( 'woocommerce_product_options_general_product_data', [ $this, 'info_fields' ] );
@@ -487,4 +488,18 @@ final class WooCommerce implements Bootable {
 </script>
 		<?php
 	}
+
+	/**
+	 * The product gallery runs on WooCommerce flexslider, which locks each slide
+	 * to the width it measures at init. Inside a CSS grid column that width can
+	 * be measured before layout settles, leaving the image tiny. Dispatch a
+	 * resize after load so flexslider re-measures to the real half-width column.
+	 */
+	public function gallery_boot_fix(): void {
+		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+			return;
+		}
+		echo '<script>(function(){function r(){try{window.dispatchEvent(new Event("resize"));}catch(e){}}window.addEventListener("load",function(){r();setTimeout(r,250);setTimeout(r,800);});})();</script>';
+	}
+
 }

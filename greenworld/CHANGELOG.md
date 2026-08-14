@@ -2,6 +2,12 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.15.0 - Single product half/half split with a full-size image; variations as a block
+
+- The single-product layout is now a true half and half split: the product image fills the entire left half (matching the benchmark) and all information sits in the right half. Previously the gallery column could collapse to a small box because it was sized as minmax(0,47%), which shrinks toward its content when the WooCommerce gallery slider is active; it is now an even 1fr / 1fr split, so the image always fills its half and appears much larger.
+- Variable products: the variation selectors (dropdowns and the Clear link) now render as a clean, full-width stacked block above the buy row, instead of being squeezed inside the flex Add to cart row. Only quantity, Add to cart and Order on WhatsApp share the inline row.
+- Version bump to 1.15.0. CSS-only change.
+
 ## v1.14.0 - Related products four-up, Recently viewed carousel, horizontal tabs
 
 - Related products (and up-sells) now show four across in a single row, matching the benchmark. Added a woocommerce_output_related_products_args filter (four products, four columns) plus a grid override; they drop to two across on smaller screens.

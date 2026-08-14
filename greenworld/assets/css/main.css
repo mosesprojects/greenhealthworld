@@ -775,3 +775,32 @@ ul.products li.product .onsale{display:none}
 .woocommerce ul.products.gw-recent__track li.product{flex:0 0 200px!important;width:200px!important;scroll-snap-align:start;margin:0!important}
 @media (max-width:600px){.woocommerce ul.products.gw-recent__track li.product{flex:0 0 clamp(150px,44vw,190px)!important;width:auto!important}}
 /* ===== end v1.14.0 ===== */
+/* ===== v1.15.0 single product: true half/half split, image fills the left half, variations as a block ===== */
+/* Product image occupies the full left half (like the benchmark); info fills the right half. */
+/* Definite 1fr / 1fr tracks so the gallery column cannot collapse to its content width. */
+.single-product div.product{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.5rem,3.5vw,3rem);align-items:start}
+.single-product div.product .woocommerce-product-gallery{width:100%;max-width:100%;min-width:0}
+.single-product div.product .woocommerce-product-gallery .flex-viewport,.single-product div.product .woocommerce-product-gallery__wrapper{width:100%}
+.single-product div.product .woocommerce-product-gallery__image{display:block;width:100%;aspect-ratio:auto;min-height:0}
+.single-product div.product .woocommerce-product-gallery__image > a{display:block;width:100%}
+.single-product div.product .woocommerce-product-gallery img{display:block;width:100%;height:auto;max-width:100%;max-height:none;margin:0;object-fit:contain}
+/* Variable products: variation selectors render as a clean full-width block ABOVE the buy row, not squeezed inside it. */
+.single-product div.product form.variations_form.cart{display:block}
+.single-product div.product .variations{width:100%;margin:0 0 1rem;border:0;border-collapse:collapse}
+.single-product div.product .variations tbody,.single-product div.product .variations tr,.single-product div.product .variations th,.single-product div.product .variations td{display:block;width:100%;padding:0;border:0;text-align:left}
+.single-product div.product .variations th.label{margin:.7rem 0 .3rem;font-weight:600;font-size:.9rem;color:var(--gw-green-deep)}
+.single-product div.product .variations td.value select{width:100%;max-width:100%;min-height:48px;border:1px solid var(--gw-line);border-radius:var(--gw-r);padding:0 .8rem;font-family:var(--gw-sans);background:#fff;color:var(--gw-ink)}
+.single-product div.product .variations td.value .reset_variations{display:inline-block;margin:.4rem 0 0;font-size:.82rem;color:var(--gw-text-muted)}
+.single-product div.product .single_variation_wrap{display:block}
+.single-product div.product .single_variation .price{color:var(--gw-green-deep);font-weight:800;font-size:1.6rem;margin:.4rem 0 .2rem}
+.single-product div.product .woocommerce-variation-add-to-cart{display:flex;flex-wrap:wrap;align-items:stretch;gap:.6rem;margin:.9rem 0 .4rem}
+.single-product div.product .woocommerce-variation-add-to-cart .single_add_to_cart_button{flex:1 1 auto;min-height:52px}
+.single-product div.product .woocommerce-variation-add-to-cart .gw-wa-order--single{flex:1 1 auto;width:auto;min-height:52px;margin:0;padding:0 1.1rem;border:0;font-size:.95rem;font-weight:700}
+@media (max-width:860px){
+	.single-product div.product{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+	.single-product div.product .woocommerce-variation-add-to-cart .single_add_to_cart_button,
+	.single-product div.product .woocommerce-variation-add-to-cart .gw-wa-order--single{flex:1 1 100%}
+}
+/* ===== end v1.15.0 ===== */

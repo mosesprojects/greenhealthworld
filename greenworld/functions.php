@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.29.0' );
+define( 'GREENWORLD_VERSION', '1.29.1' );
 
 /**
  * Emit the theme version into the page head so the running build is verifiable
@@ -592,6 +592,7 @@ function gw_critical_nav_css(): void {
 		return;
 	}
 	echo '<style id="gw-critical-nav">'
+		. '.gw-header .gw-drawer-extra{display:none}'
 		. '@media(max-width:900px){'
 		. '.gw-navbar{display:block !important;background:transparent !important;border:0 !important;box-shadow:none !important}'
 		. '.gw-navbar__inner{display:block !important;padding:0 !important;min-height:0 !important}'
@@ -609,7 +610,7 @@ function gw_critical_nav_css(): void {
 		. '.gw-primary__menu>li>a{display:flex !important;align-items:center !important;justify-content:space-between !important;padding:.9rem 1.2rem !important;border-bottom:1px solid rgba(0,0,0,.06) !important;color:#1c2b22 !important}'
 		. '.gw-mega{position:static !important;display:none !important;opacity:1 !important;visibility:visible !important;transform:none !important;box-shadow:none !important;border:0 !important;width:auto !important;background:#f7faf7 !important}'
 		. '.gw-has-mega.is-open .gw-mega{display:block !important}'
-		. '.gw-drawer-extra{padding:1rem 1.2rem !important;border-top:1px solid rgba(0,0,0,.08) !important}'
+		. '.gw-drawer-extra{display:block !important;padding:1rem 1.2rem !important;border-top:1px solid rgba(0,0,0,.08) !important}'
 		. '}'
 		. '</style>' . "\n";
 }

@@ -1,3 +1,8 @@
+## v1.29.1
+
+- Fixed the desktop header showing three stray account links (Sign in / Register as Customer / Become a Distributor) as faint text below the main menu. They come from the `.gw-drawer-extra` block, which is meant only for the mobile slide-out drawer, but nothing was hiding it on desktop.
+- Fix (in the inline critical-nav CSS so it is delivered reliably): hide `.gw-drawer-extra` on desktop and show it only inside the mobile drawer. Desktop account access is unchanged (top utility bar Sign in / Join Green World, plus the Account icon).
+
 ## v1.29.0
 
 - Introduced the **Green World Core** companion plugin (`greenworld-core/`) so business data (scan bookings now, and customer/distributor records + points in later phases) lives independently of the theme and survives theme updates or switches.

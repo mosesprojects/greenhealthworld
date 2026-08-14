@@ -2,6 +2,10 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.18.0
+
+Fixed portrait product images being pillarboxed (white space left and right). Older accreted gallery rules framed each slide as a 1:1 square and fit the image by height (`width:auto`), so tall bottles (e.g. the Vitamin C / Calcium jars) sat centered in a square box instead of filling the column, while squarish packs filled fine. This release authoritatively neutralises the square box (`aspect-ratio:auto`, no fixed/max height) and forces the image to `width:100%; height:auto` so it fills the column at its natural aspect for both portrait and landscape products. No wrapper/slide width is forced, so flexslider thumbnail navigation is unaffected. CSS-only.
+
 ## v1.17.0
 
 Removed the WooCommerce core `width:48%` float cap that was boxing in the product summary. The live single-product page had been laid out by WooCommerce's default float rules (`div.images{float:left;width:48%}` + `div.summary{float:right;width:48%}`) rather than the theme grid. This release takes authoritative control with a real 2-column grid (`!important`, beating the minified wpo-minify bundle): image on the left, title + price + buy row on the right, each filling its half. Tabs, related products and recently-viewed are forced full-width below (unchanged visually). Variable-product variations now render as a full-width block instead of being capped into the narrow column. Mobile stacks to a single column. CSS-only.

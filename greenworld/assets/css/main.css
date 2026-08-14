@@ -878,4 +878,37 @@ ul.products li.product .onsale{display:none}
 	.single-product div.product > .entry-summary{grid-column:1 / -1 !important}
 }
 /* ===== end v1.17.0 ===== */
+/* ===== v1.18.0 kill the square-box: portrait product images fill the column width ===== */
+/* Older accreted rules framed the gallery slide as a 1:1 square and fit the image
+   by height (width:auto), so tall/portrait bottles were pillarboxed with white
+   space on the sides. Neutralise the square box authoritatively and let the image
+   fill the slide width at its natural aspect. No wrapper/slide width is forced, so
+   the flexslider thumbnail navigation keeps working. */
+.single-product div.product .woocommerce-product-gallery__image{
+	aspect-ratio:auto !important;
+	min-height:0 !important;
+	max-height:none !important;
+	height:auto !important;
+	overflow:visible !important;
+	display:block !important;
+}
+.single-product div.product .woocommerce-product-gallery__image > a{
+	display:block !important;
+	width:100% !important;
+	height:auto !important;
+	max-height:none !important;
+}
+.single-product div.product .woocommerce-product-gallery img,
+.single-product div.product .woocommerce-product-gallery__image img,
+.single-product div.product .woocommerce-product-gallery img.wp-post-image{
+	width:100% !important;
+	height:auto !important;
+	max-width:100% !important;
+	max-height:none !important;
+	min-height:0 !important;
+	aspect-ratio:auto !important;
+	object-fit:contain !important;
+	margin:0 !important;
+}
+/* ===== end v1.18.0 ===== */
 

@@ -22,6 +22,7 @@ final class Optimizer implements Bootable {
 		add_filter( 'wp_lazy_loading_enabled', '__return_true' );
 		add_action( 'init', [ $this, 'trim_head' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'trim_block_styles' ], 100 );
+		add_action( 'wp_enqueue_scripts', [ $this, 'trim_wishlist_widget' ], 100 );
 		add_filter( 'get_custom_logo', [ $this, 'lighten_logo' ], 20 );
 	}
 
@@ -82,5 +83,55 @@ final class Optimizer implements Bootable {
 		$html = str_replace( ' fetchpriority="high"', '', $html );
 		$html = (string) preg_replace( '/ sizes="[^"]*"/', ' sizes="(max-width: 640px) 120px, 160px"', $html );
 		return $html;
+	}
+
+	/**
+	 * The YITH Wishlist React widget fires a guest REST call to wishlist/v1/lists
+	 * that returns 401 and stalls (~1s) — the visible loading spinner. This theme
+	 * ships its own localStorage wishlist, so YITH's frontend bundle is dead
+	 * weight on browse pages. Drop it on the homepage and shop/category/tag
+	 * archives; leave it intact everywhere else (e.g. the dedicated wishlist page).
+	 */
+	public function trim_wishlist_widget(): void {
+		if ( is_admin() ) {
+			return;
+		}
+		$browse = is_front_page() || ( function_exists( 'is_shop' ) && ( is_shop() || is_product_category() || is_product_tag() ) );
+		if ( ! $browse ) {
+			return;
+		}
+		$needles = [ 'wcwl', 'yith-woocommerce-wishlist', 'add-to-wishlist' ];
+		$this->drop_by_src( wp_scripts(), $needles, 'script' );
+		$this->drop_by_src( wp_styles(), $needles, 'style' );
+	}
+
+	/**
+	 * Dequeue any registered script/style whose source URL contains one of the
+	 * given needles. Matching by src (not handle) is robust to plugin handle
+	 * changes. Dequeue only — never deregister — so dependents are unaffected.
+	 *
+	 * @param \WP_Dependencies|null $reg
+	 * @param array<int,string>     $needles
+	 */
+	private function drop_by_src( $reg, array $needles, string $type ): void {
+		if ( ! $reg || empty( $reg->registered ) ) {
+			return;
+		}
+		foreach ( $reg->registered as $handle => $dep ) {
+			$src = isset( $dep->src ) ? (string) $dep->src : '';
+			if ( '' === $src ) {
+				continue;
+			}
+			foreach ( $needles as $needle ) {
+				if ( false !== stripos( $src, $needle ) ) {
+					if ( 'script' === $type ) {
+						wp_dequeue_script( $handle );
+					} else {
+						wp_dequeue_style( $handle );
+					}
+					break;
+				}
+			}
+		}
 	}
 }

@@ -182,6 +182,12 @@ final class Home {
 		return is_readable( GREENWORLD_DIR . $rel ) ? GREENWORLD_URI . $rel : '';
 	}
 
+	/** WebP sibling of the bundled tile image assets/img/cat/{slug}.webp, when present. */
+	private static function cat_webp( string $name ): string {
+		$rel = 'assets/img/cat/' . sanitize_title( $name ) . '.webp';
+		return is_readable( GREENWORLD_DIR . $rel ) ? GREENWORLD_URI . $rel : '';
+	}
+
 	public static function shop_by_category(): void {
 		$shop = self::shop();
 		$cats = self::home_categories();
@@ -191,6 +197,7 @@ final class Home {
 		foreach ( $cats as $name ) {
 			$term  = taxonomy_exists( 'product_cat' ) ? get_term_by( 'name', $name, 'product_cat' ) : false;
 			$img   = self::cat_image( $name );
+			$webp  = self::cat_webp( $name );
 			$count = 0;
 			if ( $term && ! is_wp_error( $term ) ) {
 				$link  = get_term_link( $term );
@@ -198,15 +205,20 @@ final class Home {
 				$tid   = (int) get_term_meta( $term->term_id, 'thumbnail_id', true );
 				if ( $tid ) {
 					$thumb = wp_get_attachment_image_url( $tid, 'medium' );
-					if ( $thumb ) { $img = (string) $thumb; }
+					if ( $thumb ) { $img = (string) $thumb; $webp = ''; }
 				}
 			} else {
 				$link = add_query_arg( array( 's' => rawurlencode( $name ), 'post_type' => 'product' ), home_url( '/' ) );
 			}
 			if ( is_wp_error( $link ) ) { $link = $shop; }
-			$media = ( $img !== '' )
-				? '<img class="gw-cat-card__img" src="' . esc_url( $img ) . '" alt="' . esc_attr( $name ) . '" loading="lazy" />'
-				: self::placeholder( $name );
+			if ( $img !== '' ) {
+				$imgtag = '<img class="gw-cat-card__img" src="' . esc_url( $img ) . '" alt="' . esc_attr( $name ) . '" loading="lazy" decoding="async" />';
+				$media  = ( $webp !== '' )
+					? '<picture><source type="image/webp" srcset="' . esc_url( $webp ) . '" />' . $imgtag . '</picture>'
+					: $imgtag;
+			} else {
+				$media = self::placeholder( $name );
+			}
 			$meta = ( $count > 0 )
 				? esc_html( sprintf( _n( '%d product', '%d products', $count, 'greenworld' ), $count ) )
 				: esc_html__( 'Explore', 'greenworld' );

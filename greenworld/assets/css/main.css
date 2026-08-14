@@ -814,4 +814,68 @@ ul.products li.product .onsale{display:none}
 .single-product div.product .woocommerce-product-gallery .woocommerce-product-gallery__image img,
 .single-product div.product .woocommerce-product-gallery img.wp-post-image{width:100%!important;height:auto!important;max-width:100%!important;max-height:none!important;object-fit:contain!important}
 /* ===== end v1.16.0 ===== */
+/* ===== v1.17.0 authoritative single-product layout — removes WooCommerce float 48% cap ===== */
+/* The live site was running WooCommerce core float layout
+   (div.images{float:left;width:48%} + div.summary{float:right;width:48%}).
+   Take authoritative control with a real 2-column grid so the summary/title fill
+   the right half and the image fills the left. !important beats the wpo-minify bundle. */
+.single-product div.product{
+	display:grid !important;
+	grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+	column-gap:2.5rem !important;
+	row-gap:1.75rem !important;
+	align-items:start !important;
+	float:none !important;
+	width:auto !important;
+	max-width:none !important;
+}
+/* neutralise the WooCommerce clearfix pseudo-elements so they do not become stray grid cells */
+.single-product div.product::before,
+.single-product div.product::after{content:none !important;display:none !important}
+/* default: every direct child spans the full width and is un-floated
+   (keeps tabs, related 4-up and recently-viewed exactly as approved) */
+.single-product div.product > *{
+	grid-column:1 / -1 !important;
+	float:none !important;
+	width:auto !important;
+	max-width:100% !important;
+	clear:none !important;
+}
+/* top row: image on the LEFT */
+.single-product div.product > .woocommerce-product-gallery,
+.single-product div.product > div.images{
+	grid-column:1 / 2 !important;
+	grid-row:1 !important;
+	margin:0 !important;
+}
+/* top row: title + price + buy row + everything on the RIGHT */
+.single-product div.product > .summary,
+.single-product div.product > .entry-summary{
+	grid-column:2 / 3 !important;
+	grid-row:1 !important;
+	margin:0 !important;
+	padding:0 !important;
+}
+/* product variations: full-width block, never capped into a narrow column */
+.single-product div.product form.variations_form,
+.single-product div.product form.variations_form .variations,
+.single-product div.product .woocommerce-variation-add-to-cart{width:100% !important}
+.single-product div.product form.variations_form .variations tr,
+.single-product div.product form.variations_form .variations td,
+.single-product div.product form.variations_form .variations th{
+	display:block !important;
+	width:100% !important;
+	text-align:left !important;
+	padding-left:0 !important;
+}
+.single-product div.product form.variations_form .variations select{width:100% !important;max-width:100% !important}
+/* mobile: stack to a single column */
+@media (max-width:768px){
+	.single-product div.product{grid-template-columns:1fr !important;column-gap:0 !important}
+	.single-product div.product > .woocommerce-product-gallery,
+	.single-product div.product > div.images,
+	.single-product div.product > .summary,
+	.single-product div.product > .entry-summary{grid-column:1 / -1 !important}
+}
+/* ===== end v1.17.0 ===== */
 

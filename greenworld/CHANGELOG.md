@@ -2,6 +2,10 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.17.0
+
+Removed the WooCommerce core `width:48%` float cap that was boxing in the product summary. The live single-product page had been laid out by WooCommerce's default float rules (`div.images{float:left;width:48%}` + `div.summary{float:right;width:48%}`) rather than the theme grid. This release takes authoritative control with a real 2-column grid (`!important`, beating the minified wpo-minify bundle): image on the left, title + price + buy row on the right, each filling its half. Tabs, related products and recently-viewed are forced full-width below (unchanged visually). Variable-product variations now render as a full-width block instead of being capped into the narrow column. Mobile stacks to a single column. CSS-only.
+
 ## v1.16.0
 
 Definitive product-image fix. Root cause: the theme enables `wc-product-gallery-slider`, so the single-product gallery runs on WooCommerce flexslider, which locks each slide to the width it measures at init. In the previous grid column that width was measured too small, so the image stayed tiny regardless of CSS. This release forces the gallery container, flex viewport, and image to fill the left half (`!important`) and dispatches a resize after page load so flexslider re-measures to the real half-width column and the main image renders large, matching Tabarak.

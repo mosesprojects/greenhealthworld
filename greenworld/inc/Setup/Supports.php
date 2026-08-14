@@ -34,9 +34,7 @@ final class Supports implements Bootable {
 			'single_image_width'    => 1200,
 			'product_grid'          => [ 'default_columns' => 4, 'min_columns' => 2, 'max_columns' => 4 ],
 		] );
-		add_theme_support( 'wc-product-gallery-zoom' );
 		add_theme_support( 'wc-product-gallery-lightbox' );
-		add_theme_support( 'wc-product-gallery-slider' );
 
 		register_nav_menus( [
 			'primary'         => __( 'Primary Menu', 'greenworld' ),

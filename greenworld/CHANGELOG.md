@@ -1,3 +1,9 @@
+## v1.26.0
+
+- Single product gallery: retired WooCommerce flexslider (removed `wc-product-gallery-slider` + `wc-product-gallery-zoom` theme support; kept lightbox). Flexslider re-measured slide widths on delayed resize events, causing the "changing after some time" layout shift and inconsistent portrait-vs-landscape sizing.
+- Replaced the flexslider gallery with a stable, dependency-free CSS gallery: one full-width hero image (centered, contain, capped at 66vh) plus a wrapped 66px thumbnail strip. Tap/click any image to enlarge via the WooCommerce lightbox. Renders identically for portrait and landscape images; no JS re-measurement, no delayed shift.
+- Removed the now-obsolete `gallery_boot_fix()` synthetic-resize script (was firing at load, +250ms, +800ms).
+
 # Changelog — GreenWorld Wellness
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.

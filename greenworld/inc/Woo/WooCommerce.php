@@ -30,7 +30,6 @@ final class WooCommerce implements Bootable {
 		add_action( 'woocommerce_single_product_summary', [ $this, 'delivery_estimate' ], 36 );
 		add_action( 'woocommerce_after_single_product_summary', [ $this, 'product_disclaimer' ], 6 );
 		add_action( 'wp_footer', [ $this, 'sticky_atc' ] );
-		add_action( 'wp_footer', [ $this, 'gallery_boot_fix' ] );
 		add_action( 'wp_head', [ $this, 'critical_product_css' ], 9999 );
 
 		// Editable product info + tabs.
@@ -490,18 +489,7 @@ final class WooCommerce implements Bootable {
 		<?php
 	}
 
-	/**
-	 * The product gallery runs on WooCommerce flexslider, which locks each slide
-	 * to the width it measures at init. Inside a CSS grid column that width can
-	 * be measured before layout settles, leaving the image tiny. Dispatch a
-	 * resize after load so flexslider re-measures to the real half-width column.
-	 */
-	public function gallery_boot_fix(): void {
-		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
-			return;
-		}
-		echo '<script>(function(){function r(){try{window.dispatchEvent(new Event("resize"));}catch(e){}}window.addEventListener("load",function(){r();setTimeout(r,250);setTimeout(r,800);});})();</script>';
-	}
+
 
 
 	/**
@@ -522,11 +510,16 @@ final class WooCommerce implements Bootable {
 			. '.single-product div.product>*{grid-column:1 / -1 !important;float:none !important;width:auto !important;max-width:100% !important;clear:none !important}'
 			. '.single-product div.product>.woocommerce-product-gallery,.single-product div.product>div.images{grid-column:1 / 2 !important;grid-row:1 !important;margin:0 !important;position:static !important}'
 			. '.single-product div.product>.summary,.single-product div.product>.entry-summary{grid-column:2 / 3 !important;grid-row:1 !important;margin:0 !important}'
-			. '.single-product div.product .woocommerce-product-gallery{width:100% !important;max-width:100% !important;min-width:0 !important}'
-			. '.single-product div.product .woocommerce-product-gallery .flex-viewport{width:100% !important;max-width:100% !important}'
-			. '.single-product div.product .woocommerce-product-gallery__image{aspect-ratio:auto !important;min-height:0 !important;max-height:none !important;height:auto !important;overflow:visible !important;display:block !important}'
-			. '.single-product div.product .woocommerce-product-gallery__image>a{display:block !important;width:100% !important;height:auto !important}'
-			. '.single-product div.product .woocommerce-product-gallery img,.single-product div.product .woocommerce-product-gallery img.wp-post-image{width:100% !important;height:auto !important;max-width:100% !important;max-height:none !important;aspect-ratio:auto !important;object-fit:contain !important;margin:0 !important}'
+			. '.single-product div.product .woocommerce-product-gallery{position:relative !important;width:100% !important;max-width:100% !important;min-width:0 !important;float:none !important;margin:0 !important;opacity:1 !important}'
+			. '.single-product div.product .woocommerce-product-gallery__wrapper{display:flex !important;flex-wrap:wrap !important;gap:.55rem !important;align-items:flex-start !important;width:100% !important;max-width:100% !important;margin:0 !important;padding:0 !important;transform:none !important}'
+			. '.single-product div.product .woocommerce-product-gallery__image{flex:0 0 66px !important;width:66px !important;margin:0 !important;border:1px solid rgba(0,0,0,.1) !important;border-radius:8px !important;overflow:hidden !important;background:#fff !important;list-style:none !important}'
+			. '.single-product div.product .woocommerce-product-gallery__image:first-child{flex:0 0 100% !important;width:100% !important;border:0 !important;border-radius:12px !important;background:#f7f7f5 !important;display:flex !important;align-items:center !important;justify-content:center !important;padding:.4rem !important}'
+			. '.single-product div.product .woocommerce-product-gallery__image>a{display:block !important;width:100% !important;height:100% !important}'
+			. '.single-product div.product .woocommerce-product-gallery__image:first-child>a{display:flex !important;align-items:center !important;justify-content:center !important;width:100% !important}'
+			. '.single-product div.product .woocommerce-product-gallery img{max-width:100% !important;height:auto !important;aspect-ratio:auto !important;display:block !important}'
+			. '.single-product div.product .woocommerce-product-gallery__image:first-child img{width:auto !important;max-width:100% !important;max-height:66vh !important;object-fit:contain !important;margin:0 auto !important}'
+			. '.single-product div.product .woocommerce-product-gallery__image:not(:first-child) img{width:100% !important;height:66px !important;object-fit:cover !important;cursor:pointer !important}'
+			. '.single-product div.product .woocommerce-product-gallery__trigger{position:absolute !important;top:.6rem !important;right:.6rem !important;z-index:5 !important}'
 			. '.single-product div.product form.variations_form,.single-product div.product form.variations_form .variations,.single-product div.product .woocommerce-variation-add-to-cart{width:100% !important}'
 			. '@media(max-width:900px){.single-product div.product{grid-template-columns:1fr !important;column-gap:0 !important}.single-product div.product>.woocommerce-product-gallery,.single-product div.product>div.images,.single-product div.product>.summary,.single-product div.product>.entry-summary{grid-column:1 / -1 !important;grid-row:auto !important}}'
 			. '</style>' . "\n";

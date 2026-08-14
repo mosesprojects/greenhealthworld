@@ -756,3 +756,22 @@ ul.products li.product .onsale{display:none}
 	.single-product div.product form.cart .gw-wa-order--single{flex:1 1 100%}
 }
 /* ===== end v1.13.0 ===== */
+/* ===== v1.14.0 related four-up + recently viewed carousel ===== */
+/* Related products / up-sells: four across in one row like the benchmark. */
+.woocommerce .related ul.products,.woocommerce .up-sells ul.products{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media (max-width:900px){.woocommerce .related ul.products,.woocommerce .up-sells ul.products{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+/* Recently viewed section spans the full product grid width, below related products. */
+.single-product div.product > .gw-recent{grid-column:1 / -1}
+.gw-recent{margin:2.4rem 0 0}
+.gw-recent__head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:0 0 1rem}
+.gw-recent__head h2{margin:0;font-family:var(--gw-serif);font-size:1.5rem;color:var(--gw-green-deep);position:relative;padding-bottom:.4rem}
+.gw-recent__head h2::after{content:"";position:absolute;left:0;bottom:0;width:48px;height:3px;border-radius:3px;background:var(--gw-gold)}
+.gw-recent__nav{display:flex;gap:.5rem;flex:none}
+.gw-recent__arrow{width:40px;height:40px;border-radius:50%;border:1px solid var(--gw-line);background:#fff;color:var(--gw-green-deep);font-size:1.4rem;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s var(--gw-ease),color .18s var(--gw-ease),border-color .18s var(--gw-ease)}
+.gw-recent__arrow:hover{background:var(--gw-green);color:#fff;border-color:var(--gw-green)}
+/* Horizontal scroll track: override the global product grid for this list. */
+.woocommerce ul.products.gw-recent__track{display:flex!important;grid-template-columns:none!important;gap:1rem!important;overflow-x:auto;scroll-snap-type:x proximity;padding:.3rem .1rem 1rem;margin:0!important;list-style:none;scrollbar-width:thin}
+.woocommerce ul.products.gw-recent__track::before,.woocommerce ul.products.gw-recent__track::after{content:none!important;display:none!important}
+.woocommerce ul.products.gw-recent__track li.product{flex:0 0 200px!important;width:200px!important;scroll-snap-align:start;margin:0!important}
+@media (max-width:600px){.woocommerce ul.products.gw-recent__track li.product{flex:0 0 clamp(150px,44vw,190px)!important;width:auto!important}}
+/* ===== end v1.14.0 ===== */

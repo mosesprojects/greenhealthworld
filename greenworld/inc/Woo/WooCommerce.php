@@ -43,8 +43,10 @@ final class WooCommerce implements Bootable {
 		add_action( 'woocommerce_single_product_summary', [ $this, 'availability' ], 15 );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'sale_savings' ], 11 );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'brand_line' ], 41 );
-		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
-		add_action( 'woocommerce_after_single_product_summary', [ $this, 'stacked_sections' ], 10 );
+		// v1.14.0: restore horizontal tabs (default), related products four-up, and a Recently viewed carousel.
+		add_filter( 'woocommerce_output_related_products_args', [ $this, 'related_args' ] );
+		add_action( 'template_redirect', [ $this, 'track_view' ], 20 );
+		add_action( 'woocommerce_after_single_product_summary', [ $this, 'recently_viewed' ], 25 );
 
 		// Clean shop chrome; the theme provides its own wrappers.
 		remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );
@@ -390,4 +392,99 @@ final class WooCommerce implements Bootable {
 		echo '<p class="gw-brandline">' . esc_html__( 'Brand:', 'greenworld' ) . ' <strong>' . esc_html__( 'Green World', 'greenworld' ) . '</strong></p>';
 	}
 
+	/**
+	 * Related products: show four across in one row, matching the benchmark.
+	 *
+	 * @param array<string,mixed> $args Related product args.
+	 * @return array<string,mixed>
+	 */
+	public function related_args( $args ) {
+		$args['posts_per_page'] = 4;
+		$args['columns']        = 4;
+		return $args;
+	}
+
+	/**
+	 * Track the current product in the woocommerce_recently_viewed cookie so the
+	 * Recently viewed carousel has data. Independent of the WooCommerce widget.
+	 */
+	public function track_view(): void {
+		if ( ! is_singular( 'product' ) ) {
+			return;
+		}
+		global $post;
+		if ( ! $post instanceof \WP_Post ) {
+			return;
+		}
+		$viewed = array();
+		if ( isset( $_COOKIE['woocommerce_recently_viewed'] ) ) {
+			$viewed = explode( '|', (string) wp_unslash( $_COOKIE['woocommerce_recently_viewed'] ) );
+		}
+		$viewed   = array_filter( array_map( 'absint', (array) $viewed ) );
+		$viewed[] = $post->ID;
+		$viewed   = array_reverse( array_unique( array_reverse( $viewed ) ) );
+		$viewed   = array_slice( $viewed, -15 );
+		if ( function_exists( 'wc_setcookie' ) ) {
+			wc_setcookie( 'woocommerce_recently_viewed', implode( '|', $viewed ) );
+		}
+	}
+
+	/**
+	 * Recently viewed products rendered as a horizontal carousel with arrows,
+	 * matching the benchmark. Reads the woocommerce_recently_viewed cookie.
+	 */
+	public function recently_viewed(): void {
+		if ( ! is_singular( 'product' ) || empty( $_COOKIE['woocommerce_recently_viewed'] ) ) {
+			return;
+		}
+		$ids     = array_filter( array_map( 'absint', explode( '|', (string) wp_unslash( $_COOKIE['woocommerce_recently_viewed'] ) ) ) );
+		$current = get_queried_object_id();
+		$ids     = array_values( array_diff( array_unique( array_reverse( $ids ) ), array( $current ) ) );
+		if ( count( $ids ) < 1 ) {
+			return;
+		}
+		$ids = array_slice( $ids, 0, 12 );
+		$q   = new \WP_Query(
+			array(
+				'post_type'           => 'product',
+				'post_status'         => 'publish',
+				'post__in'            => $ids,
+				'orderby'             => 'post__in',
+				'posts_per_page'      => count( $ids ),
+				'ignore_sticky_posts' => true,
+				'no_found_rows'       => true,
+			)
+		);
+		if ( ! $q->have_posts() ) {
+			wp_reset_postdata();
+			return;
+		}
+		echo '<section class="gw-recent products" aria-label="' . esc_attr__( 'Recently viewed', 'greenworld' ) . '">';
+		echo '<div class="gw-recent__head"><h2>' . esc_html__( 'Recently viewed', 'greenworld' ) . '</h2>';
+		echo '<div class="gw-recent__nav"><button type="button" class="gw-recent__arrow" data-gw-recent-prev aria-label="' . esc_attr__( 'Scroll left', 'greenworld' ) . '">&#8249;</button><button type="button" class="gw-recent__arrow" data-gw-recent-next aria-label="' . esc_attr__( 'Scroll right', 'greenworld' ) . '">&#8250;</button></div></div>';
+		echo '<ul class="products gw-recent__track" data-gw-recent-track>';
+		while ( $q->have_posts() ) {
+			$q->the_post();
+			wc_get_template_part( 'content', 'product' );
+		}
+		echo '</ul></section>';
+		wp_reset_postdata();
+		?>
+<script>
+(function(){
+	var track=document.querySelector('[data-gw-recent-track]');
+	if(!track){return;}
+	function step(dir){
+		var card=track.querySelector('li.product');
+		var w=card?card.getBoundingClientRect().width+16:220;
+		track.scrollBy({left:dir*w*2,behavior:'smooth'});
+	}
+	var prev=document.querySelector('[data-gw-recent-prev]');
+	var next=document.querySelector('[data-gw-recent-next]');
+	if(prev){prev.addEventListener('click',function(){step(-1);});}
+	if(next){next.addEventListener('click',function(){step(1);});}
+})();
+</script>
+		<?php
+	}
 }

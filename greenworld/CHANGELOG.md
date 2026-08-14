@@ -2,6 +2,13 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.14.0 - Related products four-up, Recently viewed carousel, horizontal tabs
+
+- Related products (and up-sells) now show four across in a single row, matching the benchmark. Added a woocommerce_output_related_products_args filter (four products, four columns) plus a grid override; they drop to two across on smaller screens.
+- Added a Recently viewed carousel below Related products. The theme now tracks product views in the woocommerce_recently_viewed cookie (independently of the WooCommerce widget) and renders viewed products as a horizontal, swipeable row with left and right arrow controls.
+- Product information is back to horizontal tabs (Description, Ingredients, How to Use, Delivery, Reviews) instead of the stacked accordion, matching the benchmark tab layout. The stacked_sections renderer is retired from the hook set.
+- Version bump to 1.14.0.
+
 ## v1.13.0 - Product page arranged to match the benchmark
 
 - Added the WooCommerce breadcrumb (Home / Category / Product) above the single product, rendered at container width. It was previously absent because the theme's woocommerce.php calls woocommerce_content() directly and never fired the default breadcrumb hook.

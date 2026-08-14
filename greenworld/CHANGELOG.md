@@ -2,6 +2,10 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.19.0
+
+Deliver the single-product layout fixes reliably by printing the critical CSS inline. Diagnosis (confirmed from live DevTools): the site serves a cached, combined CSS bundle (`wpo-minify-*.min.css`) that still contains the old `main.css` — `div.images{float:left;width:48%}` and the 1:1 square-box gallery rule — so the v1.16 to v1.18 fixes committed to `main.css` were never reaching the page. This release adds `WooCommerce::critical_product_css()` on `wp_head` (priority 9999, product pages only) which emits an inline `<style id="gw-critical-product">` block, after all enqueued stylesheets, containing the authoritative product layout: 2-column grid (image left, title/summary right), gallery/image fill, square-box removed so portrait images fill the column, full-width variations, and mobile single-column stack. Because it is inline and regenerated every request, it cannot be defeated by a stale minified bundle. No `main.css` rules were removed; this guarantees delivery regardless of CSS caching.
+
 ## v1.18.0
 
 Fixed portrait product images being pillarboxed (white space left and right). Older accreted gallery rules framed each slide as a 1:1 square and fit the image by height (`width:auto`), so tall bottles (e.g. the Vitamin C / Calcium jars) sat centered in a square box instead of filling the column, while squarish packs filled fine. This release authoritatively neutralises the square box (`aspect-ratio:auto`, no fixed/max height) and forces the image to `width:100%; height:auto` so it fills the column at its natural aspect for both portrait and landscape products. No wrapper/slide width is forced, so flexslider thumbnail navigation is unaffected. CSS-only.

@@ -31,6 +31,7 @@ final class WooCommerce implements Bootable {
 		add_action( 'woocommerce_after_single_product_summary', [ $this, 'product_disclaimer' ], 6 );
 		add_action( 'wp_footer', [ $this, 'sticky_atc' ] );
 		add_action( 'wp_footer', [ $this, 'gallery_boot_fix' ] );
+		add_action( 'wp_head', [ $this, 'critical_product_css' ], 9999 );
 
 		// Editable product info + tabs.
 		add_action( 'woocommerce_product_options_general_product_data', [ $this, 'info_fields' ] );
@@ -500,6 +501,35 @@ final class WooCommerce implements Bootable {
 			return;
 		}
 		echo '<script>(function(){function r(){try{window.dispatchEvent(new Event("resize"));}catch(e){}}window.addEventListener("load",function(){r();setTimeout(r,250);setTimeout(r,800);});})();</script>';
+	}
+
+
+	/**
+	 * Print critical single-product layout CSS inline in <head>, after the
+	 * enqueued stylesheets, on product pages only. The site serves a cached,
+	 * combined CSS bundle (wpo-minify-*.css) that can lag behind theme updates,
+	 * so committed main.css fixes may not reach the page. Emitting the critical
+	 * layout rules inline guarantees the correct product layout is always served
+	 * and cannot be defeated by a stale minified bundle (last in <head> + !important).
+	 */
+	public function critical_product_css(): void {
+		if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+			return;
+		}
+		echo '<style id="gw-critical-product">'
+			. '.single-product div.product{display:grid !important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;column-gap:2.5rem !important;row-gap:1.75rem !important;align-items:start !important;float:none !important}'
+			. '.single-product div.product::before,.single-product div.product::after{content:none !important;display:none !important}'
+			. '.single-product div.product>*{grid-column:1 / -1 !important;float:none !important;width:auto !important;max-width:100% !important;clear:none !important}'
+			. '.single-product div.product>.woocommerce-product-gallery,.single-product div.product>div.images{grid-column:1 / 2 !important;grid-row:1 !important;margin:0 !important;position:static !important}'
+			. '.single-product div.product>.summary,.single-product div.product>.entry-summary{grid-column:2 / 3 !important;grid-row:1 !important;margin:0 !important}'
+			. '.single-product div.product .woocommerce-product-gallery{width:100% !important;max-width:100% !important;min-width:0 !important}'
+			. '.single-product div.product .woocommerce-product-gallery .flex-viewport{width:100% !important;max-width:100% !important}'
+			. '.single-product div.product .woocommerce-product-gallery__image{aspect-ratio:auto !important;min-height:0 !important;max-height:none !important;height:auto !important;overflow:visible !important;display:block !important}'
+			. '.single-product div.product .woocommerce-product-gallery__image>a{display:block !important;width:100% !important;height:auto !important}'
+			. '.single-product div.product .woocommerce-product-gallery img,.single-product div.product .woocommerce-product-gallery img.wp-post-image{width:100% !important;height:auto !important;max-width:100% !important;max-height:none !important;aspect-ratio:auto !important;object-fit:contain !important;margin:0 !important}'
+			. '.single-product div.product form.variations_form,.single-product div.product form.variations_form .variations,.single-product div.product .woocommerce-variation-add-to-cart{width:100% !important}'
+			. '@media(max-width:768px){.single-product div.product{grid-template-columns:1fr !important;column-gap:0 !important}.single-product div.product>.woocommerce-product-gallery,.single-product div.product>div.images,.single-product div.product>.summary,.single-product div.product>.entry-summary{grid-column:1 / -1 !important}}'
+			. '</style>' . "\n";
 	}
 
 }

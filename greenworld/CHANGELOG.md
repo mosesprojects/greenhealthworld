@@ -1,3 +1,8 @@
+## v1.29.2
+
+- Fixed the legal / policy pages (Privacy Policy, Terms & Conditions, Returns & Refunds, Shipping & Delivery) showing only the theme's short built-in copy and ignoring the content you type into the page in wp-admin. The page-{slug}.php templates call the Trust Center renderers, which previously always printed the default text and never rendered the page's own content.
+- Fix: the Privacy, Terms and Returns renderers now show the page's own editor content in place of the built-in default whenever the page has any (falling back to the default when the page is empty); the Shipping page appends your editor content below the delivery and payment details. All keep the curated header and the Chat on WhatsApp / Email us buttons. Content is rendered through the standard `the_content` filter, so shortcodes, blocks and formatting all work.
+
 ## v1.29.1
 
 - Fixed the desktop header showing three stray account links (Sign in / Register as Customer / Become a Distributor) as faint text below the main menu. They come from the `.gw-drawer-extra` block, which is meant only for the mobile slide-out drawer, but nothing was hiding it on desktop.

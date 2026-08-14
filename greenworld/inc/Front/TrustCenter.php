@@ -113,6 +113,40 @@ final class TrustCenter implements Bootable {
 		echo '</div>';
 	}
 
+	/**
+	 * The current page's own editor content (WP-filtered), or '' when empty.
+	 * Lets a site owner override the built-in default copy simply by writing
+	 * content into the page in wp-admin.
+	 */
+	private static function editor_content(): string {
+		if ( ! is_page() ) {
+			return '';
+		}
+		$post = get_queried_object();
+		if ( ! $post instanceof \WP_Post ) {
+			return '';
+		}
+		$raw = (string) $post->post_content;
+		if ( trim( $raw ) === '' ) {
+			return '';
+		}
+		return (string) apply_filters( 'the_content', $raw );
+	}
+
+	/**
+	 * Echo the page's editor content when it has any, otherwise the built-in
+	 * default HTML. Keeps the curated header + CTA while letting the owner
+	 * replace the body copy from wp-admin.
+	 */
+	private static function body_or_default( string $default_html ): void {
+		$content = self::editor_content();
+		if ( $content !== '' ) {
+			echo '<div class="gw-richtext">' . $content . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WP-filtered post content.
+		} else {
+			echo $default_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from esc_* helpers.
+		}
+	}
+
 	/** Delivery grid + timing notes (no heading), shared by render() and shipping_page(). */
 	private static function delivery_html(): void {
 		$c       = self::contact_bits();
@@ -279,6 +313,10 @@ final class TrustCenter implements Bootable {
 		self::delivery_html();
 		echo '<h3>' . esc_html__( 'Payments', 'greenworld' ) . '</h3>';
 		echo '<p>' . esc_html__( 'We accept M-Pesa, Bank Transfer and Cash (on delivery within Nairobi, or on pickup). All online interactions run over a secure (SSL) connection.', 'greenworld' ) . '</p>';
+		$gw_extra = self::editor_content();
+		if ( $gw_extra !== '' ) {
+			echo '<div class="gw-richtext">' . $gw_extra . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WP-filtered post content.
+		}
 		echo self::cta_html();
 		echo '</section>';
 		self::page_close();
@@ -291,7 +329,7 @@ final class TrustCenter implements Bootable {
 			__( 'If something is not right with your order, here is exactly how we make it right.', 'greenworld' )
 		);
 		echo '<section class="gw-trust__sec">';
-		echo self::paras( self::v( 'returns', self::returns_default() ) ); // phpcs:ignore
+		self::body_or_default( self::paras( self::v( 'returns', self::returns_default() ) ) );
 		echo '<h3>' . esc_html__( 'Payments & refunds', 'greenworld' ) . '</h3>';
 		echo '<p>' . esc_html__( 'Refunds are returned to your original payment method — M-Pesa or bank transfer. Cash-on-delivery orders are refunded by M-Pesa.', 'greenworld' ) . '</p>';
 		echo self::cta_html();
@@ -306,7 +344,7 @@ final class TrustCenter implements Bootable {
 			__( 'What we collect, why we collect it, and the control you keep over it.', 'greenworld' )
 		);
 		echo '<section class="gw-trust__sec">';
-		echo self::paras( self::v( 'privacy', self::privacy_default() ) ); // phpcs:ignore
+		self::body_or_default( self::paras( self::v( 'privacy', self::privacy_default() ) ) );
 		echo '<p>' . esc_html__( 'To see what we hold about you, or to have it deleted, contact us using the details below.', 'greenworld' ) . '</p>';
 		echo self::cta_html();
 		echo '</section>';
@@ -320,7 +358,7 @@ final class TrustCenter implements Bootable {
 			__( 'The plain-language terms that apply when you use this site and order from us.', 'greenworld' )
 		);
 		echo '<section class="gw-trust__sec">';
-		echo self::paras( self::v( 'terms', self::terms_default() ) ); // phpcs:ignore
+		self::body_or_default( self::paras( self::v( 'terms', self::terms_default() ) ) );
 		echo self::cta_html();
 		echo '</section>';
 		self::page_close();

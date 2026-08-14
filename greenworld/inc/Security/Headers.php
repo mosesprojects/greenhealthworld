@@ -35,6 +35,15 @@ final class Headers implements Bootable {
 		// Block username enumeration (?author=N and the REST users route for guests).
 		add_action( 'template_redirect', [ $this, 'block_author_scan' ] );
 		add_filter( 'rest_endpoints', [ $this, 'restrict_user_endpoints' ] );
+		// Disable comments on posts/pages (a spam vector). WooCommerce product
+		// reviews use a separate review comment type and are left intact.
+		add_action( 'init', [ $this, 'disable_post_comments' ] );
+
+		// Login hardening: generic errors (blocks username enumeration) plus a
+		// lenient per-IP failed-attempt throttle.
+		add_filter( 'login_errors', [ $this, 'generic_login_error' ] );
+		add_filter( 'authenticate', [ $this, 'throttle_login' ], 30, 3 );
+		add_action( 'wp_login_failed', [ $this, 'record_login_failure' ] );
 	}
 
 	/**
@@ -47,6 +56,25 @@ final class Headers implements Bootable {
 		$headers['Referrer-Policy']           = 'strict-origin-when-cross-origin';
 		$headers['Permissions-Policy']        = 'geolocation=(), microphone=(), camera=()';
 		$headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains';
+		$headers['Cross-Origin-Opener-Policy'] = 'same-origin-allow-popups';
+		$headers['Content-Security-Policy']    = implode(
+			'; ',
+			array(
+				"default-src 'self'",
+				"script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+				"style-src 'self' 'unsafe-inline' https:",
+				"img-src 'self' data: blob: https:",
+				"font-src 'self' data: https:",
+				"connect-src 'self' https:",
+				"frame-src 'self' https:",
+				"media-src 'self' https:",
+				"object-src 'none'",
+				"base-uri 'self'",
+				"frame-ancestors 'self'",
+				"form-action 'self' https:",
+				'upgrade-insecure-requests',
+			)
+		);
 		return $headers;
 	}
 
@@ -106,5 +134,46 @@ final class Headers implements Bootable {
 			}
 		}
 		return $endpoints;
+	}
+
+	public function disable_post_comments(): void {
+		foreach ( array( 'post', 'page' ) as $type ) {
+			remove_post_type_support( $type, 'comments' );
+			remove_post_type_support( $type, 'trackbacks' );
+		}
+	}
+
+	public function generic_login_error(): string {
+		return __( 'Invalid login details.', 'greenworld' );
+	}
+
+	private function login_key(): string {
+		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '0';
+		return 'gw_login_fail_' . md5( $ip );
+	}
+
+	/**
+	 * Reject further login attempts from an IP after repeated failures.
+	 *
+	 * @param \WP_User|\WP_Error|null $user
+	 * @param string                  $username
+	 * @param string                  $password
+	 * @return \WP_User|\WP_Error|null
+	 */
+	public function throttle_login( $user, $username, $password ) {
+		if ( '' === (string) $username && '' === (string) $password ) {
+			return $user;
+		}
+		$fails = (int) get_transient( $this->login_key() );
+		if ( $fails >= 10 ) {
+			return new \WP_Error( 'gw_locked', __( 'Too many failed attempts. Please wait about 15 minutes and try again.', 'greenworld' ) );
+		}
+		return $user;
+	}
+
+	public function record_login_failure(): void {
+		$key   = $this->login_key();
+		$fails = (int) get_transient( $key ) + 1;
+		set_transient( $key, $fails, 15 * MINUTE_IN_SECONDS );
 	}
 }

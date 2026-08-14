@@ -2,6 +2,31 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.22.0 — Phase 2b: security hardening + anti-spam
+
+Headers/Security (inc/Security/Headers.php):
+- Added a Content-Security-Policy (object-src 'none', base-uri 'self',
+  frame-ancestors 'self', upgrade-insecure-requests, https-only subresources)
+  and Cross-Origin-Opener-Policy on top of the existing OWASP header set. The
+  policy is intentionally compatible (allows inline + https) so checkout and
+  payment flows keep working; a stricter nonce-based CSP is a later step.
+- Disabled comments/trackbacks on posts and pages (a spam vector). WooCommerce
+  product reviews use a separate review type and are deliberately left intact.
+- Login hardening: generic "Invalid login details" error (blocks username
+  enumeration) plus a lenient per-IP throttle (10 failures / 15 min).
+
+Anti-spam on public forms:
+- Health consultation form (inc/Front/Consultation.php): hidden honeypot field
+  + a submit-time trap; bots are silently dropped, humans are unaffected.
+- Registration / distributor form (inc/Account/Registration.php): honeypot field
+  rejected in validation.
+
+Hardening (functions.php):
+- DISALLOW_FILE_EDIT — removes the in-dashboard theme/plugin file editor, a
+  common post-compromise persistence vector. Code ships from Git.
+
+Edge WAF, bot mitigation, and rate limiting remain Cloudflare/host-level.
+
 ## v1.21.0 — Phase 2a: front-end performance
 
 - Assets: defer the home and setup-wizard scripts too (previously only the main

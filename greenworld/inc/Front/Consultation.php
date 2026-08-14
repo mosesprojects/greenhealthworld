@@ -58,6 +58,16 @@ final class Consultation implements Bootable {
 		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( (string) $_POST['nonce'] ) ), 'greenworld' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh and try again.', 'greenworld' ) ), 400 );
 		}
+		// Honeypot: real users never fill this hidden field. Feign success so
+		// bots do not learn they were caught, but store nothing.
+		if ( ! empty( $_POST['gw_website'] ) ) {
+			wp_send_json_success( array( 'message' => __( 'Thank you. Your request has been received and our team will contact you shortly.', 'greenworld' ) ) );
+		}
+		// Time trap: genuine submissions take more than a few seconds to complete.
+		$ts = isset( $_POST['gw_ts'] ) ? (int) $_POST['gw_ts'] : 0;
+		if ( $ts > 0 && ( time() - $ts ) < 3 ) {
+			wp_send_json_error( array( 'message' => __( 'Please take a moment to complete the form, then try again.', 'greenworld' ) ), 429 );
+		}
 		if ( empty( $_POST['consent'] ) ) {
 			wp_send_json_error( array( 'message' => __( 'Please tick the consent box so we can respond to you.', 'greenworld' ) ), 422 );
 		}
@@ -119,6 +129,10 @@ final class Consultation implements Bootable {
 		ob_start();
 		?>
 		<form class="gw-consult" data-gw-consult-form novalidate>
+			<div class="gw-hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+				<label>Leave this field empty <input type="text" name="gw_website" tabindex="-1" autocomplete="off" value="" /></label>
+			</div>
+			<input type="hidden" name="gw_ts" value="<?php echo esc_attr( (string) time() ); ?>" />
 			<div class="gw-consult__row">
 				<p class="gw-field"><label for="gwc-name"><?php esc_html_e( 'Full name', 'greenworld' ); ?> <span class="required">*</span></label><input id="gwc-name" name="name" type="text" required autocomplete="name" /></p>
 				<p class="gw-field"><label for="gwc-phone"><?php esc_html_e( 'Phone number', 'greenworld' ); ?> <span class="required">*</span></label><input id="gwc-phone" name="phone" type="tel" required autocomplete="tel" /></p>

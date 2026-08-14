@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.21.0' );
+define( 'GREENWORLD_VERSION', '1.22.0' );
 
 /**
  * Emit the theme version into the page head so the running build is verifiable
@@ -40,6 +40,14 @@ add_action(
 );
 define( 'GREENWORLD_DIR', trailingslashit( get_template_directory() ) );
 define( 'GREENWORLD_URI', trailingslashit( get_template_directory_uri() ) );
+
+/**
+ * Block the built-in theme/plugin file editors. Code ships from Git, and the
+ * in-dashboard editor is a common post-compromise persistence vector.
+ */
+if ( ! defined( 'DISALLOW_FILE_EDIT' ) ) {
+	define( 'DISALLOW_FILE_EDIT', true );
+}
 
 /**
  * Branded placeholder for products with no featured image, so category, shop

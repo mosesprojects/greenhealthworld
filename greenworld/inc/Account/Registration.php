@@ -55,6 +55,8 @@ final class Registration implements Bootable {
 	public function type_toggle(): void {
 		$type = $this->requested_type();
 		wp_nonce_field( 'gw_register', 'gw_register_nonce' );
+		// Honeypot: hidden from real users; bots that fill it are rejected in validate().
+		echo '<div class="gw-reg-hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this field empty <input type="text" name="gw_hp" tabindex="-1" autocomplete="off" value="" /></label></div>';
 		echo '<div class="gw-reg-type" role="radiogroup" aria-label="' . esc_attr__( 'Register as', 'greenworld' ) . '">';
 		echo '<span class="gw-reg-type__label">' . esc_html__( 'I want to register as', 'greenworld' ) . '</span>';
 		echo '<label class="gw-reg-type__opt"><input type="radio" name="gw_account_type" value="customer" ' . checked( $type, 'customer', false ) . ' /><span><strong>' . esc_html__( 'Customer', 'greenworld' ) . '</strong><small>' . esc_html__( 'Shop products for yourself and your family.', 'greenworld' ) . '</small></span></label>';
@@ -81,6 +83,10 @@ final class Registration implements Bootable {
 	 */
 	public function validate( $username, $email, $errors ): void {
 		if ( ! isset( $_POST['gw_register_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( (string) $_POST['gw_register_nonce'] ) ), 'gw_register' ) ) {
+			return;
+		}
+		if ( ! empty( $_POST['gw_hp'] ) ) {
+			$errors->add( 'gw_hp_error', __( 'Your submission could not be processed. Please try again.', 'greenworld' ) );
 			return;
 		}
 		if ( empty( $_POST['gw_phone'] ) ) {

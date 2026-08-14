@@ -2,6 +2,26 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.25.0 — Mobile nav drawer: fix the real z-index trap
+
+The v1.24.0 drawer still opened dimmed and untappable. Confirmed against the live
+HTML: the inline nav CSS was deployed correctly, so the cause was structural.
+
+Root cause: the OUTER `.gw-header` has `position:relative;z-index:60` (main.css
+line 60), which caps its entire subtree — including the fixed `.gw-primary`
+drawer — at stacking level 60. The nav scrim (`.gw-nav-scrim`, z-index 1150)
+lives OUTSIDE `.gw-header`, so it painted over the whole header and intercepted
+every tap. Raising the inner `.gw-header__sticky` in v1.24.0 could never escape
+that parent cap.
+
+Fix (inline critical nav CSS, gw_critical_nav_css):
+- `body.gw-nav-open .gw-header{z-index:1200 !important}` — lift the entire header
+  (and the drawer inside it) above the scrim while the menu is open.
+- Drawer at z-index 1210, scrim at 1150, and bottom nav / WhatsApp / back-to-top
+  demoted to z-index 1 while open so nothing pokes through the dim overlay.
+- Health Categories still expands in place (.gw-has-mega.is-open .gw-mega).
+Desktop (>900px) untouched.
+
 ## v1.24.0 — Mobile: product overlap, nav drawer, editable hero slides
 
 - Single product (mobile): fixed the gallery image overlapping the title/price/

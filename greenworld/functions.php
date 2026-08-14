@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.24.0' );
+define( 'GREENWORLD_VERSION', '1.25.0' );
 
 /**
  * Emit the theme version into the page head so the running build is verifiable
@@ -578,9 +578,14 @@ function greenworld_social_profiles_list( $links ) {
 /**
  * Inline critical mobile-nav CSS, emitted late in <head> on every front-end
  * page. Injected inline (like the product critical CSS) so it regenerates per
- * request and cannot be defeated by a stale minified stylesheet bundle. It
- * guarantees the hamburger drawer slides in above the sticky header, bottom
- * nav and floating buttons, and stays tappable. Desktop (>900px) is untouched.
+ * request and cannot be defeated by the stale minified stylesheet bundle.
+ *
+ * Root cause of the earlier "drawer opens but is dimmed and untappable": the
+ * OUTER .gw-header has position:relative;z-index:60, which caps its whole
+ * subtree — including the fixed drawer — below the nav scrim (z 1150). No inner
+ * z-index can escape that cap, so raising .gw-header__sticky did nothing. The
+ * fix lifts the entire header above the scrim while the drawer is open, so the
+ * drawer paints on top and stays tappable. Desktop (>900px) is untouched.
  */
 function gw_critical_nav_css(): void {
 	if ( is_admin() ) {
@@ -590,18 +595,19 @@ function gw_critical_nav_css(): void {
 		. '@media(max-width:900px){'
 		. '.gw-navbar{display:block !important;background:transparent !important;border:0 !important;box-shadow:none !important}'
 		. '.gw-navbar__inner{display:block !important;padding:0 !important;min-height:0 !important}'
-		. '.gw-primary{position:fixed !important;top:0 !important;left:0 !important;bottom:0 !important;width:min(340px,86vw) !important;max-width:86vw !important;height:100% !important;background:#fff !important;z-index:1200 !important;transform:translateX(-100%) !important;transition:transform .28s ease !important;overflow-y:auto !important;-webkit-overflow-scrolling:touch;display:block !important}'
-		. 'body.gw-nav-open .gw-header__sticky{z-index:1200 !important}'
+		. 'body.gw-nav-open .gw-header{z-index:1200 !important}'
+		. '.gw-primary{position:fixed !important;top:0 !important;left:0 !important;bottom:0 !important;width:min(340px,86vw) !important;max-width:86vw !important;height:100% !important;background:#fff !important;z-index:1210 !important;transform:translateX(-100%) !important;transition:transform .28s ease !important;overflow-y:auto !important;-webkit-overflow-scrolling:touch;display:block !important;box-shadow:6px 0 30px rgba(0,0,0,.18) !important}'
 		. 'body.gw-nav-open .gw-primary{transform:translateX(0) !important}'
-		. '.gw-nav-scrim{position:fixed !important;inset:0 !important;z-index:1150 !important;background:rgba(18,38,32,.5) !important}'
+		. '.gw-nav-scrim{position:fixed !important;inset:0 !important;z-index:1150 !important;background:rgba(18,38,32,.5) !important;border:0 !important}'
 		. '.gw-nav-scrim[hidden]{display:none !important}'
-		. 'body.gw-nav-open .gw-nav-scrim{display:block !important;opacity:1 !important}'
+		. 'body.gw-nav-open .gw-nav-scrim{display:block !important;opacity:1 !important;pointer-events:auto !important}'
+		. 'body.gw-nav-open .gw-bottomnav,body.gw-nav-open .gw-whatsapp,body.gw-nav-open .gw-backtotop{z-index:1 !important}'
 		. '.gw-primary__head{display:flex !important;align-items:center !important;justify-content:space-between !important;padding:1.1rem 1.2rem !important;background:#123726 !important;color:#fff !important}'
 		. '.gw-primary__close{background:transparent !important;border:0 !important;color:#fff !important;font-size:1.8rem !important;line-height:1 !important;cursor:pointer !important}'
-		. '.gw-primary__menu{display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:0 !important;padding:.5rem 0 !important}'
+		. '.gw-primary__menu{display:flex !important;flex-direction:column !important;align-items:stretch !important;gap:0 !important;padding:.5rem 0 !important;margin:0 !important;list-style:none !important}'
 		. '.gw-primary__menu>li{width:100% !important}'
 		. '.gw-primary__menu>li>a{display:flex !important;align-items:center !important;justify-content:space-between !important;padding:.9rem 1.2rem !important;border-bottom:1px solid rgba(0,0,0,.06) !important;color:#1c2b22 !important}'
-		. '.gw-mega{position:static !important;display:none !important;opacity:1 !important;visibility:visible !important;transform:none !important;box-shadow:none !important;border:0 !important;width:auto !important}'
+		. '.gw-mega{position:static !important;display:none !important;opacity:1 !important;visibility:visible !important;transform:none !important;box-shadow:none !important;border:0 !important;width:auto !important;background:#f7faf7 !important}'
 		. '.gw-has-mega.is-open .gw-mega{display:block !important}'
 		. '.gw-drawer-extra{padding:1rem 1.2rem !important;border-top:1px solid rgba(0,0,0,.08) !important}'
 		. '}'

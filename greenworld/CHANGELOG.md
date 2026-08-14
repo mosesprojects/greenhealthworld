@@ -2,6 +2,13 @@
 
 All notable changes to this theme are documented here. Versioning: each release bumps the `Version` header in `style.css`.
 
+## v1.12.0 - Product image sized to the benchmark
+
+- The product image now renders large and column-filling, matching the reference store: the gallery column is about 47 percent wide and the image fills its width at its natural aspect ratio, instead of the smaller padded square used in v1.10-v1.11. Tall bottle photos in particular now read much bigger.
+- Products without an image keep the compact branded tile (gw-no-productimg body class), so imageless pages still avoid a large empty well.
+- Added tidy thumbnail styling for products that have more than one image.
+- CSS-only change; the has-image / no-image body classes from v1.10 do the switching. Version bump to 1.12.0.
+
 ## v1.11.0 - Product page: international (Tabarak-style) polish
 
 - Add-to-cart CTA restyled to the brand gold accent (was WooCommerce's default mauve), scoped to the single-product buy row with high specificity so it wins without !important. Quantity and CTA now sit on one aligned row; the green Order on WhatsApp button sits full-width below.

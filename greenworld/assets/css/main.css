@@ -713,3 +713,27 @@ ul.products li.product .onsale{display:none}
 	.single-product div.product form.cart .single_add_to_cart_button{flex:1 1 100%}
 }
 /* ===== end v1.11.0 product page polish ===== */
+/* ===== v1.12.0 product gallery sized to benchmark ===== */
+/* Product HAS an image: large, column-filling gallery (WooCommerce-default proportions, like the benchmark). */
+.single-product div.product{grid-template-columns:minmax(0,47%) minmax(0,1fr);gap:clamp(1.5rem,4vw,3rem)}
+.single-product div.product .woocommerce-product-gallery{position:sticky;top:96px;margin:0;align-self:start;background:#fff;border:1px solid var(--gw-line);border-radius:var(--gw-r-lg);padding:.6rem;box-shadow:0 8px 30px rgba(18,55,38,.06)}
+.single-product div.product .woocommerce-product-gallery__wrapper{margin:0}
+.single-product div.product .woocommerce-product-gallery__image{display:block;aspect-ratio:auto;min-height:0;overflow:hidden;border-radius:var(--gw-r)}
+.single-product div.product .woocommerce-product-gallery__image > a{display:block;width:100%;height:auto}
+.single-product div.product .woocommerce-product-gallery img{display:block;width:100%;height:auto;max-width:100%;max-height:none;margin:0;object-fit:contain}
+/* Tidy thumbnail row for products with multiple images. */
+.single-product .flex-control-thumbs{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0 0;padding:0;list-style:none}
+.single-product .flex-control-thumbs li{margin:0;width:64px}
+.single-product .flex-control-thumbs img{width:100%;height:auto;border:1px solid var(--gw-line);border-radius:var(--gw-r);cursor:pointer;opacity:.65;transition:opacity .18s var(--gw-ease),border-color .18s var(--gw-ease)}
+.single-product .flex-control-thumbs img.flex-active,.single-product .flex-control-thumbs img:hover{opacity:1;border-color:var(--gw-green)}
+/* Product has NO image: keep the compact branded tile, do not enlarge empty space. */
+.gw-no-productimg .single-product div.product{grid-template-columns:minmax(0,300px) minmax(0,1fr)}
+.gw-no-productimg .single-product div.product .woocommerce-product-gallery{background:linear-gradient(160deg,var(--gw-sage-soft),#fff);padding:1rem}
+.gw-no-productimg .single-product div.product .woocommerce-product-gallery__image{aspect-ratio:1 / 1;display:flex;align-items:center;justify-content:center;min-height:200px}
+.gw-no-productimg .single-product div.product .woocommerce-product-gallery img{width:auto;height:auto;max-width:100%;max-height:100%;opacity:.92}
+@media (max-width:860px){
+	.single-product div.product,.gw-no-productimg .single-product div.product{grid-template-columns:1fr}
+	.single-product div.product .woocommerce-product-gallery{position:static;top:auto}
+	.single-product div.product .woocommerce-product-gallery__image{aspect-ratio:auto}
+}
+/* ===== end v1.12.0 ===== */

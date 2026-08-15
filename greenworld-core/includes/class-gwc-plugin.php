@@ -21,6 +21,7 @@ final class GWC_Plugin {
 		GWC_Dashboard::instance()->boot();
 		GWC_Cases::instance()->boot();
 		GWC_Customer_360::instance()->boot();
+		GWC_Followup::instance()->boot();
 		GWC_Cart_Recovery::instance()->boot();
 
 		// Flush rewrite rules once per version so new endpoints (e.g. the
@@ -44,12 +45,14 @@ final class GWC_Plugin {
 		GWC_Distributor::instance()->add_endpoint();
 		GWC_Points::instance()->register_cpt();
 		GWC_Cart_Recovery::instance()->install();
+		GWC_Followup::instance()->schedule();
 		flush_rewrite_rules();
 		update_option( 'gwc_rewrite_version', GWC_VERSION );
 	}
 
 	public static function deactivate(): void {
 		wp_clear_scheduled_hook( GWC_Cart_Recovery::CRON_HOOK );
+		wp_clear_scheduled_hook( GWC_Followup::CRON_HOOK );
 		flush_rewrite_rules();
 	}
 }

@@ -71,6 +71,7 @@ final class GWC_Cart_Recovery {
         add_action( 'wp_ajax_gwc_cart_capture', array( $this, 'ajax_capture' ) );
         add_action( 'wp_ajax_nopriv_gwc_cart_capture', array( $this, 'ajax_capture' ) );
         add_action( 'wp_footer', array( $this, 'capture_script' ) );
+        add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'capture_from_store_api' ), 10, 2 );
 
         add_action( 'template_redirect', array( $this, 'handle_links' ) );
 
@@ -138,12 +139,39 @@ final class GWC_Cart_Recovery {
         $this->capture( (string) $user->user_email, (string) $user->display_name, (int) $user->ID );
     }
 
+    /**
+     * Capture from the block (Store API) checkout the moment the shopper's
+     * email is written to the draft order. Works with no JavaScript and
+     * covers the new WooCommerce block checkout.
+     */
+    public function capture_from_store_api( $order, $request ): void {
+        if ( ! $order || ! is_object( $order ) ) {
+            return;
+        }
+        $email = method_exists( $order, 'get_billing_email' ) ? (string) $order->get_billing_email() : '';
+        if ( ! is_email( $email ) ) {
+            return;
+        }
+        $name = '';
+        if ( method_exists( $order, 'get_billing_first_name' ) ) {
+            $name = trim( (string) $order->get_billing_first_name() . ' ' . (string) $order->get_billing_last_name() );
+        }
+        $uid = method_exists( $order, 'get_customer_id' ) ? (int) $order->get_customer_id() : 0;
+        $this->capture( $email, $name, $uid );
+    }
+
     public function ajax_capture(): void {
         $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
         if ( ! wp_verify_nonce( $nonce, 'gwc_cart' ) ) {
             wp_send_json_error( 'bad_nonce', 403 );
         }
         $email = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+        if ( ! is_email( $email ) && function_exists( 'WC' ) && WC()->customer ) {
+            $maybe = WC()->customer->get_billing_email();
+            if ( is_email( $maybe ) ) {
+                $email = $maybe;
+            }
+        }
         if ( ! is_email( $email ) ) {
             wp_send_json_error( 'bad_email', 200 );
         }
@@ -243,8 +271,12 @@ final class GWC_Cart_Recovery {
         (function(){
             var CR = { ajax: '<?php echo $ajax; ?>', nonce: '<?php echo $nonce; ?>' };
             var sent = '';
+            var timer = null;
+            function valid(v){
+                return v.indexOf( '@' ) > 0 && v.lastIndexOf( '.' ) > v.indexOf( '@' );
+            }
             function send(v){
-                if ( v === sent ) { return; }
+                if ( v === sent || ! valid( v ) ) { return; }
                 sent = v;
                 var d = new URLSearchParams();
                 d.append( 'action', 'gwc_cart_capture' );
@@ -254,13 +286,26 @@ final class GWC_Cart_Recovery {
                     fetch( CR.ajax, { method: 'POST', credentials: 'same-origin', body: d } );
                 }
             }
-            document.addEventListener( 'change', function( e ){
+            function isEmailField(t){
+                if ( ! t || t.tagName !== 'INPUT' ) { return false; }
+                if ( t.type === 'email' ) { return true; }
+                var id = ( t.id || '' ).toLowerCase();
+                var nm = ( t.name || '' ).toLowerCase();
+                return id === 'billing_email' || id === 'email' || id.indexOf( 'email' ) > -1 || nm.indexOf( 'email' ) > -1;
+            }
+            function fromEvent(e){
                 var t = e.target;
-                if ( t && t.id === 'billing_email' ) {
-                    var v = ( t.value || '' ).trim();
-                    if ( v.indexOf( '@' ) > 0 ) { send( v ); }
-                }
-            } );
+                if ( ! isEmailField( t ) ) { return; }
+                var v = ( t.value || '' ).trim();
+                if ( valid( v ) ) { send( v ); }
+            }
+            document.addEventListener( 'change', fromEvent, true );
+            document.addEventListener( 'focusout', fromEvent, true );
+            document.addEventListener( 'input', function( e ){
+                if ( ! isEmailField( e.target ) ) { return; }
+                if ( timer ) { clearTimeout( timer ); }
+                timer = setTimeout( function(){ fromEvent( e ); }, 900 );
+            }, true );
         })();
         </script>
         <?php

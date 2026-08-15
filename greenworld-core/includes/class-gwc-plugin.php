@@ -22,6 +22,7 @@ final class GWC_Plugin {
 		GWC_Cases::instance()->boot();
 		GWC_Customer_360::instance()->boot();
 		GWC_Followup::instance()->boot();
+		GWC_AI::instance()->boot();
 		GWC_Cart_Recovery::instance()->boot();
 
 		// Flush rewrite rules once per version so new endpoints (e.g. the

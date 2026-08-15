@@ -71,6 +71,7 @@ final class GWC_Cart_Recovery {
         add_action( 'wp_ajax_gwc_cart_capture', array( $this, 'ajax_capture' ) );
         add_action( 'wp_ajax_nopriv_gwc_cart_capture', array( $this, 'ajax_capture' ) );
         add_action( 'wp_footer', array( $this, 'capture_script' ) );
+        add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'capture_from_store_api' ), 10, 2 );
 
         add_action( 'template_redirect', array( $this, 'handle_links' ) );
 
@@ -80,6 +81,7 @@ final class GWC_Cart_Recovery {
 
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
+        add_action( 'admin_post_gwc_send_test', array( $this, 'handle_test_send' ) );
     }
 
     public function cron_schedule( $schedules ) {
@@ -137,12 +139,39 @@ final class GWC_Cart_Recovery {
         $this->capture( (string) $user->user_email, (string) $user->display_name, (int) $user->ID );
     }
 
+    /**
+     * Capture from the block (Store API) checkout the moment the shopper's
+     * email is written to the draft order. Works with no JavaScript and
+     * covers the new WooCommerce block checkout.
+     */
+    public function capture_from_store_api( $order, $request ): void {
+        if ( ! $order || ! is_object( $order ) ) {
+            return;
+        }
+        $email = method_exists( $order, 'get_billing_email' ) ? (string) $order->get_billing_email() : '';
+        if ( ! is_email( $email ) ) {
+            return;
+        }
+        $name = '';
+        if ( method_exists( $order, 'get_billing_first_name' ) ) {
+            $name = trim( (string) $order->get_billing_first_name() . ' ' . (string) $order->get_billing_last_name() );
+        }
+        $uid = method_exists( $order, 'get_customer_id' ) ? (int) $order->get_customer_id() : 0;
+        $this->capture( $email, $name, $uid );
+    }
+
     public function ajax_capture(): void {
         $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
         if ( ! wp_verify_nonce( $nonce, 'gwc_cart' ) ) {
             wp_send_json_error( 'bad_nonce', 403 );
         }
         $email = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+        if ( ! is_email( $email ) && function_exists( 'WC' ) && WC()->customer ) {
+            $maybe = WC()->customer->get_billing_email();
+            if ( is_email( $maybe ) ) {
+                $email = $maybe;
+            }
+        }
         if ( ! is_email( $email ) ) {
             wp_send_json_error( 'bad_email', 200 );
         }
@@ -242,8 +271,12 @@ final class GWC_Cart_Recovery {
         (function(){
             var CR = { ajax: '<?php echo $ajax; ?>', nonce: '<?php echo $nonce; ?>' };
             var sent = '';
+            var timer = null;
+            function valid(v){
+                return v.indexOf( '@' ) > 0 && v.lastIndexOf( '.' ) > v.indexOf( '@' );
+            }
             function send(v){
-                if ( v === sent ) { return; }
+                if ( v === sent || ! valid( v ) ) { return; }
                 sent = v;
                 var d = new URLSearchParams();
                 d.append( 'action', 'gwc_cart_capture' );
@@ -253,13 +286,26 @@ final class GWC_Cart_Recovery {
                     fetch( CR.ajax, { method: 'POST', credentials: 'same-origin', body: d } );
                 }
             }
-            document.addEventListener( 'change', function( e ){
+            function isEmailField(t){
+                if ( ! t || t.tagName !== 'INPUT' ) { return false; }
+                if ( t.type === 'email' ) { return true; }
+                var id = ( t.id || '' ).toLowerCase();
+                var nm = ( t.name || '' ).toLowerCase();
+                return id === 'billing_email' || id === 'email' || id.indexOf( 'email' ) > -1 || nm.indexOf( 'email' ) > -1;
+            }
+            function fromEvent(e){
                 var t = e.target;
-                if ( t && t.id === 'billing_email' ) {
-                    var v = ( t.value || '' ).trim();
-                    if ( v.indexOf( '@' ) > 0 ) { send( v ); }
-                }
-            } );
+                if ( ! isEmailField( t ) ) { return; }
+                var v = ( t.value || '' ).trim();
+                if ( valid( v ) ) { send( v ); }
+            }
+            document.addEventListener( 'change', fromEvent, true );
+            document.addEventListener( 'focusout', fromEvent, true );
+            document.addEventListener( 'input', function( e ){
+                if ( ! isEmailField( e.target ) ) { return; }
+                if ( timer ) { clearTimeout( timer ); }
+                timer = setTimeout( function(){ fromEvent( e ); }, 900 );
+            }, true );
         })();
         </script>
         <?php
@@ -510,6 +556,69 @@ final class GWC_Cart_Recovery {
         return $html;
     }
 
+    public function handle_test_send(): void {
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_die( esc_html__( 'You are not allowed to do this.', 'greenworld-core' ) );
+        }
+        check_admin_referer( 'gwc_send_test' );
+
+        $to = isset( $_POST['test_email'] ) ? sanitize_email( wp_unslash( $_POST['test_email'] ) ) : '';
+        if ( ! is_email( $to ) ) {
+            $to = get_option( 'admin_email' );
+        }
+        $stage = isset( $_POST['test_stage'] ) ? (int) $_POST['test_stage'] : 1;
+        if ( $stage < 1 || $stage > 3 ) {
+            $stage = 1;
+        }
+
+        global $wpdb;
+        $table = $this->table();
+        $row   = $wpdb->get_row( "SELECT * FROM {$table} ORDER BY updated_at DESC LIMIT 1" );
+        if ( ! $row ) {
+            $row = (object) array(
+                'email'        => $to,
+                'name'         => '',
+                'cart'         => wp_json_encode( $this->sample_items() ),
+                'subtotal'     => 0,
+                'currency'     => function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : '',
+                'token'        => 'test-' . wp_generate_password( 12, false, false ),
+                'status'       => 'pending',
+                'mailed_stage' => 0,
+            );
+        }
+        // Deliver the preview to the chosen address regardless of who the row belongs to.
+        $row->email = $to;
+
+        $ok = $this->send_stage( $row, $stage, $this->settings() );
+
+        wp_safe_redirect(
+            add_query_arg(
+                array( 'page' => 'gwc-cart-recovery', 'gwc_test' => $ok ? '1' : '0' ),
+                admin_url( 'admin.php' )
+            )
+        );
+        exit;
+    }
+
+    private function sample_items(): array {
+        $items = array();
+        if ( function_exists( 'wc_get_products' ) ) {
+            $products = wc_get_products( array( 'status' => 'publish', 'limit' => 2 ) );
+            foreach ( $products as $p ) {
+                $items[] = array(
+                    'id'    => $p->get_id(),
+                    'qty'   => 1,
+                    'name'  => $p->get_name(),
+                    'price' => (float) $p->get_price(),
+                );
+            }
+        }
+        if ( empty( $items ) ) {
+            $items[] = array( 'id' => 0, 'qty' => 1, 'name' => 'Sample wellness product', 'price' => 0 );
+        }
+        return $items;
+    }
+
     public function admin_menu(): void {
         add_submenu_page(
             'woocommerce',
@@ -551,10 +660,14 @@ final class GWC_Cart_Recovery {
         $pending   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'pending'" );
         $next_cron = wp_next_scheduled( self::CRON_HOOK );
         $next_txt  = $next_cron ? get_date_from_gmt( gmdate( 'Y-m-d H:i:s', (int) $next_cron ), 'Y-m-d H:i' ) : 'not scheduled';
+        $test_flag = isset( $_GET['gwc_test'] ) ? sanitize_text_field( wp_unslash( $_GET['gwc_test'] ) ) : '';
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Abandoned Cart Recovery', 'greenworld-core' ); ?></h1>
             <p><?php echo esc_html( sprintf( 'Pending carts: %d. Next scheduled run: %s.', $pending, $next_txt ) ); ?></p>
+            <?php if ( '' !== $test_flag ) : ?>
+                <div class="notice notice-<?php echo ( '1' === $test_flag ) ? 'success' : 'error'; ?> is-dismissible"><p><?php echo esc_html( ( '1' === $test_flag ) ? 'Test email handed to the mailer. Check the inbox.' : 'Test email could not be sent. Check your SMTP setup.' ); ?></p></div>
+            <?php endif; ?>
             <form method="post" action="options.php">
                 <?php settings_fields( 'gwc_cart_recovery_group' ); ?>
                 <table class="form-table" role="presentation">
@@ -592,6 +705,30 @@ final class GWC_Cart_Recovery {
                     </tr>
                 </table>
                 <?php submit_button(); ?>
+            </form>
+
+            <h2><?php esc_html_e( 'Send a test email', 'greenworld-core' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Sends a real, immediate copy of the chosen stage (using the latest captured cart, or a sample) so you can confirm delivery and design. This bypasses the timing delays.', 'greenworld-core' ); ?></p>
+            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                <input type="hidden" name="action" value="gwc_send_test" />
+                <?php wp_nonce_field( 'gwc_send_test' ); ?>
+                <table class="form-table" role="presentation">
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Send to', 'greenworld-core' ); ?></th>
+                        <td><input type="email" name="test_email" value="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Which email', 'greenworld-core' ); ?></th>
+                        <td>
+                            <select name="test_stage">
+                                <option value="1"><?php esc_html_e( 'Email 1 - reminder', 'greenworld-core' ); ?></option>
+                                <option value="2"><?php esc_html_e( 'Email 2 - nudge + discount', 'greenworld-core' ); ?></option>
+                                <option value="3"><?php esc_html_e( 'Email 3 - last chance', 'greenworld-core' ); ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button( __( 'Send test email', 'greenworld-core' ), 'secondary' ); ?>
             </form>
 
             <h2><?php esc_html_e( 'Recent captured carts', 'greenworld-core' ); ?></h2>

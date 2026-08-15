@@ -967,6 +967,8 @@ final class GWC_AI {
 </div>
 <style>
 .gwc-ai{position:fixed;right:18px;bottom:18px;z-index:99999;font-family:inherit}
+/* Make the hidden attribute win over the panel's display:flex so it can actually minimize. */
+.gwc-ai [hidden]{display:none !important}
 .gwc-ai__launch{background:#1f7a3d;color:#fff;border:0;border-radius:24px;padding:12px 18px;font-size:15px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2)}
 .gwc-ai__panel{width:340px;max-width:92vw;height:520px;max-height:80vh;background:#fff;border:1px solid #d8e0d8;border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .gwc-ai__head{background:#1f7a3d;color:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}

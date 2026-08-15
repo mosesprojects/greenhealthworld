@@ -43,7 +43,6 @@ final class WooCommerce implements Bootable {
 		add_filter( 'body_class', [ $this, 'product_body_class' ] );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'availability' ], 15 );
 		add_action( 'woocommerce_single_product_summary', [ $this, 'sale_savings' ], 11 );
-		add_action( 'woocommerce_single_product_summary', [ $this, 'brand_line' ], 41 );
 		// v1.14.0: restore horizontal tabs (default), related products four-up, and a Recently viewed carousel.
 		add_filter( 'woocommerce_output_related_products_args', [ $this, 'related_args' ] );
 		add_action( 'template_redirect', [ $this, 'track_view' ], 20 );
@@ -383,14 +382,6 @@ final class WooCommerce implements Bootable {
 				echo '<p class="gw-save"><span class="gw-save__pct">-' . esc_html( (string) $pct ) . '%</span><span class="gw-save__amt">' . wp_kses_post( sprintf( __( 'You save %s', 'greenworld' ), $save ) ) . '</span></p>';
 			}
 		}
-	}
-
-	/**
-	 * "Brand: Green World" line placed next to the product meta, matching the
-	 * SKU / Category / Brand line used by international electronics stores.
-	 */
-	public function brand_line(): void {
-		echo '<p class="gw-brandline">' . esc_html__( 'Brand:', 'greenworld' ) . ' <strong>' . esc_html__( 'Green World', 'greenworld' ) . '</strong></p>';
 	}
 
 	/**

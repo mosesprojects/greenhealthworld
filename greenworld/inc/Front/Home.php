@@ -444,7 +444,7 @@ final class Home {
 	public static function full_body_scan(): void {
 		if ( '1' !== (string) get_theme_mod( 'gw_scan_enable', '1' ) ) { return; }
 		$title = (string) get_theme_mod( 'gw_scan_title', __( 'Computerized Full Body Health Scan', 'greenworld' ) );
-		$price = (string) get_theme_mod( 'gw_scan_price', __( 'KSh 1,500', 'greenworld' ) );
+		$price = (string) get_theme_mod( 'gw_scan_price', __( 'KSh 2,000', 'greenworld' ) );
 		$desc  = (string) get_theme_mod( 'gw_scan_desc', __( 'Book a quick, non-invasive computerized full body scan and get a clear picture of your wellbeing. Walk in or reserve a time ahead.', 'greenworld' ) );
 		$phone = preg_replace( '/[^0-9]/', '', (string) get_theme_mod( 'gw_whatsapp', '254723579873' ) );
 		$wa    = 'https://wa.me/' . $phone . '?text=' . rawurlencode( sprintf( 'Hello Green World Health Solutions, I would like to book a Computerized Full Body Scan (%s).', $price ) );

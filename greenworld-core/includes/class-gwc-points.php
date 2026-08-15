@@ -200,6 +200,16 @@ final class GWC_Points {
 		}
 
 		self::recompute_balance( $uid );
+
+		/**
+		 * Fires after a point batch is posted for a distributor.
+		 *
+		 * @param int $uid     Distributor user ID.
+		 * @param int $post_id Batch post ID.
+		 * @param int $total   Points awarded in this batch.
+		 */
+		do_action( 'gwc_points_batch_added', $uid, (int) $post_id, (int) $total );
+
 		return (int) $post_id;
 	}
 

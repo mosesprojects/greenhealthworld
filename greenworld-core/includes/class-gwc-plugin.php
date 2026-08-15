@@ -49,6 +49,9 @@ final class GWC_Plugin {
 		GWC_Points::instance()->register_cpt();
 		GWC_Cart_Recovery::instance()->install();
 		GWC_Followup::instance()->schedule();
+		if ( class_exists( 'GWC_Ranks' ) ) {
+			GWC_Ranks::instance()->seed_baselines();
+		}
 		flush_rewrite_rules();
 		update_option( 'gwc_rewrite_version', GWC_VERSION );
 	}

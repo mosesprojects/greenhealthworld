@@ -3,7 +3,7 @@
    ============================================================ */
 
 /* ---------- Trust Center page ---------- */
-.gw-trust{padding:2.5rem 0 3.5rem;}
+.gw-trust{padding:2.5rem var(--gw-pad,16px) 3.5rem;}
 .gw-trust__intro{max-width:760px;margin:0 auto 1.75rem;text-align:center;}
 .gw-trust__intro .gw-eyebrow{color:var(--gw-gold,#C8A15A);}
 .gw-trust__intro h1{font-size:clamp(2rem,4vw,2.9rem);margin:.4rem 0 .6rem;color:var(--gw-ink,#0B3F2E);}

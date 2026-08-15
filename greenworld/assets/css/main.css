@@ -196,7 +196,7 @@ body.gw-nav-open .gw-nav-scrim{opacity:1}
 .woocommerce ul.products li.product a img,ul.products li.product img{margin:0;border-radius:0;aspect-ratio:1/1;object-fit:cover;background:#fff;transition:transform .4s var(--gw-ease)}
 .woocommerce ul.products li.product:hover img{transform:scale(1.04)}
 .woocommerce ul.products li.product .woocommerce-loop-product__link{display:block;padding:0}
-.woocommerce ul.products li.product .woocommerce-loop-product__title,ul.products li.product h2{font-family:var(--gw-sans)!important;font-size:.95rem!important;font-weight:600;color:var(--gw-ink)!important;padding:.2rem 1rem 0!important;line-height:1.35;min-height:2.5em}
+.woocommerce ul.products li.product .woocommerce-loop-product__title,ul.products li.product h2{font-family:var(--gw-sans)!important;font-size:.95rem!important;font-weight:600;color:var(--gw-ink)!important;padding:.2rem 1rem 0!important;line-height:1.35;min-height:2.7em;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:break-word;word-break:break-word}
 .woocommerce ul.products li.product .price{padding:.2rem 1rem;color:var(--gw-green)!important;font-weight:700;font-size:1.02rem;font-family:var(--gw-sans)}
 .woocommerce ul.products li.product .price del{color:var(--gw-text-muted);font-weight:400;font-size:.85em;opacity:.8}
 .woocommerce ul.products li.product .price ins{text-decoration:none}
@@ -486,7 +486,7 @@ body.gw-nav-open .gw-nav-scrim{opacity:1}
   .gw-cats__grid{grid-template-columns:repeat(2,1fr)}
   .gw-collections__grid{grid-template-columns:1fr}
   .woocommerce ul.products,ul.products{grid-template-columns:repeat(2,1fr);gap:.8rem}
-  .woocommerce ul.products li.product .woocommerce-loop-product__title,ul.products li.product h2{font-size:.85rem!important;min-height:2.4em}
+  .woocommerce ul.products li.product .woocommerce-loop-product__title,ul.products li.product h2{font-size:.85rem!important;min-height:2.7em}
   .gw-consult__row{grid-template-columns:1fr}
   .gw-why__grid{grid-template-columns:1fr}
   .gw-footer__cols{grid-template-columns:1fr}

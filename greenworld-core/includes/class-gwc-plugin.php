@@ -17,6 +17,7 @@ final class GWC_Plugin {
 		GWC_Account::instance()->boot();
 		GWC_Distributor::instance()->boot();
 		GWC_Points::instance()->boot();
+		GWC_Cart_Recovery::instance()->boot();
 
 		// Flush rewrite rules once per version so new endpoints (e.g. the
 		// "My Health" account tab) work after a plugin update without the
@@ -37,11 +38,13 @@ final class GWC_Plugin {
 		GWC_Account::instance()->add_endpoint();
 		GWC_Distributor::instance()->add_endpoint();
 		GWC_Points::instance()->register_cpt();
+		GWC_Cart_Recovery::instance()->install();
 		flush_rewrite_rules();
 		update_option( 'gwc_rewrite_version', GWC_VERSION );
 	}
 
 	public static function deactivate(): void {
+		wp_clear_scheduled_hook( GWC_Cart_Recovery::CRON_HOOK );
 		flush_rewrite_rules();
 	}
 }

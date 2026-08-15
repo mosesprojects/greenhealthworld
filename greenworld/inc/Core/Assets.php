@@ -17,11 +17,17 @@ final class Assets implements Bootable {
 
 	public function front(): void {
 		$ver = GREENWORLD_VERSION;
+		// Auto cache-bust: append each asset's file modification time so any
+		// edit to the CSS/JS changes the version query string automatically.
+		$css_file = get_parent_theme_file_path( 'assets/css/main.css' );
+		$js_file  = get_parent_theme_file_path( 'assets/js/app.js' );
+		$css_ver  = file_exists( $css_file ) ? $ver . '.' . (string) filemtime( $css_file ) : $ver;
+		$js_ver   = file_exists( $js_file ) ? $ver . '.' . (string) filemtime( $js_file ) : $ver;
 
-		wp_enqueue_style( 'greenworld-main', GREENWORLD_URI . 'assets/css/main.css', [], $ver );
+		wp_enqueue_style( 'greenworld-main', GREENWORLD_URI . 'assets/css/main.css', [], $css_ver );
 		wp_style_add_data( 'greenworld-main', 'rtl', 'replace' );
 
-		wp_enqueue_script( 'greenworld-app', GREENWORLD_URI . 'assets/js/app.js', [], $ver, true );
+		wp_enqueue_script( 'greenworld-app', GREENWORLD_URI . 'assets/js/app.js', [], $js_ver, true );
 		wp_localize_script(
 			'greenworld-app',
 			'GreenWorld',

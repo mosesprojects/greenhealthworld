@@ -20,7 +20,7 @@ add_action(
 			'greenworld-child',
 			get_stylesheet_directory_uri() . '/style.css',
 			array( 'greenworld-main' ),
-			wp_get_theme()->get( 'Version' )
+			( file_exists( get_stylesheet_directory() . '/style.css' ) ? (string) filemtime( get_stylesheet_directory() . '/style.css' ) : (string) wp_get_theme()->get( 'Version' ) )
 		);
 	},
 	30

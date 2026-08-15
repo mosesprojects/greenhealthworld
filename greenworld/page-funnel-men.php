@@ -152,6 +152,11 @@ get_header();
 	.gwf-proof blockquote p{font-size:1rem;line-height:1.62;color:#eef4ef;margin:0;}
 	.gwf-proof cite{display:block;margin-top:.9rem;color:#C9A96A;font-style:normal;font-weight:700;font-size:.9rem;}
 	.gwf-proof__badges{text-align:center;margin-top:2.2rem;color:#bcd2c2;font-weight:600;letter-spacing:.02em;}
+		.gwf-proof__stats{list-style:none;padding:0;margin:0 auto 1.8rem;max-width:840px;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center;}
+		.gwf-proof__stats li{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:1.1rem .6rem;}
+		.gwf-proof__stats strong{display:block;color:#ffffff;font-size:1.5rem;font-weight:800;line-height:1.1;}
+		.gwf-proof__stats span{display:block;margin-top:.35rem;color:#c6dccb;font-size:.82rem;line-height:1.35;}
+		@media(max-width:640px){.gwf-proof__stats{grid-template-columns:repeat(2,1fr);}}
 
 	.gwf-faq{padding:5.2rem 0;background:#f6f7f5;}
 	.gwf-faq h2{text-align:center;font-size:clamp(1.6rem,3.4vw,2.3rem);color:#123726;margin:0 0 1.8rem;}
@@ -263,15 +268,15 @@ get_header();
 		</div>
 	</section>
 
-	<section class="gwf-proof">
+		<section class="gwf-proof">
 		<div class="gw-container">
-			<h2>Men across Kenya are getting their confidence back</h2>
-			<!-- GREEN WORLD: these are sample quotes for layout. Replace them with real, consented customer reviews before relying on them. -->
-			<div class="gwf-proof__grid">
-				<blockquote><p>&ldquo;I had struggled quietly for a long time. A few weeks into the plan I felt like a different man &mdash; more energy and far more confidence. Delivery was completely discreet.&rdquo;</p><cite>&mdash; J. M., Nairobi</cite></blockquote>
-				<blockquote><p>&ldquo;We had almost given up on having a child. The fertility package gave us hope again and the team guided us kindly the whole way.&rdquo;</p><cite>&mdash; P. &amp; W., Nakuru</cite></blockquote>
-				<blockquote><p>&ldquo;The prostate combo helped me sleep through the night without waking for the bathroom. Easy to order and it arrived fast.&rdquo;</p><cite>&mdash; S. O., Mombasa</cite></blockquote>
-			</div>
+			<h2>Why men across Kenya choose Green World</h2>
+			<ul class="gwf-proof__stats">
+				<li><strong>30+</strong><span>years of botanical science</span></li>
+				<li><strong>40+</strong><span>countries worldwide</span></li>
+				<li><strong>100%</strong><span>natural formulas</span></li>
+				<li><strong>Discreet</strong><span>plain-packaging delivery</span></li>
+			</ul>
 			<div class="gwf-proof__badges">Genuine products &nbsp;&bull;&nbsp; Discreet packaging &nbsp;&bull;&nbsp; Free consultation &nbsp;&bull;&nbsp; Countrywide delivery</div>
 		</div>
 	</section>

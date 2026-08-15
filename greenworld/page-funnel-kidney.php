@@ -47,11 +47,6 @@ gwf_render_funnel(
 			),
 		),
 		'proof_title'     => 'Trusted by families across Kenya',
-		'testimonials'    => array(
-			array( 'I used to wake several times a night. After a few weeks I finally sleep through - such a relief.', '- D. O., Nakuru' ),
-			array( 'The team explained everything kindly and delivery was fast and discreet. My energy is back.', '- S. M., Nairobi' ),
-			array( 'Simple to order, genuine products, and real support along the way. Highly recommend.', '- J. K., Eldoret' ),
-		),
 		'faqs'            => array(
 			array( 'Is it safe to use?', 'Green World products are natural, plant-based supplements used in over 40 countries and are generally well tolerated. If you have a kidney condition or take medication, please check with your doctor first.' ),
 			array( 'Are there side effects?', 'Because the formulas are natural, most people tolerate them well when used as directed. Follow the recommended usage and stop if you notice any reaction.' ),

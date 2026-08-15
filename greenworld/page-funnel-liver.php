@@ -47,11 +47,6 @@ gwf_render_funnel(
 			),
 		),
 		'proof_title'     => 'People across Kenya are feeling refreshed',
-		'testimonials'    => array(
-			array( 'After the detox I felt lighter and my skin cleared up. I have so much more energy now.', '- L. W., Nairobi' ),
-			array( 'Bloating that bothered me for years finally eased. Gentle and easy to follow.', '- B. A., Thika' ),
-			array( 'Genuine products and helpful guidance. I feel refreshed and renewed.', '- C. M., Kisii' ),
-		),
 		'faqs'            => array(
 			array( 'Is it safe to use?', 'Green World products are natural, plant-based supplements used in over 40 countries and are generally well tolerated. If you have a medical condition or take medication, please check with your doctor first.' ),
 			array( 'Are there side effects?', 'Because the formulas are natural, most people tolerate them well when used as directed. Follow the recommended usage and stop if you notice any reaction.' ),

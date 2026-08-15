@@ -212,7 +212,7 @@ final class Home {
 			}
 			if ( is_wp_error( $link ) ) { $link = $shop; }
 			if ( $img !== '' ) {
-				$imgtag = '<img class="gw-cat-card__img" src="' . esc_url( $img ) . '" alt="' . esc_attr( $name ) . '" loading="lazy" decoding="async" />';
+				$imgtag = '<img class="gw-cat-card__img" src="' . esc_url( $img ) . '" alt="' . esc_attr( $name ) . '" width="400" height="400" loading="lazy" decoding="async" />';
 				$media  = ( $webp !== '' )
 					? '<picture><source type="image/webp" srcset="' . esc_url( $webp ) . '" />' . $imgtag . '</picture>'
 					: $imgtag;

@@ -158,7 +158,6 @@ if ( ! function_exists( 'gwf_render_funnel' ) ) {
 		);
 
 		$proof_title  = isset( $c['proof_title'] ) ? $c['proof_title'] : 'Trusted by families across Kenya';
-		$testimonials = isset( $c['testimonials'] ) ? (array) $c['testimonials'] : array();
 
 		$faqs = isset( $c['faqs'] ) ? (array) $c['faqs'] : array();
 
@@ -259,6 +258,11 @@ if ( ! function_exists( 'gwf_render_funnel' ) ) {
 		.gwf-proof blockquote p{font-size:1rem;line-height:1.62;color:#eef4ef;margin:0;}
 		.gwf-proof cite{display:block;margin-top:.9rem;color:var(--gwf-gold);font-style:normal;font-weight:700;font-size:.9rem;}
 		.gwf-proof__badges{text-align:center;margin-top:2.2rem;color:#c6dccb;font-weight:600;letter-spacing:.02em;}
+		.gwf-proof__stats{list-style:none;padding:0;margin:0 auto 1.8rem;max-width:840px;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;text-align:center;}
+		.gwf-proof__stats li{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:1.1rem .6rem;}
+		.gwf-proof__stats strong{display:block;color:#ffffff;font-size:1.5rem;font-weight:800;line-height:1.1;}
+		.gwf-proof__stats span{display:block;margin-top:.35rem;color:#c6dccb;font-size:.82rem;line-height:1.35;}
+		@media(max-width:640px){.gwf-proof__stats{grid-template-columns:repeat(2,1fr);}}
 
 		.gwf-faq{padding:5.2rem 0;background:#f6f7f5;}
 		.gwf-faq h2{text-align:center;font-size:clamp(1.6rem,3.4vw,2.3rem);color:var(--gwf-accent-dark);margin:0 0 1.8rem;}
@@ -396,20 +400,18 @@ if ( ! function_exists( 'gwf_render_funnel' ) ) {
 			</div>
 		</section>
 
-		<?php if ( $testimonials ) : ?>
-		<section class="gwf-proof">
+				<section class="gwf-proof">
 			<div class="gw-container">
 				<h2><?php echo wp_kses_post( $proof_title ); ?></h2>
-				<!-- GREEN WORLD: these are sample quotes for layout. Replace them with real, consented customer reviews before relying on them. -->
-				<div class="gwf-proof__grid">
-					<?php foreach ( $testimonials as $q ) : ?>
-						<blockquote><p><?php echo esc_html( $q[0] ); ?></p><cite><?php echo esc_html( $q[1] ); ?></cite></blockquote>
-					<?php endforeach; ?>
-				</div>
+				<ul class="gwf-proof__stats">
+					<li><strong>30+</strong><span>years of botanical science</span></li>
+					<li><strong>40+</strong><span>countries worldwide</span></li>
+					<li><strong>100%</strong><span>natural formulas</span></li>
+					<li><strong>Countrywide</strong><span>discreet delivery</span></li>
+				</ul>
 				<div class="gwf-proof__badges">Genuine products &nbsp;&bull;&nbsp; Discreet packaging &nbsp;&bull;&nbsp; Free consultation &nbsp;&bull;&nbsp; Countrywide delivery</div>
 			</div>
 		</section>
-		<?php endif; ?>
 
 		<?php if ( $faqs ) : ?>
 		<section class="gwf-faq">

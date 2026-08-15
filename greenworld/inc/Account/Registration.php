@@ -57,6 +57,7 @@ final class Registration implements Bootable {
 		wp_nonce_field( 'gw_register', 'gw_register_nonce' );
 		// Honeypot: hidden from real users; bots that fill it are rejected in validate().
 		echo '<div class="gw-reg-hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"><label>Leave this field empty <input type="text" name="gw_hp" tabindex="-1" autocomplete="off" value="" /></label></div>';
+		echo '<input type="hidden" name="gw_rt" value="' . esc_attr( (string) time() ) . '" />';
 		echo '<div class="gw-reg-type" role="radiogroup" aria-label="' . esc_attr__( 'Register as', 'greenworld' ) . '">';
 		echo '<span class="gw-reg-type__label">' . esc_html__( 'I want to register as', 'greenworld' ) . '</span>';
 		echo '<label class="gw-reg-type__opt"><input type="radio" name="gw_account_type" value="customer" ' . checked( $type, 'customer', false ) . ' /><span><strong>' . esc_html__( 'Customer', 'greenworld' ) . '</strong><small>' . esc_html__( 'Shop products for yourself and your family.', 'greenworld' ) . '</small></span></label>';
@@ -89,6 +90,18 @@ final class Registration implements Bootable {
 			$errors->add( 'gw_hp_error', __( 'Your submission could not be processed. Please try again.', 'greenworld' ) );
 			return;
 		}
+		$rt = isset( $_POST['gw_rt'] ) ? (int) $_POST['gw_rt'] : 0;
+		if ( $rt > 0 && ( time() - $rt ) < 4 ) {
+			$errors->add( 'gw_rt_error', __( 'Your submission came through too fast. Please try again.', 'greenworld' ) );
+			return;
+		}
+		$rl_key = 'gw_reg_rl_' . md5( isset( $_SERVER['REMOTE_ADDR'] ) ? (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '0' );
+		$rl     = (int) get_transient( $rl_key );
+		if ( $rl >= 10 ) {
+			$errors->add( 'gw_rl_error', __( 'Too many sign-up attempts from your connection. Please wait a while and try again.', 'greenworld' ) );
+			return;
+		}
+		set_transient( $rl_key, $rl + 1, HOUR_IN_SECONDS );
 		if ( empty( $_POST['gw_phone'] ) ) {
 			$errors->add( 'gw_phone_error', __( 'Please enter a phone number so we can reach you about your order or application.', 'greenworld' ) );
 		}

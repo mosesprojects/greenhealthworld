@@ -47,11 +47,6 @@ gwf_render_funnel(
 			),
 		),
 		'proof_title'     => 'Real, lasting results across Kenya',
-		'testimonials'    => array(
-			array( 'I lost weight steadily without feeling starved, and it has stayed off. I feel confident again.', '- F. M., Nairobi' ),
-			array( 'My cravings finally calmed down and my energy went up. Simple and natural.', '- E. K., Kitengela' ),
-			array( 'Great guidance and genuine products. The results speak for themselves.', '- V. A., Mombasa' ),
-		),
 		'faqs'            => array(
 			array( 'Is it safe?', 'Green World products are natural, plant-based supplements used in over 40 countries and are generally well tolerated. If you have a medical condition or take medication, please check with your doctor first.' ),
 			array( 'Will I gain the weight back?', 'Our approach supports your metabolism and appetite so results can last. We also guide you on simple habits to maintain your progress.' ),

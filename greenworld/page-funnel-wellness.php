@@ -47,11 +47,6 @@ gwf_render_funnel(
 			),
 		),
 		'proof_title'     => 'Families across Kenya trust Green World',
-		'testimonials'    => array(
-			array( 'Since we started, the whole family has more energy and we fall sick far less often.', '- G. N., Nairobi' ),
-			array( 'I finally found supplements I trust. Genuine quality and helpful advice.', '- P. O., Machakos' ),
-			array( 'Easy to order, fast discreet delivery, and real results. Highly recommend.', '- T. W., Nyeri' ),
-		),
 		'faqs'            => array(
 			array( 'Are these safe for daily use?', 'Green World products are natural, plant-based supplements used in over 40 countries and are generally well tolerated for daily use. If you have a medical condition or take medication, please check with your doctor first.' ),
 			array( 'Can the whole family use them?', 'Many of our supplements suit adults and older children. Message us on WhatsApp and we will recommend what is right for each member of your family.' ),

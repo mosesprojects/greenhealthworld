@@ -68,6 +68,16 @@ final class Consultation implements Bootable {
 		if ( $ts > 0 && ( time() - $ts ) < 3 ) {
 			wp_send_json_error( array( 'message' => __( 'Please take a moment to complete the form, then try again.', 'greenworld' ) ), 429 );
 		}
+		$hp = isset( $_POST['gw_hp'] ) ? trim( (string) wp_unslash( $_POST['gw_hp'] ) ) : '';
+		if ( strlen( $hp ) > 0 ) {
+			wp_send_json_error( array( 'message' => __( 'Your submission could not be processed. Please try again.', 'greenworld' ) ), 422 );
+		}
+		$rl_key = 'gw_consult_rl_' . md5( isset( $_SERVER['REMOTE_ADDR'] ) ? (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '0' );
+		$rl     = (int) get_transient( $rl_key );
+		if ( $rl >= 8 ) {
+			wp_send_json_error( array( 'message' => __( 'Too many requests from your connection. Please wait a few minutes and try again.', 'greenworld' ) ), 429 );
+		}
+		set_transient( $rl_key, $rl + 1, 10 * MINUTE_IN_SECONDS );
 		if ( empty( $_POST['consent'] ) ) {
 			wp_send_json_error( array( 'message' => __( 'Please tick the consent box so we can respond to you.', 'greenworld' ) ), 422 );
 		}
@@ -158,6 +168,7 @@ final class Consultation implements Bootable {
 					<label>Leave this field empty <input type="text" name="gw_website" tabindex="-1" autocomplete="off" value="" /></label>
 				</div>
 				<input type="hidden" name="gw_ts" value="<?php echo esc_attr( (string) time() ); ?>" />
+				<input type="text" name="gw_hp" tabindex="-1" autocomplete="off" value="" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" />
 
 				<div class="gw-consult__group">
 					<h3 class="gw-consult__legend"><span class="gw-consult__step">1</span><?php esc_html_e( 'Your details', 'greenworld' ); ?></h3>

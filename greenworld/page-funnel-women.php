@@ -67,11 +67,6 @@ gwf_render_funnel(
 			),
 		),
 		'proof_title'     => 'Women across Kenya are feeling well again',
-		'testimonials'    => array(
-			array( 'After years of trying, the fertility package gave us hope again - the team guided me so kindly the whole way.', '- A. W., Nairobi' ),
-			array( 'My periods used to leave me in bed. Within two cycles the pain eased and I finally felt like myself.', '- M. K., Kisumu' ),
-			array( 'The menopause pack really helped with the hot flushes and my moods. Discreet delivery and easy to order.', '- R. N., Mombasa' ),
-		),
 		'faqs'            => array(
 			array( 'Is it safe to use?', 'Green World products are natural, plant-based supplements used in over 40 countries and are generally well tolerated. If you are pregnant, breastfeeding, have a medical condition or take medication, please check with your doctor first.' ),
 			array( 'Can I use these while trying to conceive?', 'Many of our fertility packages are designed to support conception. For personal guidance, message us on WhatsApp for a free, confidential recommendation.' ),

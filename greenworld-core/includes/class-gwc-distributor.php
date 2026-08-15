@@ -187,6 +187,7 @@ final class GWC_Distributor {
 		$this->section_status( $uid, $status );
 		$this->section_profile( $uid );
 		if ( 'active' === $status ) {
+			do_action( 'gwc_distributor_dashboard_active', $uid );
 			$this->section_referral( $uid );
 			$this->section_points( $uid );
 		}

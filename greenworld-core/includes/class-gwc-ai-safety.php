@@ -224,7 +224,7 @@ final class GWC_AI_Safety {
 
 	/** Safe, non-diagnostic holding reply for YELLOW. */
 	public static function yellow_reply(): string {
-		return __( 'Thank you for sharing that. Because your question involves your personal health circumstances, it would not be safe for me to give a specific recommendation - that needs a qualified Green World Health advisor. I have logged your question and an advisor will follow up with you personally. If this is urgent, please contact your nearest health facility.', 'greenworld-core' );
+		return __( 'Thank you so much for reaching out, and for trusting us with something this personal. Because your question is about your own health, I would not want to give a general answer that might not be right for you - you deserve guidance made for your situation. I have shared your question with a qualified Green World Health advisor, who will personally follow up with you very soon. If it feels urgent, please reach out to your nearest health facility right away - your wellbeing comes first, and we are here for you.', 'greenworld-core' );
 	}
 
 	/** Safe urgent-care reply for RED. */

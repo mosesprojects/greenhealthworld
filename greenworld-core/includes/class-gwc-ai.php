@@ -986,6 +986,11 @@ final class GWC_AI {
 .gwc-ai__hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .gwc-ai__send{background:#1f7a3d;color:#fff;border:0;border-radius:8px;padding:0 16px;cursor:pointer;font-size:14px}
 .gwc-ai__disc{margin:0;padding:0 12px 10px;font-size:11px;color:#7a857a;text-align:center}
+.gwc-ai__typing{display:inline-flex;gap:5px;align-items:center;padding:11px 12px}
+.gwc-ai__dot{width:7px;height:7px;border-radius:50%;background:#8aa58f;display:inline-block;animation:gwcai-blink 1.2s infinite ease-in-out}
+.gwc-ai__dot:nth-child(2){animation-delay:.15s}
+.gwc-ai__dot:nth-child(3){animation-delay:.3s}
+@keyframes gwcai-blink{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
 </style>
 <script>
 (function(){
@@ -1032,7 +1037,12 @@ final class GWC_AI {
 		history.push({role:'user', content:msg});
 		input.value = '';
 		sendBtn.disabled = true;
-		var thinking = bubble('...', 'bot');
+		var thinking = document.createElement('div');
+		thinking.className = 'gwc-ai__msg gwc-ai__msg--bot gwc-ai__typing';
+		thinking.setAttribute('aria-label','Assistant is typing');
+		thinking.innerHTML = '<span class="gwc-ai__dot"></span><span class="gwc-ai__dot"></span><span class="gwc-ai__dot"></span>';
+		logEl.appendChild(thinking);
+		logEl.scrollTop = logEl.scrollHeight;
 
 		var body = new URLSearchParams();
 		body.append('action','gwc_ai_message');
@@ -1050,11 +1060,12 @@ final class GWC_AI {
 			.then(function(res){
 				var data = (res && res.data) ? res.data : {};
 				var reply = data.reply || 'Sorry, something went wrong. Please try again.';
+				thinking.classList.remove('gwc-ai__typing');
 				thinking.textContent = reply;
 				if(res && res.success){ history.push({role:'assistant', content:reply}); }
 				if(data.case_number){ bubble('Reference: ' + data.case_number + '. A Green World Health advisor will follow up.', 'note'); }
 			})
-			.catch(function(){ thinking.textContent = 'Network error. Please try again.'; })
+			.catch(function(){ thinking.classList.remove('gwc-ai__typing'); thinking.textContent = 'Network error. Please try again.'; })
 			.then(function(){ sendBtn.disabled = false; });
 	});
 })();

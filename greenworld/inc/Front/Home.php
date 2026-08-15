@@ -185,9 +185,10 @@ final class Home {
 		if ( $default > 0 ) {
 			$exclude[] = $default;
 		}
-		$args  = array(
+		$hide_empty = (bool) apply_filters( 'gw_home_category_hide_empty', true );
+		$args       = array(
 			'taxonomy'   => 'product_cat',
-			'hide_empty' => false,
+			'hide_empty' => $hide_empty,
 			'parent'     => 0,
 			'orderby'    => 'menu_order',
 			'order'      => 'ASC',
@@ -197,6 +198,17 @@ final class Home {
 		if ( is_wp_error( $terms ) || empty( $terms ) ) {
 			$args['orderby'] = 'name';
 			$terms           = get_terms( $args );
+		}
+		// If nothing is populated yet, retry including empty categories so the
+		// section still renders while the catalogue is being organised.
+		if ( ( is_wp_error( $terms ) || empty( $terms ) ) && $hide_empty ) {
+			$args['hide_empty'] = false;
+			$args['orderby']    = 'menu_order';
+			$terms              = get_terms( $args );
+			if ( is_wp_error( $terms ) || empty( $terms ) ) {
+				$args['orderby'] = 'name';
+				$terms           = get_terms( $args );
+			}
 		}
 		if ( is_wp_error( $terms ) || empty( $terms ) ) {
 			return self::home_categories();

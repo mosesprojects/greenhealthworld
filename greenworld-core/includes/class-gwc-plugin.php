@@ -18,6 +18,7 @@ final class GWC_Plugin {
 		GWC_Distributor::instance()->boot();
 		GWC_Points::instance()->boot();
 		GWC_Compliance::instance()->boot();
+		GWC_Dashboard::instance()->boot();
 		GWC_Cart_Recovery::instance()->boot();
 
 		// Flush rewrite rules once per version so new endpoints (e.g. the
@@ -37,6 +38,7 @@ final class GWC_Plugin {
 		GWC_Scan::instance()->register_cpt();
 		GWC_Records::instance()->register_cpts();
 		GWC_Account::instance()->add_endpoint();
+		GWC_Dashboard::instance()->add_endpoints();
 		GWC_Distributor::instance()->add_endpoint();
 		GWC_Points::instance()->register_cpt();
 		GWC_Cart_Recovery::instance()->install();

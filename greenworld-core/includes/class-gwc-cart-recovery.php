@@ -80,6 +80,7 @@ final class GWC_Cart_Recovery {
 
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
+        add_action( 'admin_post_gwc_send_test', array( $this, 'handle_test_send' ) );
     }
 
     public function cron_schedule( $schedules ) {
@@ -510,6 +511,69 @@ final class GWC_Cart_Recovery {
         return $html;
     }
 
+    public function handle_test_send(): void {
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_die( esc_html__( 'You are not allowed to do this.', 'greenworld-core' ) );
+        }
+        check_admin_referer( 'gwc_send_test' );
+
+        $to = isset( $_POST['test_email'] ) ? sanitize_email( wp_unslash( $_POST['test_email'] ) ) : '';
+        if ( ! is_email( $to ) ) {
+            $to = get_option( 'admin_email' );
+        }
+        $stage = isset( $_POST['test_stage'] ) ? (int) $_POST['test_stage'] : 1;
+        if ( $stage < 1 || $stage > 3 ) {
+            $stage = 1;
+        }
+
+        global $wpdb;
+        $table = $this->table();
+        $row   = $wpdb->get_row( "SELECT * FROM {$table} ORDER BY updated_at DESC LIMIT 1" );
+        if ( ! $row ) {
+            $row = (object) array(
+                'email'        => $to,
+                'name'         => '',
+                'cart'         => wp_json_encode( $this->sample_items() ),
+                'subtotal'     => 0,
+                'currency'     => function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : '',
+                'token'        => 'test-' . wp_generate_password( 12, false, false ),
+                'status'       => 'pending',
+                'mailed_stage' => 0,
+            );
+        }
+        // Deliver the preview to the chosen address regardless of who the row belongs to.
+        $row->email = $to;
+
+        $ok = $this->send_stage( $row, $stage, $this->settings() );
+
+        wp_safe_redirect(
+            add_query_arg(
+                array( 'page' => 'gwc-cart-recovery', 'gwc_test' => $ok ? '1' : '0' ),
+                admin_url( 'admin.php' )
+            )
+        );
+        exit;
+    }
+
+    private function sample_items(): array {
+        $items = array();
+        if ( function_exists( 'wc_get_products' ) ) {
+            $products = wc_get_products( array( 'status' => 'publish', 'limit' => 2 ) );
+            foreach ( $products as $p ) {
+                $items[] = array(
+                    'id'    => $p->get_id(),
+                    'qty'   => 1,
+                    'name'  => $p->get_name(),
+                    'price' => (float) $p->get_price(),
+                );
+            }
+        }
+        if ( empty( $items ) ) {
+            $items[] = array( 'id' => 0, 'qty' => 1, 'name' => 'Sample wellness product', 'price' => 0 );
+        }
+        return $items;
+    }
+
     public function admin_menu(): void {
         add_submenu_page(
             'woocommerce',
@@ -551,10 +615,14 @@ final class GWC_Cart_Recovery {
         $pending   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'pending'" );
         $next_cron = wp_next_scheduled( self::CRON_HOOK );
         $next_txt  = $next_cron ? get_date_from_gmt( gmdate( 'Y-m-d H:i:s', (int) $next_cron ), 'Y-m-d H:i' ) : 'not scheduled';
+        $test_flag = isset( $_GET['gwc_test'] ) ? sanitize_text_field( wp_unslash( $_GET['gwc_test'] ) ) : '';
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Abandoned Cart Recovery', 'greenworld-core' ); ?></h1>
             <p><?php echo esc_html( sprintf( 'Pending carts: %d. Next scheduled run: %s.', $pending, $next_txt ) ); ?></p>
+            <?php if ( '' !== $test_flag ) : ?>
+                <div class="notice notice-<?php echo ( '1' === $test_flag ) ? 'success' : 'error'; ?> is-dismissible"><p><?php echo esc_html( ( '1' === $test_flag ) ? 'Test email handed to the mailer. Check the inbox.' : 'Test email could not be sent. Check your SMTP setup.' ); ?></p></div>
+            <?php endif; ?>
             <form method="post" action="options.php">
                 <?php settings_fields( 'gwc_cart_recovery_group' ); ?>
                 <table class="form-table" role="presentation">
@@ -592,6 +660,30 @@ final class GWC_Cart_Recovery {
                     </tr>
                 </table>
                 <?php submit_button(); ?>
+            </form>
+
+            <h2><?php esc_html_e( 'Send a test email', 'greenworld-core' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Sends a real, immediate copy of the chosen stage (using the latest captured cart, or a sample) so you can confirm delivery and design. This bypasses the timing delays.', 'greenworld-core' ); ?></p>
+            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                <input type="hidden" name="action" value="gwc_send_test" />
+                <?php wp_nonce_field( 'gwc_send_test' ); ?>
+                <table class="form-table" role="presentation">
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Send to', 'greenworld-core' ); ?></th>
+                        <td><input type="email" name="test_email" value="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Which email', 'greenworld-core' ); ?></th>
+                        <td>
+                            <select name="test_stage">
+                                <option value="1"><?php esc_html_e( 'Email 1 - reminder', 'greenworld-core' ); ?></option>
+                                <option value="2"><?php esc_html_e( 'Email 2 - nudge + discount', 'greenworld-core' ); ?></option>
+                                <option value="3"><?php esc_html_e( 'Email 3 - last chance', 'greenworld-core' ); ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button( __( 'Send test email', 'greenworld-core' ), 'secondary' ); ?>
             </form>
 
             <h2><?php esc_html_e( 'Recent captured carts', 'greenworld-core' ); ?></h2>

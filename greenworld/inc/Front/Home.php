@@ -166,6 +166,54 @@ final class Home {
 	}
 
 	/** @return array<int,string> */
+	/**
+	 * Category names for the homepage "Shop by Health Category" grid, pulled
+	 * live from the real WooCommerce product categories so the section is
+	 * managed entirely from Products -> Categories (add, rename, reorder, and
+	 * set the tile image). Top-level categories only, in the category display
+	 * order, with "Uncategorized" skipped. Falls back to the curated list until
+	 * real categories exist. The number shown is filterable via
+	 * gw_home_category_limit (default 10).
+	 */
+	private static function home_category_names(): array {
+		if ( ! taxonomy_exists( 'product_cat' ) ) {
+			return self::home_categories();
+		}
+		$limit   = (int) apply_filters( 'gw_home_category_limit', 10 );
+		$exclude = array();
+		$default = (int) get_option( 'default_product_cat' );
+		if ( $default > 0 ) {
+			$exclude[] = $default;
+		}
+		$args  = array(
+			'taxonomy'   => 'product_cat',
+			'hide_empty' => false,
+			'parent'     => 0,
+			'orderby'    => 'menu_order',
+			'order'      => 'ASC',
+			'exclude'    => $exclude,
+		);
+		$terms = get_terms( $args );
+		if ( is_wp_error( $terms ) || empty( $terms ) ) {
+			$args['orderby'] = 'name';
+			$terms           = get_terms( $args );
+		}
+		if ( is_wp_error( $terms ) || empty( $terms ) ) {
+			return self::home_categories();
+		}
+		$names = array();
+		foreach ( (array) $terms as $t ) {
+			if ( ! isset( $t->slug ) || 'uncategorized' === $t->slug ) {
+				continue;
+			}
+			$names[] = (string) $t->name;
+			if ( $limit > 0 && count( $names ) >= $limit ) {
+				break;
+			}
+		}
+		return ! empty( $names ) ? $names : self::home_categories();
+	}
+
 	private static function home_categories(): array {
 		$default = array( 'General Health', "Men's Health", "Women's Health", 'Immunity & Energy', 'Wellness & Nutrition', 'Detox & Wellness', 'Heart & Circulation', 'Bone & Joint', 'Digestive Care', 'Weight Management' );
 		$csv     = (string) get_theme_mod( 'gw_home_categories', '' );
@@ -190,7 +238,7 @@ final class Home {
 
 	public static function shop_by_category(): void {
 		$shop = self::shop();
-		$cats = self::home_categories();
+		$cats = self::home_category_names();
 		echo '<section class="gw-section gw-cats"><div class="gw-container">';
 		self::section_head( __( 'Shop by need', 'greenworld' ), __( 'Shop by Health Category', 'greenworld' ), $shop, __( 'View all', 'greenworld' ) );
 		echo '<div class="gw-cats__grid gw-cats__grid--5">';

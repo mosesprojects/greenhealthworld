@@ -26,6 +26,8 @@ final class GWC_AI {
 	const OPTION   = 'gwc_ai';
 	const KB_CACHE = 'gwc_ai_kb_index';
 
+	private $rendered = false;
+
 	public static function instance(): GWC_AI {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -37,6 +39,7 @@ final class GWC_AI {
 		add_action( 'wp_ajax_gwc_ai_message', array( $this, 'ajax_message' ) );
 		add_action( 'wp_ajax_nopriv_gwc_ai_message', array( $this, 'ajax_message' ) );
 		add_shortcode( 'green_world_assistant', array( $this, 'shortcode_widget' ) );
+		add_action( 'wp_footer', array( $this, 'maybe_render_sitewide' ) );
 		add_action( 'admin_menu', array( $this, 'menu' ), 40 );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
@@ -47,6 +50,7 @@ final class GWC_AI {
 	public function defaults(): array {
 		return array(
 			'enabled'      => 1,
+			'sitewide'     => 1,
 			'order'        => 'gemini,groq,openai',
 			'gemini_model' => GWC_AI_Provider_Gemini::DEFAULT_MODEL,
 			'groq_model'   => GWC_AI_Provider_Groq::DEFAULT_MODEL,
@@ -79,6 +83,7 @@ final class GWC_AI {
 		$out = array();
 
 		$out['enabled'] = empty( $input['enabled'] ) ? 0 : 1;
+		$out['sitewide'] = empty( $input['sitewide'] ) ? 0 : 1;
 
 		$order = isset( $input['order'] ) ? (string) $input['order'] : $d['order'];
 		$known = array( 'gemini', 'groq', 'openai' );
@@ -900,15 +905,43 @@ final class GWC_AI {
 		if ( empty( $s['enabled'] ) ) {
 			return '';
 		}
-		$atts  = shortcode_atts( array( 'title' => $s['widget_title'] ), (array) $atts, 'green_world_assistant' );
+		$atts = shortcode_atts( array( 'title' => $s['widget_title'] ), (array) $atts, 'green_world_assistant' );
+		return $this->render_widget( (string) $atts['title'] );
+	}
+
+	/**
+	 * Output the chat widget in the site footer on every front-end page when the
+	 * site-wide option is on. Deduped so it never doubles the shortcode.
+	 */
+	public function maybe_render_sitewide(): void {
+		$s = $this->settings();
+		if ( empty( $s['enabled'] ) || empty( $s['sitewide'] ) ) {
+			return;
+		}
+		echo $this->render_widget( (string) $s['widget_title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Build the chat widget markup, at most once per page request. Shared by the
+	 * [green_world_assistant] shortcode and the site-wide footer output.
+	 *
+	 * @param string $title Panel heading.
+	 */
+	public function render_widget( string $title = '' ): string {
+		if ( $this->rendered ) {
+			return '';
+		}
+		$this->rendered = true;
+		$s = $this->settings();
+		if ( '' === trim( $title ) ) {
+			$title = (string) $s['widget_title'];
+		}
 		$uid   = 'gwcai_' . substr( md5( uniqid( '', true ) ), 0, 8 );
 		$cfg   = array(
 			'ajax'  => admin_url( 'admin-ajax.php' ),
 			'nonce' => wp_create_nonce( 'gwc_ai' ),
 			'intro' => (string) $s['intro'],
 		);
-		$title = (string) $atts['title'];
-
 		ob_start();
 		?>
 <div class="gwc-ai" id="<?php echo esc_attr( $uid ); ?>">
@@ -1142,6 +1175,10 @@ final class GWC_AI {
 						<td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[enabled]" value="1" <?php checked( ! empty( $s['enabled'] ) ); ?> /> <?php esc_html_e( 'Enabled', 'greenworld-core' ); ?></label></td>
 					</tr>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Show on every page', 'greenworld-core' ); ?></th>
+						<td><label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[sitewide]" value="1" <?php checked( ! empty( $s['sitewide'] ) ); ?> /> <?php esc_html_e( 'Float the chat button on every page automatically (no shortcode needed)', 'greenworld-core' ); ?></label></td>
+					</tr>
+					<tr>
 						<th scope="row"><?php esc_html_e( 'Provider order', 'greenworld-core' ); ?></th>
 						<td>
 							<input type="text" name="<?php echo esc_attr( self::OPTION ); ?>[order]" value="<?php echo esc_attr( (string) $s['order'] ); ?>" class="regular-text" />
@@ -1200,7 +1237,7 @@ final class GWC_AI {
 				<?php submit_button(); ?>
 			</form>
 
-			<p class="description"><?php esc_html_e( 'Add the chat widget to any page or post with the shortcode:', 'greenworld-core' ); ?> <code>[green_world_assistant]</code></p>
+			<p class="description"><?php esc_html_e( 'With "Show on every page" enabled the chat button appears everywhere automatically. To place it on a specific page or post instead, use the shortcode:', 'greenworld-core' ); ?> <code>[green_world_assistant]</code></p>
 
 			<h2><?php esc_html_e( 'Test the assistant', 'greenworld-core' ); ?></h2>
 			<p>

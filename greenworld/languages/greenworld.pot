@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GreenWorld Pro 2.10.0\n"
-"Report-Msgid-Bugs-To: https://greenworldhealthsolutions.co.ke/\n"
+"Report-Msgid-Bugs-To: https://greenworldhealth.co.ke/\n"
 "POT-Creation-Date: 2026-07-09 15:51+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"

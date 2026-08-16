@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name:       Green World Core
- * Plugin URI:        https://greenworldheath.com/
+ * Plugin URI:        https://greenworldhealth.co.ke/
  * Description:       Business logic for Green World Health Solutions: automatic WhatsApp notifications (Meta Cloud API), scan bookings, the customer health dashboard, and the full distributor programme (dashboard, admin activation, product point values, batch allocation and a points ledger). Keeps this data independent of the active theme.
- * Version:           0.16.0
+ * Version:           0.16.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Green World Health Solutions
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'GWC_VERSION', '0.16.0' );
+define( 'GWC_VERSION', '0.16.1' );
 define( 'GWC_FILE', __FILE__ );
 define( 'GWC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GWC_URL', plugin_dir_url( __FILE__ ) );

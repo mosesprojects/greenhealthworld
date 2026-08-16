@@ -201,7 +201,7 @@ get_header();
 				<p>Fill in your details and our team will reach out to help you get started. It takes a couple of minutes and there is no obligation.</p>
 				<ul class="gw-dist-contact">
 					<li><span>WhatsApp or call</span><a href="<?php echo esc_url( $gw_wa_url ); ?>">0723 579 873</a></li>
-					<li><span>Email</span><a href="mailto:info@greenworldheath.com">info@greenworldheath.com</a></li>
+					<li><span>Email</span><a href="mailto:info@greenworldhealth.co.ke">info@greenworldhealth.co.ke</a></li>
 					<li><span>Hours</span>Mon &ndash; Sat, 8:30 AM &ndash; 6:00 PM</li>
 				</ul>
 			</div>

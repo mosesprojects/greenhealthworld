@@ -206,7 +206,7 @@ final class TopicMap {
 	/** General FAQs used on the commercial hub and homepage. */
 	public static function general_faqs(): array {
 		return [
-			[ 'Where is Green World Health Solutions located?', 'We are at Development House, 11th Floor, Room 7, Nairobi. You are welcome to visit during business hours, Monday to Saturday, 8:30 AM to 6:00 PM. You can also reach us on 0723 579 873 or info@greenworldheath.com.' ],
+			[ 'Where is Green World Health Solutions located?', 'We are at Development House, 11th Floor, Room 7, Nairobi. You are welcome to visit during business hours, Monday to Saturday, 8:30 AM to 6:00 PM. You can also reach us on 0723 579 873 or info@greenworldhealth.co.ke.' ],
 			[ 'Are your products genuine Green World products?', 'Yes. Every item we sell is a genuine Green World brand product sourced through the group supply chain, never counterfeit or grey-market stock. If you would like to verify a product, contact us and we will help you check it.' ],
 			[ 'How do I place an order?', 'Add the products you want to your cart and check out online, or message us on WhatsApp at 0723 579 873 and we will place the order for you. We then confirm the order and arrange delivery.' ],
 			[ 'What payment methods do you accept?', 'We accept M-Pesa, bank transfer, and cash (on delivery within Nairobi or on pickup at our office). All online payments run over a secure, encrypted connection.' ],
@@ -219,7 +219,7 @@ final class TopicMap {
 			[ 'How do I choose the right product?', 'Start with the product information on each page, or use our free wellness consultation and a real advisor will suggest suitable options for your goals. Always consult a qualified health professional before starting a new product.' ],
 			[ 'Is the product information medical advice?', 'No. Our product information is for general wellness purposes only and is not a substitute for professional medical advice, diagnosis or treatment. Please read the label and speak to a qualified healthcare professional before use, especially if you are pregnant, nursing, taking medication or managing a condition.' ],
 			[ 'Is the free health consultation really free?', 'Yes. The consultation is free and carries no obligation to buy. Anything you share about your health is treated as private, used only to guide product suggestions, and is never sold or shared for marketing.' ],
-			[ 'How do I contact customer care?', 'Message or call us on WhatsApp at 0723 579 873, email info@greenworldheath.com, or visit our Nairobi office during business hours, Monday to Saturday, 8:30 AM to 6:00 PM. We are glad to help.' ],
+			[ 'How do I contact customer care?', 'Message or call us on WhatsApp at 0723 579 873, email info@greenworldhealth.co.ke, or visit our Nairobi office during business hours, Monday to Saturday, 8:30 AM to 6:00 PM. We are glad to help.' ],
 		];
 	}
 

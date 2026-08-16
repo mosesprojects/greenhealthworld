@@ -23,7 +23,7 @@ final class Customizer implements Bootable {
 		return [
 			'gw_phone'             => '0723 579 873',
 			'gw_whatsapp'          => '254723579873',
-			'gw_email'             => 'info@greenworldheath.com',
+			'gw_email'             => 'info@greenworldhealth.co.ke',
 			'gw_hours'             => 'Mon - Sat, 8:30 AM - 6:00 PM',
 			'gw_address'           => 'Development House, 11th Floor, Room 7, Nairobi',
 			'gw_topbar_notice'     => 'Welcome to Green World Health Solutions — free health consultation available',

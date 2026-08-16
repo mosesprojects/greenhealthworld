@@ -79,7 +79,7 @@ final class TrustCenter implements Bootable {
 			'address' => self::v( 'address', 'Development House, 11th Floor, Room 7, Nairobi, Kenya' ),
 			'hours'   => self::v( 'hours', 'Monday to Saturday, 8:30 AM to 6:00 PM' ),
 			'phone'   => self::v( 'phone', '0723 579 873' ),
-			'email'   => self::v( 'email', 'info@greenworldheath.com' ),
+			'email'   => self::v( 'email', 'info@greenworldhealth.co.ke' ),
 			'wa'      => (string) preg_replace( '/[^0-9]/', '', self::v( 'whatsapp', '254723579873' ) ),
 			'pickup'  => self::v( 'pickup', 'Development House, 11th Floor, Room 7, Nairobi' ),
 		);

@@ -43,7 +43,7 @@ gwf_render_funnel(
 				'type'     => 'category',
 				'category' => 'weight-management',
 				'limit'    => 12,
-				'link'     => 'https://greenworldheath.com/product-category/weight-management/',
+				'link'     => home_url( '/product-category/weight-management/' ),
 			),
 		),
 		'proof_title'     => 'Real, lasting results across Kenya',

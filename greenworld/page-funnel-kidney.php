@@ -43,7 +43,7 @@ gwf_render_funnel(
 				'type'     => 'category',
 				'category' => 'kidney-urinary-wellness',
 				'limit'    => 12,
-				'link'     => 'https://greenworldheath.com/product-category/kidney-urinary-wellness/',
+				'link'     => home_url( '/product-category/kidney-urinary-wellness/' ),
 			),
 		),
 		'proof_title'     => 'Trusted by families across Kenya',

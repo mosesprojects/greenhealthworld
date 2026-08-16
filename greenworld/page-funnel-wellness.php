@@ -43,7 +43,7 @@ gwf_render_funnel(
 				'type'     => 'category',
 				'category' => 'health-wellness-supplements',
 				'limit'    => 12,
-				'link'     => 'https://greenworldheath.com/product-category/health-wellness-supplements/',
+				'link'     => home_url( '/product-category/health-wellness-supplements/' ),
 			),
 		),
 		'proof_title'     => 'Families across Kenya trust Green World',

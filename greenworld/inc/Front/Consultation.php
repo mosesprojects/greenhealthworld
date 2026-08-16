@@ -223,7 +223,7 @@ final class Consultation implements Bootable {
 					<h3><?php esc_html_e( 'Prefer to talk now', 'greenworld' ); ?></h3>
 					<a class="button gw-btn--gold gw-consult-aside__wa" href="<?php echo esc_url( 'https://wa.me/' . $wa ); ?>"><?php esc_html_e( 'Chat on WhatsApp', 'greenworld' ); ?></a>
 					<p class="gw-consult-aside__line"><a href="tel:+254723579873">0723 579 873</a></p>
-					<p class="gw-consult-aside__line"><a href="mailto:info@greenworldheath.com">info@greenworldheath.com</a></p>
+					<p class="gw-consult-aside__line"><a href="mailto:info@greenworldhealth.co.ke">info@greenworldhealth.co.ke</a></p>
 					<p class="gw-consult-aside__hours"><?php esc_html_e( 'Mon to Sat, 8:30 AM to 6:00 PM', 'greenworld' ); ?></p>
 				</div>
 			</aside>

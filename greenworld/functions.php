@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.33.1' );
+define( 'GREENWORLD_VERSION', '1.33.2' );
 
 /**
  * Emit the theme version into the page head so the running build is verifiable
@@ -228,7 +228,7 @@ function greenworld_run_starter_setup(): void {
 	$dir = get_template_directory();
 
 	// Seed brand contact options used by schema + templates (admin can override).
-	add_option( 'greenworld_email', 'info@greenworldheath.com' );
+	add_option( 'greenworld_email', 'info@greenworldhealth.co.ke' );
 	add_option( 'greenworld_phone', '+254723579873' );
 	add_option( 'greenworld_street', 'Development House, 11th Floor, Room 7' );
 	add_option( 'greenworld_city', 'Nairobi' );
@@ -269,7 +269,7 @@ function greenworld_run_starter_setup(): void {
 		update_option( 'woocommerce_currency', 'KES' );
 		update_option( 'woocommerce_default_country', 'KE' );
 		update_option( 'woocommerce_store_city', 'Nairobi' );
-		update_option( 'woocommerce_email_from_address', 'info@greenworldheath.com' );
+		update_option( 'woocommerce_email_from_address', 'info@greenworldhealth.co.ke' );
 		update_option( 'woocommerce_enable_ajax_add_to_cart', 'yes' );
 		update_option( 'woocommerce_cart_redirect_after_add', 'no' );
 		update_option( 'woocommerce_enable_myaccount_registration', 'yes' );

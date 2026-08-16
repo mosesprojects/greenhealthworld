@@ -43,7 +43,7 @@ gwf_render_funnel(
 				'type'     => 'category',
 				'category' => 'liver-detox-wellness',
 				'limit'    => 12,
-				'link'     => 'https://greenworldheath.com/product-category/liver-detox-wellness/',
+				'link'     => home_url( '/product-category/liver-detox-wellness/' ),
 			),
 		),
 		'proof_title'     => 'People across Kenya are feeling refreshed',

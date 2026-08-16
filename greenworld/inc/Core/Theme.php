@@ -42,6 +42,7 @@ final class Theme {
 			\GreenWorld\Security\Headers::class,
 			\GreenWorld\Admin\Dashboard::class,
 			\GreenWorld\Admin\ProductList::class,
+			\GreenWorld\Admin\HomeCategories::class,
 			\GreenWorld\Compat\Elementor::class,
 			\GreenWorld\Customizer\Customizer::class,
 			\GreenWorld\Customizer\HomepagePanel::class,

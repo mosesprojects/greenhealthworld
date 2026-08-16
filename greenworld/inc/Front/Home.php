@@ -185,6 +185,38 @@ final class Home {
 		if ( $default > 0 ) {
 			$exclude[] = $default;
 		}
+
+		// Categories explicitly ticked "Show on homepage" (see
+		// Admin\HomeCategories) take priority: when any exist, the grid shows
+		// exactly those, in Products -> Categories order. With none ticked we
+		// fall through to the automatic "top categories with products" set.
+		$featured = get_terms(
+			array(
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => false,
+				'orderby'    => 'menu_order',
+				'order'      => 'ASC',
+				'exclude'    => $exclude,
+				'meta_key'   => '_gw_home_featured',
+				'meta_value' => '1',
+			)
+		);
+		if ( ! is_wp_error( $featured ) && ! empty( $featured ) ) {
+			$picked = array();
+			foreach ( (array) $featured as $t ) {
+				if ( ! isset( $t->slug ) || 'uncategorized' === $t->slug ) {
+					continue;
+				}
+				$picked[] = (string) $t->name;
+				if ( $limit > 0 && count( $picked ) >= $limit ) {
+					break;
+				}
+			}
+			if ( ! empty( $picked ) ) {
+				return $picked;
+			}
+		}
+
 		$hide_empty = (bool) apply_filters( 'gw_home_category_hide_empty', true );
 		$args       = array(
 			'taxonomy'   => 'product_cat',

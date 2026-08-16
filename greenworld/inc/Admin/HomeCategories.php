@@ -78,7 +78,7 @@ final class HomeCategories implements Bootable {
 	 * @param int $term_id Category term ID.
 	 */
 	public function save( $term_id ): void {
-		if ( ! current_user_can( 'manage_product_terms' ) ) {
+		if ( ! current_user_can( 'manage_product_terms' ) && ! current_user_can( 'manage_categories' ) ) {
 			return;
 		}
 		$on = ( isset( $_POST['gw_home_featured'] ) && '1' === (string) wp_unslash( $_POST['gw_home_featured'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing

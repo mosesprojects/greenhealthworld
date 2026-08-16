@@ -188,22 +188,42 @@ final class Home {
 
 		// Categories explicitly ticked "Show on homepage" (see
 		// Admin\HomeCategories) take priority: when any exist, the grid shows
-		// exactly those, in Products -> Categories order. With none ticked we
-		// fall through to the automatic "top categories with products" set.
+		// exactly those. We deliberately do NOT order this query by
+		// menu_order: on product_cat WooCommerce implements menu_order via its
+		// own term-meta JOIN, which collides with a meta_query filter and
+		// returns zero rows. Instead we filter by meta only, then sort in PHP
+		// by the WooCommerce category display order (term meta 'order').
 		$featured = get_terms(
 			array(
 				'taxonomy'   => 'product_cat',
 				'hide_empty' => false,
-				'orderby'    => 'menu_order',
+				'orderby'    => 'name',
 				'order'      => 'ASC',
 				'exclude'    => $exclude,
-				'meta_key'   => '_gw_home_featured',
-				'meta_value' => '1',
+				'meta_query' => array(
+					array(
+						'key'     => '_gw_home_featured',
+						'value'   => '1',
+						'compare' => '=',
+					),
+				),
 			)
 		);
 		if ( ! is_wp_error( $featured ) && ! empty( $featured ) ) {
+			$featured = array_values( (array) $featured );
+			usort(
+				$featured,
+				static function ( $a, $b ): int {
+					$oa = (int) get_term_meta( (int) $a->term_id, 'order', true );
+					$ob = (int) get_term_meta( (int) $b->term_id, 'order', true );
+					if ( $oa === $ob ) {
+						return strcasecmp( (string) $a->name, (string) $b->name );
+					}
+					return $oa <=> $ob;
+				}
+			);
 			$picked = array();
-			foreach ( (array) $featured as $t ) {
+			foreach ( $featured as $t ) {
 				if ( ! isset( $t->slug ) || 'uncategorized' === $t->slug ) {
 					continue;
 				}

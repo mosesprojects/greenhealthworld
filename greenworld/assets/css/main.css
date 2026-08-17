@@ -1080,3 +1080,27 @@ ul.products li.product .onsale{display:none}
     display:block!important;
   }
 }
+
+
+/* ============================================================
+   v1.34.4 - REAL fix for mobile Shop horizontal overflow
+   The shop content column (.gw-wc__main) is a grid item inside
+   the .gw-wc--shop grid. Its default min-width:auto let it refuse
+   to shrink below its content's min-content (the result-count +
+   'Default sorting' toolbar row, ~418px side by side), so on
+   phones the column bulged ~28px past the viewport and dragged
+   the whole product grid (and any wide card) off the right edge.
+   Letting the shop grid items shrink removes the overflow. This,
+   not the product image, was the true cause of the broken Shop
+   layout in 1.34.1-1.34.3.
+   ============================================================ */
+.gw-wc--shop{min-width:0}
+.gw-wc--shop>*,
+.gw-wc__main,
+.gw-wc__aside,
+.gw-wc__main ul.products{min-width:0!important;}
+@media (max-width:900px){
+  .gw-wc__main .woocommerce-ordering,
+  .gw-wc__main .woocommerce-ordering select.orderby,
+  .gw-wc__main .woocommerce-result-count{max-width:100%!important;}
+}

@@ -190,6 +190,14 @@ final class Schema implements Bootable {
 		if ( count( $same ) > 0 ) {
 			$place['sameAs'] = $same;
 		}
+		$geo = $this->geo();
+		if ( count( $geo ) > 0 ) {
+			$place['geo'] = $geo;
+		}
+		$map = trim( (string) get_theme_mod( 'gw_gbp_url', '' ) );
+		if ( strlen( $map ) > 0 ) {
+			$place['hasMap'] = esc_url_raw( $map );
+		}
 		return $place;
 	}
 
@@ -368,6 +376,8 @@ final class Schema implements Bootable {
 				'@type'       => 'AggregateRating',
 				'ratingValue' => (string) $product->get_average_rating(),
 				'reviewCount' => (int) $product->get_review_count(),
+				'bestRating'  => '5',
+				'worstRating' => '1',
 			];
 			$reviews = $this->real_reviews( $pid );
 			if ( count( $reviews ) > 0 ) {
@@ -394,10 +404,12 @@ final class Schema implements Bootable {
 					'@type'         => 'Offer',
 					'priceCurrency' => get_woocommerce_currency(),
 					'price'         => $v->get_price(),
+					'priceValidUntil' => gmdate( 'Y-m-d', strtotime( '+1 year' ) ),
 					'availability'  => $v->is_in_stock() ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
 					'url'           => get_permalink( $product->get_id() ),
 					'itemCondition' => 'https://schema.org/NewCondition',
 					'seller'        => [ '@id' => $this->id( '#organization', true ) ],
+					'hasMerchantReturnPolicy' => $this->return_policy(),
 				],
 			] );
 		}
@@ -421,6 +433,9 @@ final class Schema implements Bootable {
 					'availability'  => $avail,
 					'url'           => $url,
 					'seller'        => [ '@id' => $this->id( '#organization', true ) ],
+					'itemCondition' => 'https://schema.org/NewCondition',
+					'priceValidUntil' => gmdate( 'Y-m-d', strtotime( '+1 year' ) ),
+					'hasMerchantReturnPolicy' => $this->return_policy(),
 				];
 			}
 		}
@@ -921,6 +936,19 @@ final class Schema implements Bootable {
 			'streetAddress'   => get_option( 'greenworld_street', 'Development House, 11th Floor, Room 7' ),
 			'addressLocality' => get_option( 'greenworld_city', 'Nairobi' ),
 			'addressCountry'  => 'KE',
+		];
+	}
+
+	private function geo(): array {
+		$lat = trim( (string) get_option( 'greenworld_geo_lat', (string) get_theme_mod( 'gw_geo_lat', '' ) ) );
+		$lng = trim( (string) get_option( 'greenworld_geo_lng', (string) get_theme_mod( 'gw_geo_lng', '' ) ) );
+		if ( strlen( $lat ) === 0 || strlen( $lng ) === 0 ) {
+			return array();
+		}
+		return [
+			'@type'     => 'GeoCoordinates',
+			'latitude'  => $lat,
+			'longitude' => $lng,
 		];
 	}
 

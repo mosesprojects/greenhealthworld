@@ -95,6 +95,10 @@ final class Customizer implements Bootable {
 
 		$wp->add_setting( 'gw_gbp_url', [ 'default' => '', 'sanitize_callback' => 'esc_url_raw', 'transport' => 'refresh' ] );
 		$wp->add_control( 'gw_gbp_url', [ 'label' => __( 'Google Business Profile URL (reviews)', 'greenworld' ), 'section' => 'gw_contact', 'type' => 'url' ] );
+		$wp->add_setting( 'gw_geo_lat', [ 'default' => '', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'refresh' ] );
+		$wp->add_control( 'gw_geo_lat', [ 'label' => __( 'Map latitude (optional, e.g. -1.2864)', 'greenworld' ), 'section' => 'gw_contact', 'type' => 'text' ] );
+		$wp->add_setting( 'gw_geo_lng', [ 'default' => '', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'refresh' ] );
+		$wp->add_control( 'gw_geo_lng', [ 'label' => __( 'Map longitude (optional, e.g. 36.8172)', 'greenworld' ), 'section' => 'gw_contact', 'type' => 'text' ] );
 
 		// --- Social profiles (entity SEO sameAs) ---
 		$wp->add_section( 'gw_social', array( 'title' => __( 'Social Profiles', 'greenworld' ), 'panel' => 'greenworld', 'description' => __( 'Official profile URLs. Used for schema sameAs and footer links.', 'greenworld' ) ) );

@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.34.2' );
+define( 'GREENWORLD_VERSION', '1.34.3' );
 
 /**
  * Emit the theme version into the page head so the running build is verifiable

@@ -25,7 +25,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-define( 'GREENWORLD_VERSION', '1.33.2' );
+define( 'GREENWORLD_VERSION', '1.34.0' );
 
 /**
  * Emit the theme version into the page head so the running build is verifiable
@@ -110,6 +110,30 @@ add_action(
 		echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />' . "\n";
 	},
 	0
+);
+
+/**
+ * Load the Google Fonts stylesheet without blocking first paint: swap it to a
+ * non-render-blocking load (media="print" flipped to "all" on load) with a
+ * <noscript> fallback. With display=swap this keeps the fonts CSS and its font
+ * files off the critical render path (PSI: render-blocking requests).
+ */
+add_filter(
+	'style_loader_tag',
+	static function ( string $tag, string $handle ): string {
+		if ( 'greenworld-fonts' !== $handle ) {
+			return $tag;
+		}
+		$async = (string) preg_replace( '/ media=(\'|")[^\'"]*(\'|")/', '', $tag );
+		$async = str_replace(
+			array( " rel='stylesheet'", ' rel="stylesheet"' ),
+			" rel='stylesheet' media='print' onload=\"this.media='all';this.onload=null;\"",
+			$async
+		);
+		return $async . '<noscript>' . $tag . '</noscript>';
+	},
+	10,
+	2
 );
 
 /**

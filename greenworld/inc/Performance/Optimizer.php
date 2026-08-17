@@ -40,8 +40,14 @@ final class Optimizer implements Bootable {
 	public function preload(): void {
 		printf( '<link rel="preload" href="%s" as="style" />' . "\n", esc_url( GREENWORLD_URI . 'assets/css/main.css' ) );
 		if ( is_front_page() ) {
-			$hero = (string) get_theme_mod( 'gw_hero_image', GREENWORLD_URI . 'assets/img/hero.jpg' );
-			if ( $hero ) {
+			// Preload the actual first hero-carousel slide (the homepage LCP
+			// element) so it is discoverable immediately and fetched at high
+			// priority. Falls back to the legacy single-hero setting.
+			$hero = class_exists( '\\GreenWorld\\Front\\Home' ) ? \GreenWorld\Front\Home::first_hero_image() : '';
+			if ( '' === $hero ) {
+				$hero = (string) get_theme_mod( 'gw_hero_image', GREENWORLD_URI . 'assets/img/hero.jpg' );
+			}
+			if ( '' !== $hero ) {
 				printf( '<link rel="preload" href="%s" as="image" fetchpriority="high" />' . "\n", esc_url( $hero ) );
 			}
 		}
@@ -72,6 +78,10 @@ final class Optimizer implements Bootable {
 		if ( false === $has_blocks ) {
 			wp_dequeue_style( 'wp-block-library' );
 			wp_dequeue_style( 'wp-block-library-theme' );
+			// WooCommerce Blocks CSS is only needed by block-based Cart/Checkout
+			// or product blocks (pages that contain blocks, exempted above). The
+			// PHP-rendered homepage and archives do not use it.
+			wp_dequeue_style( 'wc-blocks-style' );
 		}
 	}
 

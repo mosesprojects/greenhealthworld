@@ -119,6 +119,19 @@ final class Home {
 		} ) );
 	}
 
+	/**
+	 * Resolved background image of the first hero slide — the homepage LCP
+	 * element. Used by the Performance Optimizer to emit an accurate
+	 * high-priority preload so the largest paint is discovered immediately.
+	 */
+	public static function first_hero_image(): string {
+		$slides = self::hero_slides();
+		if ( empty( $slides ) || empty( $slides[0]['image'] ) ) {
+			return '';
+		}
+		return (string) $slides[0]['image'];
+	}
+
 	public static function hero(): void {
 		$slides = self::hero_slides();
 		$count  = count( $slides );
@@ -311,25 +324,42 @@ final class Home {
 			$img   = self::cat_image( $name );
 			$webp  = self::cat_webp( $name );
 			$count = 0;
+			$tid   = 0;
 			if ( $term && ! is_wp_error( $term ) ) {
 				$link  = get_term_link( $term );
 				$count = (int) $term->count;
 				$tid   = (int) get_term_meta( $term->term_id, 'thumbnail_id', true );
-				if ( $tid ) {
-					$thumb = wp_get_attachment_image_url( $tid, 'medium' );
-					if ( $thumb ) { $img = (string) $thumb; $webp = ''; }
-				}
 			} else {
 				$link = add_query_arg( array( 's' => rawurlencode( $name ), 'post_type' => 'product' ), home_url( '/' ) );
 			}
 			if ( is_wp_error( $link ) ) { $link = $shop; }
-			if ( $img !== '' ) {
-				$imgtag = '<img class="gw-cat-card__img" src="' . esc_url( $img ) . '" alt="' . esc_attr( $name ) . '" width="400" height="400" loading="lazy" decoding="async" />';
-				$media  = ( $webp !== '' )
-					? '<picture><source type="image/webp" srcset="' . esc_url( $webp ) . '" />' . $imgtag . '</picture>'
-					: $imgtag;
-			} else {
-				$media = self::placeholder( $name );
+			// Small tiles (~182px on phones): emit responsive srcset/sizes so
+			// mobile fetches a small image instead of the full 400px file.
+			$sizes = '(max-width: 640px) 46vw, 200px';
+			$media = '';
+			if ( $tid ) {
+				$media = (string) wp_get_attachment_image(
+					$tid,
+					'medium',
+					false,
+					array(
+						'class'    => 'gw-cat-card__img',
+						'alt'      => $name,
+						'loading'  => 'lazy',
+						'decoding' => 'async',
+						'sizes'    => $sizes,
+					)
+				);
+			}
+			if ( '' === $media ) {
+				if ( $img !== '' ) {
+					$imgtag = '<img class="gw-cat-card__img" src="' . esc_url( $img ) . '" alt="' . esc_attr( $name ) . '" width="400" height="400" loading="lazy" decoding="async" sizes="' . esc_attr( $sizes ) . '" />';
+					$media  = ( $webp !== '' )
+						? '<picture><source type="image/webp" srcset="' . esc_url( $webp ) . '" />' . $imgtag . '</picture>'
+						: $imgtag;
+				} else {
+					$media = self::placeholder( $name );
+				}
 			}
 			$meta = ( $count > 0 )
 				? esc_html( sprintf( _n( '%d product', '%d products', $count, 'greenworld' ), $count ) )

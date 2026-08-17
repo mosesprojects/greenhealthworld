@@ -485,7 +485,7 @@ body.gw-nav-open .gw-nav-scrim{opacity:1}
 @media (max-width:560px){
   .gw-cats__grid{grid-template-columns:repeat(2,1fr)}
   .gw-collections__grid{grid-template-columns:1fr}
-  .woocommerce ul.products,ul.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+  .woocommerce ul.products,ul.products{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.8rem}
   .woocommerce ul.products li.product .woocommerce-loop-product__title,ul.products li.product h2{font-size:.85rem!important;min-height:2.7em}
   .gw-consult__row{grid-template-columns:1fr}
   .gw-why__grid{grid-template-columns:1fr}
@@ -532,7 +532,7 @@ body.gw-nav-open .gw-nav-scrim{opacity:1}
   .gw-navbar__inner{display:block;padding:0;min-height:0}
 
   /* Products: clean, centered 2-up across the whole mobile range. */
-  .woocommerce ul.products,ul.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+  .woocommerce ul.products,ul.products{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.8rem}
 
   /* Featured scroller: show ~2 cards per screen instead of 1. */
   .gw-featured ul.products li.product,.gw-scroller .products li.product{flex:0 0 calc((100% - 1.1rem) / 2)!important}
